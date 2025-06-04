@@ -29,3 +29,15 @@ TrakBasis manages power-on and power-off sequences for the ACOPOStrak assembly s
 - Provides structured diagnostic output (`ErrorID`, `ErrorText`, `ErrorInitiator`) for easy integration with HMIs or remote clients.
 
 ---
+
+## ✅ Compatibility
+
+TrakBasis is developed for and tested with:
+
+- **Automation Studio 6.x**  
+- **mappMotion 6.x**    
+
+> 💡 All Automation Studio 6.x versions are supported.  
+> ⚠️ Backporting to Automation Studio 4 is not supported due to structural and library differences.
+
+---
