@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
+<Configuration>
+  <Element ID="Sector_1" Type="sector">
+    <Selector ID="Type">
+      <Group ID="StartSegment">
+        <Property ID="SegmentRef" Value="::Seg_1" />
+      </Group>
+      <Group ID="IntermediateSegments">
+        <Property ID="SegmentRef[1]" Value="::Seg_2" />
+        <Property ID="SegmentRef[2]" Value="::Seg_3" />
+        <Property ID="SegmentRef[3]" Value="::Seg_4" />
+        <Property ID="SegmentRef[4]" Value="::Seg_5" />
+        <Property ID="SegmentRef[5]" Value="::Seg_6" />
+        <Property ID="SegmentRef[6]" Value="::Seg_7" />
+        <Property ID="SegmentRef[7]" Value="::Seg_8" />
+        <Property ID="SegmentRef[8]" Value="::Seg_9" />
+        <Property ID="SegmentRef[9]" Value="::Seg_10" />
+        <Property ID="SegmentRef[10]" Value="::Seg_11" />
+      </Group>
+      <Group ID="EndSegment">
+        <Property ID="SegmentRef" Value="::Seg_12" />
+        <Property ID="PositionRelativeTo" Value="FromEnd" />
+      </Group>
+    </Selector>
+  </Element>
+</Configuration>

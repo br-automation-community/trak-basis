@@ -1,0 +1,113 @@
+(********************************************************************
+ * COPYRIGHT - B&R Spain
+ ********************************************************************
+ * Program: AsmCtrl
+ * File: AsmCtrll.var
+ * Author: B&R Spain
+ * Created: July 22, 2024
+ * Modified: July 22, 2024
+ ********************************************************************
+ * Local variables of program AsmCtrl
+ *******************************************************************
+*)
+(********************************************************************
+ * References
+********************************************************************)
+VAR
+	AdrAssembly : UDINT;
+	AssemblyName : STRING[32];
+	AdrSector : UDINT;
+	pTrakCtrl : REFERENCE TO TrakCtrlType;
+END_VAR
+(********************************************************************
+ * Sequences
+********************************************************************)
+VAR
+	TrakState : TrakStateEnum;
+	TrakErrorState : TrakErrorStateEnum;
+	InitState : InitStateEnum;
+END_VAR
+(********************************************************************
+ * Function Blocks
+********************************************************************)
+(********************************************************************
+ * For assembly
+********************************************************************)
+VAR
+	MC_BR_AsmReadInfo_AcpTrak_0 : MC_BR_AsmReadInfo_AcpTrak; (*Reads information of the assembly *)
+	MC_BR_AsmReadStatus_AcpTrak_0 : MC_BR_AsmReadStatus_AcpTrak; (*Reads the PLCopen state of the assembly*)
+	MC_BR_AsmGetSegment_AcpTrak_0 : MC_BR_AsmGetSegment_AcpTrak; (*Gets all the assembly segments*)
+	MC_BR_AsmPowerOff_AcpTrak_0 : MC_BR_AsmPowerOff_AcpTrak; (*Performs a Power OFF of the assembly*)
+	MC_BR_AsmPowerOn_AcpTrak_0 : MC_BR_AsmPowerOn_AcpTrak; (*Performs a Power ON of the assembly*)
+	MC_BR_AsmReset_AcpTrak_0 : MC_BR_AsmReset_AcpTrak; (*Resets all assembly and segment related errors*)
+	MC_BR_AsmStop_AcpTrak_0 : MC_BR_AsmStop_AcpTrak; (*Stops all shuttle movements*)
+	MC_BR_AsmDeleteShuttle_AcpTrak_0 : MC_BR_AsmDeleteShuttle_AcpTrak; (*Deletes all shuttles from an assembly (useful in simulation or when shuttle is lost in real system and references needs to be refreshed)*)
+END_VAR
+(********************************************************************
+ * For sector
+********************************************************************)
+VAR
+	MC_BR_SecAddShuttle_AcpTrak_0 : MC_BR_SecAddShuttle_AcpTrak; (*Adds a shuttle to a predefined sector*)
+	MC_BR_SecGetShuttle_AcpTrak_0 : MC_BR_SecGetShuttle_AcpTrak;
+END_VAR
+(********************************************************************
+ * For shuttles
+*******************************************************************)
+VAR
+	MC_BR_ModuloMoveAbs_AcpTrak_0 : MC_BR_ModuloMoveAbs_AcpTrak; (*Performs an elastic absolute movement within a predefined sector (Modulo is very useful for closed loop assemblies)*)
+	MC_BR_ElasticMoveVel_AcpTrak_0 : MC_BR_ElasticMoveVel_AcpTrak; (*Performs an elastic movement within the predefined sector*)
+	MC_BR_ShSetUserID_AcpTrak_0 : MC_BR_ShSetUserID_AcpTrak; (*Defines a shuttle user ID that will be later used for identification in case of error*)
+	MC_BR_ShReadSectorPos_AcpTrak_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_BR_ShReadSectorPos_AcpTrak; (*Reads the sector related shuttle position (very useful for closed loop assemblies)*)
+	MC_BR_ShReadInfo_AcpTrak_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_BR_ShReadInfo_AcpTrak; (*Reads some current values of the shuttles such as the current speed, total distance or current sector.*)
+	MC_BR_ShReadFrame_AcpTrak_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_BR_ShReadFrame_AcpTrak; (*Used to read the XYZ position of each shuttle within the environment (may be used for external representation of the system)*)
+	MC_ReadStatus_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_ReadStatus; (*Used to read the current PLCopen state of the shuttles*)
+	MC_Reset_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_Reset; (*Reset of the shuttle errors*)
+END_VAR
+(********************************************************************
+ * For segments
+*******************************************************************)
+VAR
+	MC_BR_SegReadStatus_AcpTrak_0 : ARRAY[1..TRAK_MAX_SEGMENT] OF MC_BR_SegReadStatus_AcpTrak; (*Checks segment current PLCopen state*)
+	MC_BR_SegProcessParID_AcpTrak_0 : ARRAY[1..TRAK_MAX_SEGMENT] OF MC_BR_SegProcessParID_AcpTrak; (*Used to read different segment ParIDs*)
+	MC_BR_SegGetInfo_AcpTrak_0 : ARRAY[1..TRAK_MAX_SEGMENT] OF MC_BR_SegGetInfo_AcpTrak; (*Used to read the name of each segment*)
+	TON_0 : TON; (*Timer used to delay the cyclic read of segment ParIDs such as the temperature*)
+END_VAR
+(********************************************************************
+ * For error diagnosis
+*******************************************************************)
+VAR
+	MC_BR_AsmReadErrorInfo_AcpTrak_0 : MC_BR_AsmReadErrorInfo_AcpTrak; (*Reads error related information for the assembly*)
+	MC_BR_SegReadErrorInfo_AcpTrak_0 : ARRAY[1..TRAK_MAX_SEGMENT] OF MC_BR_SegReadErrorInfo_AcpTrak; (*Reads error related information for each segment*)
+	MC_BR_ShReadErrorInfo_AcpTrak_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_BR_ShReadErrorInfo_AcpTrak; (*Reads error related information for each shuttle*)
+	MC_BR_ReadErrorText_0 : MC_BR_ReadErrorText; (*FB that reads errors from logger*)
+END_VAR
+(********************************************************************
+ * For shuttle ID recovery
+*******************************************************************)
+VAR RETAIN
+	RemShPosition : ARRAY[1..TRAK_MAX_SHUTTLE] OF LREAL; (*Array of shuttle positions saved in remanent memory (used in ID recovery)*)
+END_VAR
+VAR
+	EquivalentShPos : ARRAY[1..TRAK_MAX_SHUTTLE] OF UINT; (*Checks equivalence between actual and previous shuttle positions (used in ID recovery)*)
+END_VAR
+(********************************************************************
+ * Temp variables
+********************************************************************)
+VAR
+	i : INT; (*Loop index*)
+	j : INT; (*Loop index*)
+	Counter : UINT; (*Auxiliar variable used to iterate in array positions*)
+	InitDone : BOOL; (*Trak initialization process completed*)
+	InSimulation : BOOL; (*Trak is in simulation*)
+	RestoreShuttleNumber : UINT; (*The amount of the shuttle in the old configuration*)
+	RemShPosRequired : BOOL; (*Remanent data should be collected (after first movement is detected)*)
+	TotalCountSegment : UINT; (*Used to detect if maximum count of segments is exceeded*)
+	TotalCountShuttle : UINT; (*Used to detect if maximum count of shuttles is exceeded*)
+	SegmentDCurrent : ARRAY[1..TRAK_MAX_SEGMENT] OF REAL; (*Used to calculate segment power consumption*)
+	SegmentQCurrent : ARRAY[1..TRAK_MAX_SEGMENT] OF REAL; (*Used to calculate segment power consumption*)
+	AdrErrorComponent : UDINT; (*Reference to motion component to read the logger entry*)
+	SegmentProcessParId : ARRAY[0..5] OF McAcpTrakSegProcessParIDType; (*Used to monitor different ParIDs for every segments*)
+	AuxShuttleAxis : ARRAY[1..TRAK_MAX_SHUTTLE] OF McAxisType; (*Auxiliar axis reference array (used in ID recovery)*)
+	AuxAxisAssigned : ARRAY[1..TRAK_MAX_SHUTTLE] OF BOOL; (*Auxiliar variable for axis ID assignation (used in ID recovery)*)
+	AuxString : STRING[32]; (*Auxiliar string used to parse and define shuttle names for ShuttleUser ID*)
+END_VAR

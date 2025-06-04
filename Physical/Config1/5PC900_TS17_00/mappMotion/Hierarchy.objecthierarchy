@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
+<Configuration>
+  <Element ID="ObjectHierarchy" Type="objecthierarchy">
+    <Group ID="SceneViewer">
+      <Property ID="FileDevice" Value="SvgData" />
+    </Group>
+    <Group ID="GlobalCoordinateSystem">
+      <Group ID="Object[1]">
+        <Selector ID="Type" Value="Assembly">
+          <Property ID="AssemblyRef" Value="gAssembly_1" />
+        </Selector>
+      </Group>
+    </Group>
+  </Element>
+</Configuration>

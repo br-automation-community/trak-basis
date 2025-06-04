@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
+<Package SubType="mappMotion" PackageType="mappMotion" xmlns="http://br-automation.co.at/AS/Package">
+  <Objects>
+    <Object Type="File">Hierarchy.objecthierarchy</Object>
+    <Object Type="File">Config_1.assembly</Object>
+    <Object Type="File">Config_2.sector</Object>
+    <Object Type="File">Config_3.shuttlestereotype</Object>
+  </Objects>
+</Package>

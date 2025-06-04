@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
+<Configuration>
+  <Element ID="gAssembly_1" Type="assembly">
+    <Group ID="Tracks">
+      <Group ID="Track[1]">
+        <Group ID="Segments">
+          <Property ID="SegmentRef[1]" Value="::Seg_1" />
+          <Property ID="SegmentRef[2]" Value="::Seg_2" />
+          <Property ID="SegmentRef[3]" Value="::Seg_3" />
+          <Property ID="SegmentRef[4]" Value="::Seg_4" />
+          <Property ID="SegmentRef[5]" Value="::Seg_5" />
+          <Property ID="SegmentRef[6]" Value="::Seg_6" />
+          <Property ID="SegmentRef[7]" Value="::Seg_7" />
+          <Property ID="SegmentRef[8]" Value="::Seg_8" />
+          <Property ID="SegmentRef[9]" Value="::Seg_9" />
+          <Property ID="SegmentRef[10]" Value="::Seg_10" />
+          <Property ID="SegmentRef[11]" Value="::Seg_11" />
+          <Property ID="SegmentRef[12]" Value="::Seg_12" />
+        </Group>
+      </Group>
+    </Group>
+    <Group ID="CommonSegmentSettings">
+      <Group ID="ControllerParameters">
+        <Group ID="DefaultParameter">
+          <Group ID="Controller">
+            <Group ID="Position">
+              <Property ID="ProportionalGain" Value="150" />
+            </Group>
+            <Group ID="Speed">
+              <Property ID="ProportionalGain" Value="120" />
+            </Group>
+            <Group ID="FeedForward">
+              <Property ID="TotalMass" Value="1.25" />
+              <Property ID="ForcePositive" Value="1.0" />
+              <Property ID="ForceNegative" Value="1.0" />
+            </Group>
+          </Group>
+        </Group>
+      </Group>
+    </Group>
+    <Group ID="Shuttles">
+      <Property ID="MaxShuttleCount" Value="40" />
+      <Group ID="ShuttleStereotypes">
+        <Property ID="ShuttleStRef[1]" Value="ShuttleStereotype_1" />
+      </Group>
+      <Group ID="MagnetPlateConfigurations">
+        <Selector ID="ShuttleType[1]" Value="8F1Sx.102.xxxxxx-x" />
+      </Group>
+    </Group>
+  </Element>
+</Configuration>

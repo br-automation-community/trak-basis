@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio WorkingVersion="6.1" FileVersion="4.9"?>
+<Hardware xmlns="http://br-automation.co.at/AS/Hardware">
+  <Module Name="5AC901.BX02-01" Type="5AC901.BX02-01" Version="1.1.1.0">
+    <Connection Connector="SY" TargetModule="5PC910.SX02-00" TargetConnector="SY3" />
+  </Module>
+  <Module Name="5LS187.6-1" Type="5LS187.6-1" Version="1.9.0.0">
+    <Connection Connector="SL" TargetModule="5AC901.BX02-01" TargetConnector="SL2" />
+    <Connector Name="IF2">
+      <Parameter ID="CycleTime" Value="800" />
+      <Parameter ID="EplNatSubnet" Value="192.168.102.0" />
+    </Connector>
+  </Module>
+  <Module Name="5PC900_TS17_00" Type="5PC900.TS17-00" Version="2.1.0.0">
+    <Connection Connector="SY" TargetModule="5PC910.SX02-00" TargetConnector="SY1" />
+    <Parameter ID="ConfigurationID" Value="TrakBasisProject_Config1" />
+    <Parameter ID="UserPartitionSize" Value="200" />
+    <Parameter ID="Simulation" Value="1" />
+    <Parameter ID="RemMemDevice" Value="PCI.2.LS187.SRAM" />
+    <Parameter ID="RemMemSize" Value="20000" />
+    <Parameter ID="RemanentGlobalPvSize" Value="2000" />
+    <Parameter ID="MotionLoggerSize" Value="2048000" />
+    <Parameter ID="TimerDeviceType" Value="EPLX2X" />
+    <Parameter ID="TimerDevice" Value="5LS187.6-1.IF2" />
+    <Parameter ID="IdleTaskClass" Value="3" />
+    <Parameter ID="TaskClassIdleTime" Value="1600" />
+    <Parameter ID="Cyclic1Duration" Value="800" />
+    <Parameter ID="Cyclic1Tolerance" Value="0" />
+    <Parameter ID="Cyclic1Stack" Value="256000" />
+    <Parameter ID="Cyclic1Output" Value="1" />
+    <Parameter ID="Cyclic2Duration" Value="1600" />
+    <Parameter ID="Cyclic2Tolerance" Value="1600" />
+    <Parameter ID="Cyclic3Duration" Value="20000" />
+    <Parameter ID="Cyclic3Tolerance" Value="40000" />
+    <Parameter ID="Cyclic8Duration" Value="9600" />
+    <Parameter ID="Cyclic8Stack" Value="100000" />
+    <Group ID="FileDevice1" />
+    <Parameter ID="FileDeviceName1" Value="SvgData" />
+    <Parameter ID="FileDevicePath1" Value="USER_PATH" />
+    <Parameter ID="ActivateFtpServer" Value="1" />
+    <Group ID="FtpUser1" />
+    <Parameter ID="FtpUsername1" Value="BR" />
+    <Parameter ID="FtpUserPassword1" Value="sCAcS4M0KXkF12D2Ev+1iYDIV5DbZPUJhKJtxWH0zr0=" Description="BR" />
+    <Parameter ID="FtpUserSalt1" Value="M7Jis0HY" />
+    <Parameter ID="FTPAccessRight1" Value="0" />
+    <Parameter ID="FTPdevice1" Value="ALL" />
+    <Parameter ID="ActivateWebServer" Value="1" />
+    <Parameter ID="ActivateSdm" Value="1" />
+  </Module>
+  <Module Name="5PC910.SX02-00" Type="5PC910.SX02-00" Version="2.1.2.0">
+    <Connector Name="IF1">
+      <Parameter ID="AssignedOperatingSystem" Value="ARemb" />
+    </Connector>
+    <Connector Name="IF3">
+      <Parameter ID="AssignedOperatingSystem" Value="ARemb" />
+      <Parameter ID="ActivateDevice" Value="1" />
+    </Connector>
+    <Connector Name="IF4">
+      <Parameter ID="AssignedOperatingSystem" Value="ARemb" />
+      <Parameter ID="ActivateDevice" Value="1" />
+      <Parameter ID="ActivateSnmp" Value="2" />
+    </Connector>
+    <Connector Name="IF5">
+      <Parameter ID="AssignedOperatingSystem" Value="ARemb" />
+    </Connector>
+    <Connector Name="IF6">
+      <Parameter ID="AssignedOperatingSystem" Value="ARemb" />
+    </Connector>
+    <Connector Name="IF7">
+      <Parameter ID="AssignedOperatingSystem" Value="ARemb" />
+    </Connector>
+    <Connector Name="IF8">
+      <Parameter ID="AssignedOperatingSystem" Value="ARemb" />
+    </Connector>
+    <Connector Name="IF9">
+      <Parameter ID="AssignedOperatingSystem" Value="ARemb" />
+    </Connector>
+  </Module>
+  <Module Name="8F1I01.AA66.xxxx-1" Type="8F1I01.AA66.xxxx-1" Version="1.0.0.4" NodeNumber="12">
+    <Connection Connector="PLK2" TargetModule="8F1I01.AB2B.xxxx-1" TargetConnector="PLK1">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="STRAIGHT660" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_7" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+  <Module Name="8F1I01.AA66.xxxx-1a" Type="8F1I01.AA66.xxxx-1" Version="1.0.0.4" NodeNumber="1">
+    <Connection Connector="PLK1" TargetModule="8F1I01.BA2B.xxxx-1a" TargetConnector="PLK2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Connection Connector="PLK2" TargetModule="8F1I01.AB2B.xxxx-1a" TargetConnector="PLK1">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Connection Connector="PLK3" TargetModule="5LS187.6-1" TargetConnector="IF2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="STRAIGHT660" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_1" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+  <Module Name="8F1I01.AB2B.xxxx-1" Type="8F1I01.AB2B.xxxx-1" Version="1.0.0.4" NodeNumber="11">
+    <Connection Connector="PLK1" TargetModule="8F1I01.AA66.xxxx-1" TargetConnector="PLK2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Connection Connector="PLK2" TargetModule="8F1I01.BB4B.xxxx-1c" TargetConnector="PLK1">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="STRAIGHT105_TO_CIRCULAR" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_8" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+  <Module Name="8F1I01.AB2B.xxxx-1a" Type="8F1I01.AB2B.xxxx-1" Version="1.0.0.4" NodeNumber="2">
+    <Connection Connector="PLK1" TargetModule="8F1I01.AA66.xxxx-1a" TargetConnector="PLK2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Connection Connector="PLK2" TargetModule="8F1I01.BB4B.xxxx-1" TargetConnector="PLK1">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="STRAIGHT105_TO_CIRCULAR" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_2" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+  <Module Name="8F1I01.BA2B.xxxx-1" Type="8F1I01.BA2B.xxxx-1" Version="1.0.0.4" NodeNumber="7">
+    <Connection Connector="PLK1" TargetModule="8F1I01.BB4B.xxxx-1b" TargetConnector="PLK2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="CIRCULAR_TO_STRAIGHT105" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_6" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+  <Module Name="8F1I01.BA2B.xxxx-1a" Type="8F1I01.BA2B.xxxx-1" Version="1.0.0.4">
+    <Connection Connector="PLK1" TargetModule="8F1I01.BB4B.xxxx-1e" TargetConnector="PLK2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Connection Connector="PLK2" TargetModule="8F1I01.AA66.xxxx-1a" TargetConnector="PLK1">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="CIRCULAR_TO_STRAIGHT105" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_12" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+  <Module Name="8F1I01.BB4B.xxxx-1" Type="8F1I01.BB4B.xxxx-1" Version="1.0.0.4" NodeNumber="4">
+    <Connection Connector="PLK1" TargetModule="8F1I01.AB2B.xxxx-1a" TargetConnector="PLK2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Connection Connector="PLK2" TargetModule="8F1I01.BB4B.xxxx-1a" TargetConnector="PLK1">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="CIRCULAR" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_3" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+  <Module Name="8F1I01.BB4B.xxxx-1a" Type="8F1I01.BB4B.xxxx-1" Version="1.0.0.4" NodeNumber="5">
+    <Connection Connector="PLK1" TargetModule="8F1I01.BB4B.xxxx-1" TargetConnector="PLK2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Connection Connector="PLK2" TargetModule="8F1I01.BB4B.xxxx-1b" TargetConnector="PLK1">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="CIRCULAR" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_4" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+  <Module Name="8F1I01.BB4B.xxxx-1b" Type="8F1I01.BB4B.xxxx-1" Version="1.0.0.4" NodeNumber="6">
+    <Connection Connector="PLK1" TargetModule="8F1I01.BB4B.xxxx-1a" TargetConnector="PLK2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Connection Connector="PLK2" TargetModule="8F1I01.BA2B.xxxx-1" TargetConnector="PLK1">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="CIRCULAR" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_5" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+  <Module Name="8F1I01.BB4B.xxxx-1c" Type="8F1I01.BB4B.xxxx-1" Version="1.0.0.4" NodeNumber="10">
+    <Connection Connector="PLK1" TargetModule="8F1I01.AB2B.xxxx-1" TargetConnector="PLK2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Connection Connector="PLK2" TargetModule="8F1I01.BB4B.xxxx-1d" TargetConnector="PLK1">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="CIRCULAR" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_9" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+  <Module Name="8F1I01.BB4B.xxxx-1d" Type="8F1I01.BB4B.xxxx-1" Version="1.0.0.4" NodeNumber="9">
+    <Connection Connector="PLK1" TargetModule="8F1I01.BB4B.xxxx-1c" TargetConnector="PLK2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Connection Connector="PLK2" TargetModule="8F1I01.BB4B.xxxx-1e" TargetConnector="PLK1">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="CIRCULAR" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_10" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+  <Module Name="8F1I01.BB4B.xxxx-1e" Type="8F1I01.BB4B.xxxx-1" Version="1.0.0.4">
+    <Connection Connector="PLK1" TargetModule="8F1I01.BB4B.xxxx-1d" TargetConnector="PLK2">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Connection Connector="PLK2" TargetModule="8F1I01.BA2B.xxxx-1a" TargetConnector="PLK1">
+      <Cable Type="PowerlinkCable" Length="10" Version="1.0.0.3" />
+    </Connection>
+    <Parameter ID="McTypeID" Location="DriveConfiguration" Value="LLMConfig" />
+    <Parameter ID="Shape" Location="DriveConfiguration/Segment" Value="CIRCULAR" />
+    <Parameter ID="SegmentReference" Location="DriveConfiguration/Segment" Value="Seg_11" />
+    <Parameter ID="SegmentSectorDirection" Location="DriveConfiguration/Segment" Value="Positive" />
+    <Parameter ID="ElongationCompensation" Location="DriveConfiguration/Segment/Compensation" Value="UseAssemblySetting" />
+    <Parameter ID="ACC" Location="DriveConfiguration/Segment/Compensation" Value="Inactive" />
+    <Parameter ID="StopReaction" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="SpeedFilter" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+    <Parameter ID="PositionControllerLagMonitor" Location="DriveConfiguration/Segment" Value="UseAssemblySetting" />
+  </Module>
+</Hardware>
