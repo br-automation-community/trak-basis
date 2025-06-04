@@ -39,5 +39,3 @@ TrakBasis is developed for and tested with:
 
 > 💡 All Automation Studio 6.x versions are supported.  
 > ⚠️ Backporting to Automation Studio 4 is not supported due to structural and library differences.
-
----
