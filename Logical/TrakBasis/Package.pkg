@@ -6,4 +6,11 @@
     <Object Type="File" TransferedForTargetSourceCompare="true">TrakBasis.var</Object>
     <Object Type="Program" Language="IEC" TransferedForTargetSourceCompare="true">TrakCtrl</Object>
   </Objects>
+  <Dependencies>
+    <Dependency ObjectName="standard" />
+    <Dependency ObjectName="AsBrStr" />
+    <Dependency ObjectName="McBase" />
+    <Dependency ObjectName="McAxis" />
+    <Dependency ObjectName="McAcpTrak" />
+  </Dependencies>
 </Package>
