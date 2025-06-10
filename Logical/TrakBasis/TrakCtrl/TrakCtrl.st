@@ -688,7 +688,7 @@ PROGRAM _CYCLIC
 		END_IF
 		
 		MC_BR_SegGetInfo_AcpTrak_0[i].Segment := ADR(pTrakCtrl.Status.Segment[i].Segment);
-		MC_BR_SegGetInfo_AcpTrak_0[i].Execute := TON_0.Q AND pTrakCtrl.Status.PowerOn;
+		MC_BR_SegGetInfo_AcpTrak_0[i].Execute := (pTrakCtrl.Status.Segment[i].Segment.controlif <> 0) AND TON_0.Q AND pTrakCtrl.Status.PowerOn;
 		MC_BR_SegGetInfo_AcpTrak_0[i]();
 		MC_BR_SegGetInfo_AcpTrak_0[i].Execute := FALSE;
 		
