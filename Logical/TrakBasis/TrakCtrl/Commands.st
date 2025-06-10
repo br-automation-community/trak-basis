@@ -16,7 +16,7 @@ END_ACTION
 ACTION AddShuttles:
 	
 	MC_BR_SecAddShuttle_AcpTrak_0.Sector := AdrSector;
-	MC_BR_SecAddShuttle_AcpTrak_0.Position := pTrakCtrl.Parameter.SimulationParameters.Position + pTrakCtrl.Parameter.SimulationParameters.Separation * Counter;
+	MC_BR_SecAddShuttle_AcpTrak_0.Position := pTrakCtrl.Parameter.SimulationParameters.Position + pTrakCtrl.Parameter.SimulationParameters.Separation * UINT_TO_LREAL(Counter);
 	MC_BR_SecAddShuttle_AcpTrak_0.Velocity := 0.0;
 	MC_BR_SecAddShuttle_AcpTrak_0.Orientation := mcDIR_POSITIVE;
 	MC_BR_SecAddShuttle_AcpTrak_0.Execute := TRUE;
