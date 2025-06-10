@@ -1,0 +1,57 @@
+# Git repository ignore pattern
+# B&R Automation Studio 4 projects
+# Including considerations for Safety projects (unofficial)
+#
+# This .gitignore file serves as a starting point for Automation Studio 4 projects even with Safety (unofficial)
+# The starting "/" have to be adapted to match the actual structure of the repository
+
+ 
+# Ignore AR versions as those are not considered part of the project
+/AS/System/
+
+# Ignore build results
+/Binaries/
+
+# Ignore (all) debugging content
+/Diagnosis/**
+# But save the watch windows and task trace configurations (if it should stay in the repository) - optional, uncomment if needed
+#!/Diagnosis/**/
+#!/Diagnosis/**/*.PVM
+#!/Diagnosis/**/*.tc
+
+# Ignore standard temp folder
+/Temp/
+
+# Ignore upgrades as those are not considered part of the project source code
+/Upgrades/
+
+# Ignore user settings file
+/*.set
+# Include all the Safety related .set files - all the .set files in the Physical folder
+!/Physical/**/*.set
+# Ignore is open indication
+/*.isopen
+
+# Unnoficial strategies when using Safety. Uncomment the appropriate lines depending on whether you are using mapp Safety or Legacy Safety.
+# Alternatively, you can also choose to commit the complete safety project, without ignoring any of its parts.
+# mapp Safety:
+# Ignore CPU folder in mapp Safety - ..\{ASprojectName}\Physical\{ConfigName}\{PLCname}\mappSafety\{SafetyProjectName}\C\PLC\R\CPU
+#/Physical/*/*/mappSafety/*/C/PLC/R/CPU/*
+# But include the required binary files
+#!/Physical/*/*/mappSafety/*/C/PLC/R/CPU/src.st1
+#!/Physical/*/*/mappSafety/*/C/PLC/R/CPU/tmp.sto
+# And include global variables translation file
+#!/Physical/*/*/mappSafety/*/C/PLC/R/CPU/GLOBAL_VARIABLESTranslation_SF.xml
+# Legacy safety:
+# Ignore CPU folder in Legacy Safety - ..\{ASprojectName}\Physical\{ConfigName}\{PLCname}\{SafetyProjectName}\C\PLC\R\CPU
+#/Physical/*/*/*/C/PLC/R/CPU/*
+# But include the required binary files
+#!/Physical/*/*/*/C/PLC/R/CPU/src.st1
+#!/Physical/*/*/*/C/PLC/R/CPU/tmp.sto
+# And include global variables translation file
+#!/Physical/*/*/*/C/PLC/R/CPU/GLOBAL_VARIABLESTranslation_SF.xml
+
+# Ignore archives, as these shouldn't be in Git (if necessary, comment out these rules and place the archives in LFS)
+*.zip
+*.tar
+*.7z
