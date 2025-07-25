@@ -71,6 +71,7 @@ TYPE
 		ActPosition : LREAL; (*Shuttle position on sector*)
 		ActVelocity : REAL; (*Shuttle velocity on sector*)
 		TotalMoveDistance : LREAL; (*Shuttle total moved distance*)
+		IsConvoyMaster : BOOL; (*Shuttle is a convoy master*)
 		Pos : McPosType; (*Shuttle position in the coordinate system*)
 		State : TrakCtrlStatusShuttleStateType; (*Shuttle state*)
 	END_STRUCT;

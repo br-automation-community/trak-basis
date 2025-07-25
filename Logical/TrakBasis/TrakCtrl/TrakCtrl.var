@@ -60,6 +60,7 @@ VAR
 	MC_BR_ShReadSectorPos_AcpTrak_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_BR_ShReadSectorPos_AcpTrak; (*Reads the sector related shuttle position (very useful for closed loop assemblies)*)
 	MC_BR_ShReadInfo_AcpTrak_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_BR_ShReadInfo_AcpTrak; (*Reads some current values of the shuttles such as the current speed, total distance or current sector.*)
 	MC_BR_ShReadFrame_AcpTrak_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_BR_ShReadFrame_AcpTrak; (*Used to read the XYZ position of each shuttle within the environment (may be used for external representation of the system)*)
+	MC_BR_ConDelete_AcpTrak_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_BR_ConDelete_AcpTrak; (*Deletes shuttle convoy (used before error reset of convoy masters)*)
 	MC_ReadStatus_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_ReadStatus; (*Used to read the current PLCopen state of the shuttles*)
 	MC_Reset_0 : ARRAY[1..TRAK_MAX_SHUTTLE] OF MC_Reset; (*Reset of the shuttle errors*)
 END_VAR

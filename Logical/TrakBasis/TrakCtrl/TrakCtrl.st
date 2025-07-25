@@ -428,6 +428,14 @@ PROGRAM _CYCLIC
 			// Reset PowerON command when an error is detected
 			pTrakCtrl.Command.Power := FALSE;
 			
+			// Deletes the convoy from the convoy master axis before the error is reset
+			FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+				IF pTrakCtrl.Status.Shuttle[i].IsConvoyMaster THEN
+					MC_BR_ConDelete_AcpTrak_0[i].ConvoyMaster := ADR(pTrakCtrl.Status.Shuttle[i].Axis);
+					MC_BR_ConDelete_AcpTrak_0[i].Execute := pTrakCtrl.Status.Shuttle[i].State.StatusErrorStop;
+				END_IF
+			END_FOR
+			
 			// Reset errors in assembly (using "ErrorReset command") 
 			IF pTrakCtrl.Command.ErrorReset THEN
 				// Assembly and segment errors can be reset using MC_BR_AsmReset_AcpTrak FB
@@ -615,6 +623,12 @@ PROGRAM _CYCLIC
 	MC_BR_ShSetUserID_AcpTrak_0();
 	MC_BR_ShSetUserID_AcpTrak_0.Execute := FALSE;
 	
+	FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+		MC_BR_ConDelete_AcpTrak_0[i].AdvancedParameters.Mode := mcACPTRAK_CON_DELETE_ANY_CASE;
+		MC_BR_ConDelete_AcpTrak_0[i]();
+		MC_BR_ConDelete_AcpTrak_0[i].Execute := FALSE;
+	END_FOR
+	
 	//*****************************************************************************************************************
 	// PROVIDES ERROR INFORMATION                                                                  
 	//*****************************************************************************************************************
@@ -763,6 +777,7 @@ PROGRAM _CYCLIC
 			pTrakCtrl.Status.Shuttle[i].ActPosition := MC_BR_ShReadSectorPos_AcpTrak_0[i].Info.Position;
 			pTrakCtrl.Status.Shuttle[i].ActVelocity := MC_BR_ShReadInfo_AcpTrak_0[i].ShuttleInfo.CurrentValues.Velocity;
 			pTrakCtrl.Status.Shuttle[i].TotalMoveDistance := MC_BR_ShReadInfo_AcpTrak_0[i].ShuttleInfo.LifeCycleInfo.AbsoluteMovementDistance;
+			pTrakCtrl.Status.Shuttle[i].IsConvoyMaster := MC_BR_ShReadInfo_AcpTrak_0[i].ShuttleInfo.ConvoyInfo.IsConvoyMaster;
 			pTrakCtrl.Status.Shuttle[i].Pos := MC_BR_ShReadFrame_AcpTrak_0[i].Frame.Pos;
 			pTrakCtrl.Status.Shuttle[i].State.StatusStandStill := MC_ReadStatus_0[i].StandStill;
 			pTrakCtrl.Status.Shuttle[i].State.StatusStopping := MC_ReadStatus_0[i].Stopping;
