@@ -65,6 +65,15 @@ PROGRAM _CYCLIC
 	// MAIN SEQUENCE                                                                    
 	//*****************************************************************************************************************
 	
+	// Handle warning acknowledgment (can be done from any state)
+	IF pTrakCtrl.Command.WarningAcknowledge THEN
+		pTrakCtrl.Status.Warning := FALSE;
+		pTrakCtrl.Status.WarningInfo.ID := 0;
+		pTrakCtrl.Status.WarningInfo.Text := '';
+		pTrakCtrl.Status.WarningInfo.TrakState := '';
+		pTrakCtrl.Command.WarningAcknowledge := FALSE;
+	END_IF
+	
 	CASE TrakState OF 
 		
 		TRAK_STATE_DISABLED:
@@ -119,8 +128,24 @@ PROGRAM _CYCLIC
 			
 			// Only add shuttles when working in simulation
 			IF InSimulation THEN
-				Counter := 0;
-				TrakState := TRAK_STATE_ADD_SHUTTLE;
+				// Check if requested quantity exceeds maximum allowed
+				IF (pTrakCtrl.Parameter.SimulationParameters.Quantity > TRAK_MAX_SHUTTLE) THEN
+					// Set application warning for user feedback and abort shuttle adding
+					pTrakCtrl.Status.Warning := TRUE;
+					pTrakCtrl.Status.WarningInfo.ID := 100; // Warning code for shuttle quantity exceeded
+					AuxString := UINT_TO_STRING(pTrakCtrl.Parameter.SimulationParameters.Quantity);
+					pTrakCtrl.Status.WarningInfo.Text := CONCAT('Requested shuttle quantity (',AuxString);
+					pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,') exceeds TRAK_MAX_SHUTTLE limit (');
+					AuxString := UINT_TO_STRING(TRAK_MAX_SHUTTLE);
+					pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,AuxString);
+					pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,'). Operation aborted.');
+					pTrakCtrl.Status.WarningInfo.TrakState := 'TRAK_STATE_ADD_SHUTTLE_INIT';
+					// Abort shuttle adding and go to standstill
+					TrakState := TRAK_STATE_STANDSTILL;
+				ELSE
+					Counter := 0;
+					TrakState := TRAK_STATE_ADD_SHUTTLE;
+				END_IF
 			ELSE
 				TrakState := TRAK_STATE_GET_SHUTTLE_INIT;
 			END_IF
@@ -169,11 +194,24 @@ PROGRAM _CYCLIC
 					MC_BR_SecGetShuttle_AcpTrak_0.Enable := FALSE;
 					TrakState := TRAK_STATE_STANDSTILL;
 				ELSE
+					// Abort immediately if shuttle count exceeds maximum (safety critical for real hardware)
 					IF (TotalCountShuttle > TRAK_MAX_SHUTTLE) THEN
+						// Set application warning for user feedback and abort operation
+						pTrakCtrl.Status.Warning := TRUE;
+						pTrakCtrl.Status.WarningInfo.ID := 101; // Warning code for shuttle count exceeded after detection
+						AuxString := UINT_TO_STRING(TotalCountShuttle);
+						pTrakCtrl.Status.WarningInfo.Text := CONCAT('Detected shuttle count (',AuxString);
+						pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,') exceeds TRAK_MAX_SHUTTLE limit (');
+						AuxString := UINT_TO_STRING(TRAK_MAX_SHUTTLE);
+						pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,AuxString);
+						pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,'). Operation aborted for safety.');
+						pTrakCtrl.Status.WarningInfo.TrakState := 'TRAK_STATE_GET_SHUTTLE_WAIT';
+						// Abort shuttle detection - could be dangerous to continue with unrecognized shuttles
 						MC_BR_SecGetShuttle_AcpTrak_0.Enable := FALSE;
 						MC_BR_SecGetShuttle_AcpTrak_0.Next := FALSE;
-						TrakState := TRAK_STATE_ERROR;
+						TrakState := TRAK_STATE_STANDSTILL;
 					ELSE
+						// Continue with shuttle processing - all shuttles within limit
 						Counter := Counter + 1;
 						pTrakCtrl.Status.Shuttle[Counter].Axis := MC_BR_SecGetShuttle_AcpTrak_0.Axis;
 						pTrakCtrl.Status.Shuttle[Counter].ID := MC_BR_SecGetShuttle_AcpTrak_0.AdditionalInfo.ShuttleID;
@@ -484,7 +522,7 @@ PROGRAM _CYCLIC
 			// Checks if the assembly is the error initiator
 			IF (MC_BR_AsmReadErrorInfo_AcpTrak_0.ErrorInfo.Initiator) THEN
 				AdrErrorComponent := AdrAssembly;
-				pTrakCtrl.Status.ErrorInfo.ErrorInitiator := 'Assembly';
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'Assembly';
 			END_IF
 			
 			// Check if initiator has been found
@@ -500,7 +538,7 @@ PROGRAM _CYCLIC
 			FOR i:=1 TO TRAK_MAX_SEGMENT DO
 				IF MC_BR_SegReadErrorInfo_AcpTrak_0[i].ErrorInfo.Initiator THEN
 					AdrErrorComponent := ADR(gTrakCtrl.Status.Segment[i].Segment);
-					pTrakCtrl.Status.ErrorInfo.ErrorInitiator := pTrakCtrl.Status.Segment[i].Name;
+					pTrakCtrl.Status.ErrorInfo.Initiator := pTrakCtrl.Status.Segment[i].Name;
 					EXIT;
 				END_IF
 			END_FOR
@@ -519,7 +557,7 @@ PROGRAM _CYCLIC
 			FOR i:=1 TO TRAK_MAX_SHUTTLE DO
 				IF MC_BR_ShReadErrorInfo_AcpTrak_0[i].ErrorInfo.Initiator THEN
 					AdrErrorComponent := ADR(gTrakCtrl.Status.Shuttle[i].Axis);
-					pTrakCtrl.Status.ErrorInfo.ErrorInitiator := pTrakCtrl.Status.Shuttle[i].Name;
+					pTrakCtrl.Status.ErrorInfo.Initiator := pTrakCtrl.Status.Shuttle[i].Name;
 					EXIT;
 				END_IF
 			END_FOR	
@@ -528,7 +566,7 @@ PROGRAM _CYCLIC
 			IF (AdrErrorComponent <> 0) THEN
 				TrakErrorState := TRAK_ERR_STATE_COLLECT_LOG;
 			ELSE
-				pTrakCtrl.Status.ErrorInfo.ErrorText := 'No initiator component found.';
+				pTrakCtrl.Status.ErrorInfo.Text := 'No initiator component found.';
 				TrakErrorState := TRAK_ERR_STATE_DONE;
 			END_IF
 			
@@ -543,14 +581,14 @@ PROGRAM _CYCLIC
 		
 			IF MC_BR_ReadErrorText_0.ReadDone THEN
 				// Important to record the very first triggered error, the rest will not be recorded.  
-				pTrakCtrl.Status.ErrorInfo.ErrorText := MC_BR_ReadErrorText_0.ErrorRecords.Record[0].Text;
-				pTrakCtrl.Status.ErrorInfo.ErrorID := MC_BR_ReadErrorText_0.ErrorRecords.Record[0].EventID;
+				pTrakCtrl.Status.ErrorInfo.Text := MC_BR_ReadErrorText_0.ErrorRecords.Record[0].Text;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_ReadErrorText_0.ErrorRecords.Record[0].EventID;
 				TrakErrorState := TRAK_ERR_STATE_DONE;
 			ELSIF MC_BR_ReadErrorText_0.Error THEN
 				// When FB ouputs an error is because it could not communicate with motion component
 				// In that case, mark it as a generic error and output the error ID
-				pTrakCtrl.Status.ErrorInfo.ErrorText := 'Unresponsive motion component.';
-				pTrakCtrl.Status.ErrorInfo.ErrorID := MC_BR_ReadErrorText_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Text := 'Unresponsive motion component.';
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_ReadErrorText_0.ErrorID;
 				TrakErrorState := TRAK_ERR_STATE_DONE;
 			END_IF
 			
@@ -558,9 +596,9 @@ PROGRAM _CYCLIC
 		
 			IF NOT pTrakCtrl.Status.Error THEN
 				AdrErrorComponent := 0;
-				pTrakCtrl.Status.ErrorInfo.ErrorText := '';
-				pTrakCtrl.Status.ErrorInfo.ErrorInitiator := '';
-				pTrakCtrl.Status.ErrorInfo.ErrorID := 0;
+				pTrakCtrl.Status.ErrorInfo.Text := '';
+				pTrakCtrl.Status.ErrorInfo.Initiator := '';
+				pTrakCtrl.Status.ErrorInfo.ID := 0;
 				MC_BR_ReadErrorText_0.Enable := FALSE;
 				MC_BR_ReadErrorText_0.ReadNext := FALSE;
 				TrakErrorState := TRAK_ERR_STATE_WAIT;
@@ -719,15 +757,15 @@ PROGRAM _CYCLIC
 		SegmentProcessParId[2].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
 		SegmentProcessParId[2].ParID := 213;
 		SegmentProcessParId[2].VariableAddress := ADR(SegmentQCurrent[i]);
-		// 4. Temperature Balancer - Warning 90ºC / Error at 95ºC - Internal ambient temperature of segment
+		// 4. Temperature Balancer - Warning 90ï¿½C / Error at 95ï¿½C - Internal ambient temperature of segment
 		SegmentProcessParId[3].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
 		SegmentProcessParId[3].ParID := 63648;
 		SegmentProcessParId[3].VariableAddress := ADR(pTrakCtrl.Status.Segment[i].Info.TempBalancer);
-		// 5. Temperature Air - Warning 75ºC / Error at 80ºC - CPU temperature
+		// 5. Temperature Air - Warning 75ï¿½C / Error at 80ï¿½C - CPU temperature
 		SegmentProcessParId[4].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
 		SegmentProcessParId[4].ParID := 63647;
 		SegmentProcessParId[4].VariableAddress := ADR(pTrakCtrl.Status.Segment[i].Info.TempAir);
-		// 6. Tempreature Sensor - Warning 75ºC / Error at 80ºC - Back side of segment in the center
+		// 6. Tempreature Sensor - Warning 75ï¿½C / Error at 80ï¿½C - Back side of segment in the center
 		SegmentProcessParId[5].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
 		SegmentProcessParId[5].ParID := 861;
 		SegmentProcessParId[5].VariableAddress := ADR(pTrakCtrl.Status.Segment[i].Info.TempSensor);

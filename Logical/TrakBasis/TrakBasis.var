@@ -4,7 +4,7 @@
 ********************************************************************)
 VAR CONSTANT
 	TRAK_MAX_SEGMENT : UINT := 12;
-	TRAK_MAX_SHUTTLE : UINT := 40;
+	TRAK_MAX_SHUTTLE : UINT := 40;  (*Maximum number of shuttles. This value must match the assembly configuration file*)
 END_VAR
 (********************************************************************
  * Global control variable
