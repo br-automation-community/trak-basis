@@ -6,6 +6,7 @@
     <Object Type="File" Description="Hardware topology">Hardware.hwl</Object>
     <Object Type="Cpu" TransferedForTargetSourceCompare="true">5PC900_TS17_00</Object>
     <Object Type="File">Hardware.jpg</Object>
+    <Object Type="File">UtTestConfiguration.xml</Object>
   </Objects>
   <Sources Download="false" IncludeUpgrades="true" Mode="ProjectTransfer" Option="Complete" />
 </Configuration>
