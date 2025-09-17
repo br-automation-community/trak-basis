@@ -56,8 +56,8 @@ TYPE
 		WarningInfo : TrakCtrlWarningInfoType; (*Application warning information*)
 		PLCopenState : TrakCtrlStatusPLCopenStateType; (*PLC Open state of the assembly *)
 		ShRecoveryInfo : TrakCtrlStatusShRecoveryInfoType; (*Shuttle recovery information*)
-		Segment : ARRAY[1..TRAK_MAX_SEGMENT]OF TrakCtrlStatusSegmentType; (*Overall count of the segments*)
-		Shuttle : ARRAY[1..TRAK_MAX_SHUTTLE]OF TrakCtrlStatusShuttleType; (*Overall count of the shuttles*)
+		Segment : ARRAY[0..TRAK_MAX_SEGMENT]OF TrakCtrlStatusSegmentType; (*Overall count of the segments*)
+		Shuttle : ARRAY[0..TRAK_MAX_SHUTTLE]OF TrakCtrlStatusShuttleType; (*Overall count of the shuttles*)
 	END_STRUCT;
 	TrakCtrlStatusErrorInfoType : 	STRUCT  (*Track error related information*)
 		ID : DINT; (*The error id of any ocurred error*)
