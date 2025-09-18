@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio Version=4.0.19.69 SP?>
+<Package xmlns="http://br-automation.co.at/AS/Package">
+  <Objects>
+    <Object Type="Package">embunit</Object>
+    <Object Type="File" Description="init cylcic exit handlers">utRunnerTestSuite.c</Object>
+    <Object Type="File">utOther.h</Object>
+  </Objects>
+</Package>
