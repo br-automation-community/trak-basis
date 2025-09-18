@@ -23,7 +23,6 @@ TYPE
 		Power : BOOL; (*Switch on the controller*)
 		Move : TrakCtrlCmdMoveType; (*Movement structures*)
 		ErrorReset : BOOL; (*Reset the error in assembly*)
-		WarningAcknowledge : BOOL; (*Acknowledge application warnings*)
 	END_STRUCT;
 	TrakCtrlCmdMoveType : 	STRUCT  (*Movement structures*)
 		Absolute : BOOL; (*Elastic move absolute of all the shuttles to a predefined position*)
@@ -52,22 +51,15 @@ TYPE
 		MovementDetected : BOOL; (*There are movements in the assembly*)
 		Error : BOOL; (*The Assembly is in hardware error*)
 		ErrorInfo : TrakCtrlStatusErrorInfoType; (*Hardware error information*)
-		Warning : BOOL; (*Application warning present*)
-		WarningInfo : TrakCtrlWarningInfoType; (*Application warning information*)
 		PLCopenState : TrakCtrlStatusPLCopenStateType; (*PLC Open state of the assembly *)
 		ShRecoveryInfo : TrakCtrlStatusShRecoveryInfoType; (*Shuttle recovery information*)
-		Segment : ARRAY[0..TRAK_MAX_SEGMENT]OF TrakCtrlStatusSegmentType; (*Overall count of the segments*)
-		Shuttle : ARRAY[0..TRAK_MAX_SHUTTLE]OF TrakCtrlStatusShuttleType; (*Overall count of the shuttles*)
+		Segment : ARRAY[0..TRAK_MAX_SEGMENT_MINUS_ONE]OF TrakCtrlStatusSegmentType; (*Overall count of the segments*)
+		Shuttle : ARRAY[0..TRAK_MAX_SHUTTLE_MINUS_ONE]OF TrakCtrlStatusShuttleType; (*Overall count of the shuttles*)
 	END_STRUCT;
 	TrakCtrlStatusErrorInfoType : 	STRUCT  (*Track error related information*)
 		ID : DINT; (*The error id of any ocurred error*)
 		Text : STRING[255]; (*Error description*)
 		Initiator : STRING[32]; (*Error initiator*)
-	END_STRUCT;
-	TrakCtrlWarningInfoType : 	STRUCT  (*Application warning information*)
-		ID : DINT; (*The warning id of the triggered warning*)
-		Text : STRING[255]; (*Warning description*)
-		TrakState : STRING[32]; (*TRAK state where the warning was triggered*)
 	END_STRUCT;
 	TrakCtrlStatusShuttleType : 	STRUCT  (*Overrall numbers of shuttles*)
 		Valid : BOOL; (*Shuttle data valid*)

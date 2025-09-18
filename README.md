@@ -165,32 +165,33 @@ END_IF
 
 ### Error Handling
 
-TrakBasis provides separate error handling for hardware and application errors:
+TrakBasis provides unified error handling for both hardware and application errors:
 
 ```st
-// Check for hardware errors (assembly, segment, shuttle)
+// Check for any error (hardware or application)
 IF gTrakCtrl.Status.Error THEN
-    // Get hardware error information from Status.ErrorInfo
+    // Get error information from Status.ErrorInfo
     ErrID := gTrakCtrl.Status.ErrorInfo.ID;
     ErrText := gTrakCtrl.Status.ErrorInfo.Text;
     ErrInitiator := gTrakCtrl.Status.ErrorInfo.Initiator;
+    
+    // Check error source
+    IF gTrakCtrl.Status.ErrorInfo.Initiator = 'Application' THEN
+        // Application error (e.g., configuration issues, safety violations)
+        // These can be reset immediately after addressing the root cause
+    ELSE
+        // Hardware error (assembly, segment, or shuttle)
+        // Initiator will contain the component name (e.g., 'Assembly', 'Segment_01', 'Sh_1')
+    END_IF
 
-    // Reset hardware errors
+    // Reset any error (hardware or application)
     gTrakCtrl.Command.ErrorReset := TRUE;
 END_IF
-
-// Check for application-level warnings (configuration, logic warnings)
-IF gTrakCtrl.Status.Warning THEN
-    // Get application warning information from Status.WarningInfo
-    WID := gTrakCtrl.Status.WarningInfo.ID;
-    WText := gTrakCtrl.Status.WarningInfo.Text;
-    WState := gTrakCtrl.Status.WarningInfo.TrakState;
-
-    // Acknowledge the warning once the operator has reviewed it
-    // This does not reset hardware errors — use ErrorReset for hardware faults
-    gTrakCtrl.Command.WarningAcknowledge := TRUE;
-END_IF
 ```
+
+**Error Types:**
+- **Hardware Errors**: Assembly, segment, or shuttle faults detected by the motion system
+- **Application Errors**: Safety violations or configuration issues detected by TrakBasis logic (e.g., shuttle count exceeding maximum allowed)
 
 ### Shuttle Recovery Configuration
 
@@ -252,8 +253,7 @@ Use `gTrakCtrl.Command` to control the system:
 | `Move.Absolute` | BOOL | Moves all shuttles to absolute position (elastic movement) |
 | `Move.Velocity` | BOOL | Moves all shuttles with velocity within predefined sector |
 | `Move.Halt` | BOOL | Stops the movement for all shuttles |
-| `ErrorReset` | BOOL | Resets assembly errors |
-| `WarningAcknowledge` | BOOL | Acknowledge application warnings |
+| `ErrorReset` | BOOL | Resets any errors (hardware or application) |
 
 ### Parameter Interface
 
@@ -279,26 +279,17 @@ Monitor system state through `gTrakCtrl.Status`:
 | `ReadyForPowerOn` | BOOL | Assembly can be powered on |
 | `PowerOn` | BOOL | Assembly is powered on |
 | `MovementDetected` | BOOL | Movements detected in assembly |
-| `Error` | BOOL | Hardware error present in system |
-| `Warning` | BOOL | Application-level warning present |
+| `Error` | BOOL | Error present in system (hardware or application) |
 
-### Error & Warning Information
+### Error Information
 
-Access hardware error details via `gTrakCtrl.Status.ErrorInfo`:
+Access error details via `gTrakCtrl.Status.ErrorInfo`:
 
 | Error Info | Type | Description |
 |------------|------|-------------|
-| `ID` | DINT | Hardware error identifier |
+| `ID` | DINT | Error identifier |
 | `Text` | STRING[255] | Human-readable error description |
-| `Initiator` | STRING[32] | Component that caused the error |
-
-Access application warning details via `gTrakCtrl.Status.WarningInfo`:
-
-| Warning Info | Type | Description |
-|--------------|------|-------------|
-| `ID` | DINT | Application warning identifier |
-| `Text` | STRING[255] | Human-readable warning description |
-| `TrakState` | STRING[32] | TRAK state where the warning was triggered |
+| `Initiator` | STRING[32] | Error source: 'Application' for application errors, or component name for hardware errors |
 
 ### Shuttle Data
 

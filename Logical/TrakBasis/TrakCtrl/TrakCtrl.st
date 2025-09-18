@@ -56,23 +56,15 @@ PROGRAM _CYCLIC
 	//*****************************************************************************************************************
 	// CHECK IF SOME TRAK COMPONENT IS IN ERROR                                                                    
 	//*****************************************************************************************************************
-	IF MC_BR_AsmReadStatus_AcpTrak_0.AssemblyErrorStop OR MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.ShuttleCount.InErrorStop > 0 
-		OR MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.SegmentCount.InErrorStop > 0 THEN
+	IF MC_BR_AsmReadStatus_AcpTrak_0.AssemblyErrorStop OR (MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.ShuttleCount.InErrorStop > 0) 
+		OR (MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.SegmentCount.InErrorStop > 0) THEN
+		pTrakCtrl.Status.Error := TRUE;
 		TrakState := TRAK_STATE_ERROR;
 	END_IF	
 		
 	//*****************************************************************************************************************
 	// MAIN SEQUENCE                                                                    
 	//*****************************************************************************************************************
-	
-	// Handle warning acknowledgment (can be done from any state)
-	IF pTrakCtrl.Command.WarningAcknowledge THEN
-		pTrakCtrl.Status.Warning := FALSE;
-		pTrakCtrl.Status.WarningInfo.ID := 0;
-		pTrakCtrl.Status.WarningInfo.Text := '';
-		pTrakCtrl.Status.WarningInfo.TrakState := '';
-		pTrakCtrl.Command.WarningAcknowledge := FALSE;
-	END_IF
 	
 	CASE TrakState OF 
 		
@@ -130,18 +122,18 @@ PROGRAM _CYCLIC
 			IF InSimulation THEN
 				// Check if requested quantity exceeds maximum allowed
 				IF (pTrakCtrl.Parameter.SimulationParameters.Quantity > TRAK_MAX_SHUTTLE) THEN
-					// Set application warning for user feedback and abort shuttle adding
-					pTrakCtrl.Status.Warning := TRUE;
-					pTrakCtrl.Status.WarningInfo.ID := 100; // Warning code for shuttle quantity exceeded
+					// Set application error for user feedback and abort shuttle adding
+					pTrakCtrl.Status.Error := TRUE;
+					pTrakCtrl.Status.ErrorInfo.ID := 100; // Error code for shuttle quantity exceeded
+					pTrakCtrl.Status.ErrorInfo.Initiator := 'Application';
 					AuxString := UINT_TO_STRING(pTrakCtrl.Parameter.SimulationParameters.Quantity);
-					pTrakCtrl.Status.WarningInfo.Text := CONCAT('Requested shuttle quantity (',AuxString);
-					pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,') exceeds TRAK_MAX_SHUTTLE limit (');
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT('Requested shuttle quantity (',AuxString);
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,') exceeds TRAK_MAX_SHUTTLE limit (');
 					AuxString := UINT_TO_STRING(TRAK_MAX_SHUTTLE);
-					pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,AuxString);
-					pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,'). Operation aborted.');
-					pTrakCtrl.Status.WarningInfo.TrakState := 'TRAK_STATE_ADD_SHUTTLE_INIT';
-					// Abort shuttle adding and go to standstill
-					TrakState := TRAK_STATE_STANDSTILL;
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,AuxString);
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,'). Operation aborted.');
+					// Abort shuttle adding and go to error state
+					TrakState := TRAK_STATE_ERROR;
 				ELSE
 					Counter := 0;
 					TrakState := TRAK_STATE_ADD_SHUTTLE;
@@ -178,6 +170,7 @@ PROGRAM _CYCLIC
 		
 		TRAK_STATE_GET_SHUTTLE:
 			
+			Counter := Counter + 1;
 			MC_BR_SecGetShuttle_AcpTrak_0.Next := TRUE;
 			TrakState := TRAK_STATE_GET_SHUTTLE_WAIT;
 			
@@ -196,23 +189,22 @@ PROGRAM _CYCLIC
 				ELSE
 					// Abort immediately if shuttle count exceeds maximum (safety critical for real hardware)
 					IF (TotalCountShuttle > TRAK_MAX_SHUTTLE) THEN
-						// Set application warning for user feedback and abort operation
-						pTrakCtrl.Status.Warning := TRUE;
-						pTrakCtrl.Status.WarningInfo.ID := 101; // Warning code for shuttle count exceeded after detection
+						// Set application error for user feedback and abort operation
+						pTrakCtrl.Status.Error := TRUE;
+						pTrakCtrl.Status.ErrorInfo.ID := 101; // Error code for shuttle count exceeded after detection
+						pTrakCtrl.Status.ErrorInfo.Initiator := 'Application';
 						AuxString := UINT_TO_STRING(TotalCountShuttle);
-						pTrakCtrl.Status.WarningInfo.Text := CONCAT('Detected shuttle count (',AuxString);
-						pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,') exceeds TRAK_MAX_SHUTTLE limit (');
+						pTrakCtrl.Status.ErrorInfo.Text := CONCAT('Detected shuttle count (',AuxString);
+						pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,') exceeds TRAK_MAX_SHUTTLE limit (');
 						AuxString := UINT_TO_STRING(TRAK_MAX_SHUTTLE);
-						pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,AuxString);
-						pTrakCtrl.Status.WarningInfo.Text := CONCAT(pTrakCtrl.Status.WarningInfo.Text,'). Operation aborted for safety.');
-						pTrakCtrl.Status.WarningInfo.TrakState := 'TRAK_STATE_GET_SHUTTLE_WAIT';
+						pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,AuxString);
+						pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,'). Operation aborted for safety.');
 						// Abort shuttle detection - could be dangerous to continue with unrecognized shuttles
 						MC_BR_SecGetShuttle_AcpTrak_0.Enable := FALSE;
 						MC_BR_SecGetShuttle_AcpTrak_0.Next := FALSE;
-						TrakState := TRAK_STATE_STANDSTILL;
+						TrakState := TRAK_STATE_ERROR;
 					ELSE
 						// Continue with shuttle processing - all shuttles within limit
-						Counter := Counter + 1;
 						pTrakCtrl.Status.Shuttle[Counter].Axis := MC_BR_SecGetShuttle_AcpTrak_0.Axis;
 						pTrakCtrl.Status.Shuttle[Counter].ID := MC_BR_SecGetShuttle_AcpTrak_0.AdditionalInfo.ShuttleID;
 						
@@ -246,7 +238,7 @@ PROGRAM _CYCLIC
 			brsmemset(ADR(pTrakCtrl.Status.ShRecoveryInfo),0,SIZEOF(pTrakCtrl.Status.ShRecoveryInfo));
 			// Check how many available shuttle data is stored in remanent memory
 			RestoreShuttleNumber := 0;
-			FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+			FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 				IF (RemShPosition[i] <> 0) THEN
 					RestoreShuttleNumber := RestoreShuttleNumber + 1; 
 				END_IF
@@ -254,7 +246,7 @@ PROGRAM _CYCLIC
 			
 			// Save shuttle axis in temporary variable (used in next state for shuttle reshuffle)
 			brsmemset(ADR(AuxShuttleAxis),0,SIZEOF(AuxShuttleAxis));
-			FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+			FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 				AuxShuttleAxis[i] := pTrakCtrl.Status.Shuttle[i].Axis;
 			END_FOR
 			
@@ -281,8 +273,8 @@ PROGRAM _CYCLIC
 			brsmemset(ADR(AuxAxisAssigned),0,SIZEOF(AuxAxisAssigned));
 			
 			// Find equivalent positions
-			FOR i:=1 TO TRAK_MAX_SHUTTLE DO
-				FOR j:=1 TO TRAK_MAX_SHUTTLE DO
+			FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
+				FOR j:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 					// Make sure that data can only be assigned once
 					IF NOT AuxAxisAssigned[j] THEN
 						// Check if there is a shuttle at some existing position within a predefine tolerance
@@ -298,7 +290,7 @@ PROGRAM _CYCLIC
 			// Reshuffle shuttles	
 			pTrakCtrl.Status.ShRecoveryInfo.ShuttleRecovered := TRUE;
 					
-			FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+			FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 				
 				// All shuttle related function blocks that use "Enable" input needs to be disabled before shuttle axis reference is updated!
 				MC_BR_ShReadInfo_AcpTrak_0[i].Enable := FALSE;
@@ -321,7 +313,7 @@ PROGRAM _CYCLIC
 					pTrakCtrl.Status.Shuttle[EquivalentShPos[i]].Axis := AuxShuttleAxis[i];
 				ELSE
 					// Abort shuttle restore sequence (Some shuttle position is not matching)
-					FOR j:=1 TO TRAK_MAX_SHUTTLE DO
+					FOR j:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 						pTrakCtrl.Status.Shuttle[j].Axis := AuxShuttleAxis[j];
 					END_FOR
 					pTrakCtrl.Status.ShRecoveryInfo.ShuttleMoved := TRUE;
@@ -335,7 +327,6 @@ PROGRAM _CYCLIC
 			
 		TRAK_STATE_SH_RESTORE_UID:
 			
-			Counter := Counter + 1;
 			IF pTrakCtrl.Status.Shuttle[Counter].Valid THEN
 				// Define shuttle user ID (very useful with shuttle error diagnosis)
 				AuxString := UINT_TO_STRING(Counter);
@@ -353,6 +344,7 @@ PROGRAM _CYCLIC
 		TRAK_STATE_SH_RESTORE_UID_WAIT:	
 			
 			IF MC_BR_ShSetUserID_AcpTrak_0.Done THEN
+				Counter := Counter + 1;
 				TrakState := TRAK_STATE_SH_RESTORE_UID;
 			END_IF		
 
@@ -378,12 +370,13 @@ PROGRAM _CYCLIC
 			
 		TRAK_STATE_MOVE_ABS:
 			
-			Counter := Counter + 1;
-			IF (Counter > TRAK_MAX_SHUTTLE) THEN
+			IF (Counter > TRAK_MAX_SHUTTLE_MINUS_ONE) THEN
 				TrakState := TRAK_STATE_IN_MOTION;
 			ELSIF (pTrakCtrl.Status.Shuttle[Counter].Valid) THEN
 				MoveAbsolute;
 				TrakState := TRAK_STATE_MOVE_ABS_WAIT;
+			ELSE 
+				Counter := Counter + 1;
 			END_IF
 
 		TRAK_STATE_MOVE_ABS_WAIT:
@@ -391,17 +384,19 @@ PROGRAM _CYCLIC
 			IF MC_BR_ModuloMoveAbs_AcpTrak_0.Error THEN
 				TrakState := TRAK_STATE_ERROR;
 			ELSE
+				Counter := Counter + 1;
 				TrakState := TRAK_STATE_MOVE_ABS;
 			END_IF
 			
 		TRAK_STATE_MOVE_VEL:
 			
-			Counter := Counter + 1;
-			IF (Counter > TRAK_MAX_SHUTTLE) THEN
+			IF (Counter > TRAK_MAX_SHUTTLE_MINUS_ONE) THEN
 				TrakState := TRAK_STATE_IN_MOTION;
 			ELSIF (pTrakCtrl.Status.Shuttle[Counter].Valid) THEN
 				MoveVelocity;
 				TrakState := TRAK_STATE_MOVE_VEL_WAIT;
+			ELSE
+				Counter := Counter + 1;
 			END_IF
 			
 		TRAK_STATE_MOVE_VEL_WAIT:
@@ -409,6 +404,7 @@ PROGRAM _CYCLIC
 			IF MC_BR_ElasticMoveVel_AcpTrak_0.Error THEN
 				TrakState := TRAK_STATE_ERROR;
 			ELSE
+				Counter := Counter + 1;
 				TrakState := TRAK_STATE_MOVE_VEL;
 			END_IF
 			
@@ -467,7 +463,7 @@ PROGRAM _CYCLIC
 			pTrakCtrl.Command.Power := FALSE;
 			
 			// Deletes the convoy from the convoy master axis before the error is reset
-			FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+			FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 				IF pTrakCtrl.Status.Shuttle[i].IsConvoyMaster THEN
 					MC_BR_ConDelete_AcpTrak_0[i].ConvoyMaster := ADR(pTrakCtrl.Status.Shuttle[i].Axis);
 					MC_BR_ConDelete_AcpTrak_0[i].Execute := pTrakCtrl.Status.Shuttle[i].State.StatusErrorStop;
@@ -479,20 +475,21 @@ PROGRAM _CYCLIC
 				// Assembly and segment errors can be reset using MC_BR_AsmReset_AcpTrak FB
 				IF MC_BR_AsmReadStatus_AcpTrak_0.AssemblyErrorStop OR (MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.SegmentCount.InErrorStop > 0) THEN
 					MC_BR_AsmReset_AcpTrak_0.Execute := NOT MC_BR_AsmReset_AcpTrak_0.Error;	
-					// Shuttle errors can be reset using MC_Reset
+				// Shuttle errors can be reset using MC_Reset
 				ELSIF (MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.ShuttleCount.InErrorStop > 0) THEN
-					FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+					FOR i:=0 TO TRAK_MAX_SHUTTLE DO
 						MC_Reset_0[i].Axis := ADR(pTrakCtrl.Status.Shuttle[i].Axis);
 						MC_Reset_0[i].Execute := pTrakCtrl.Status.Shuttle[i].State.StatusErrorStop;
 					END_FOR
-					// When there are no more active errors in the system, reset the command and leave error state
+				// When there are no more active hardware errors in the system, reset the command and leave error state
 				ELSE
-					// Wait until error has been reset
 					IF pTrakCtrl.Status.PLCopenState.Disabled THEN	
 						pTrakCtrl.Command.ErrorReset := FALSE;
+						ClearError;
 						TrakState := TRAK_STATE_DISABLED;
 					ELSIF pTrakCtrl.Status.PLCopenState.Ready THEN
 						pTrakCtrl.Command.ErrorReset := FALSE;
+						ClearError;
 						PowerOff;
 						TrakState := TRAK_STATE_SWITCHING_OFF;
 					END_IF		
@@ -513,7 +510,8 @@ PROGRAM _CYCLIC
 		TRAK_ERR_STATE_WAIT:
 			
 			// When there is some trak element with an active error, find the initiator
-			IF pTrakCtrl.Status.Error THEN
+			IF MC_BR_AsmReadStatus_AcpTrak_0.AssemblyErrorStop OR (MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.ShuttleCount.InErrorStop > 0)
+				OR (MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.SegmentCount.InErrorStop > 0) THEN
 				TrakErrorState := TRAK_ERR_STATE_FIND_INIT_ASM;
 			END_IF
 		
@@ -535,7 +533,7 @@ PROGRAM _CYCLIC
 		TRAK_ERR_STATE_FIND_INIT_SEG:
 		
 			// Checks if some segment is the error initiator
-			FOR i:=1 TO TRAK_MAX_SEGMENT DO
+			FOR i:=0 TO TRAK_MAX_SEGMENT_MINUS_ONE DO
 				IF MC_BR_SegReadErrorInfo_AcpTrak_0[i].ErrorInfo.Initiator THEN
 					AdrErrorComponent := ADR(gTrakCtrl.Status.Segment[i].Segment);
 					pTrakCtrl.Status.ErrorInfo.Initiator := pTrakCtrl.Status.Segment[i].Name;
@@ -548,13 +546,12 @@ PROGRAM _CYCLIC
 				TrakErrorState := TRAK_ERR_STATE_COLLECT_LOG;
 			ELSE
 				TrakErrorState := TRAK_ERR_STATE_FIND_INIT_SH;
-			END_IF
-			
+			END_IF	
 			
 		TRAK_ERR_STATE_FIND_INIT_SH:
 			
 			// Check if some shuttle is the initiator
-			FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+			FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 				IF MC_BR_ShReadErrorInfo_AcpTrak_0[i].ErrorInfo.Initiator THEN
 					AdrErrorComponent := ADR(gTrakCtrl.Status.Shuttle[i].Axis);
 					pTrakCtrl.Status.ErrorInfo.Initiator := pTrakCtrl.Status.Shuttle[i].Name;
@@ -594,11 +591,11 @@ PROGRAM _CYCLIC
 			
 		TRAK_ERR_STATE_DONE:
 		
-			IF NOT pTrakCtrl.Status.Error THEN
+			// Exit error state when all hardware errors in the trak system have been resolved
+			// Only exit if this is a hardware error (not application error)
+			IF NOT MC_BR_AsmReadStatus_AcpTrak_0.AssemblyErrorStop AND NOT (MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.ShuttleCount.InErrorStop > 0) 
+				AND NOT (MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.SegmentCount.InErrorStop > 0) THEN
 				AdrErrorComponent := 0;
-				pTrakCtrl.Status.ErrorInfo.Text := '';
-				pTrakCtrl.Status.ErrorInfo.Initiator := '';
-				pTrakCtrl.Status.ErrorInfo.ID := 0;
 				MC_BR_ReadErrorText_0.Enable := FALSE;
 				MC_BR_ReadErrorText_0.ReadNext := FALSE;
 				TrakErrorState := TRAK_ERR_STATE_WAIT;
@@ -653,7 +650,7 @@ PROGRAM _CYCLIC
 	MC_BR_ElasticMoveVel_AcpTrak_0();
 	MC_BR_ElasticMoveVel_AcpTrak_0.Execute := FALSE;
 	
-	FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+	FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 		MC_Reset_0[i]();
 		MC_Reset_0[i].Execute := FALSE;
 	END_FOR
@@ -661,7 +658,7 @@ PROGRAM _CYCLIC
 	MC_BR_ShSetUserID_AcpTrak_0();
 	MC_BR_ShSetUserID_AcpTrak_0.Execute := FALSE;
 	
-	FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+	FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 		MC_BR_ConDelete_AcpTrak_0[i].AdvancedParameters.Mode := mcACPTRAK_CON_DELETE_ANY_CASE;
 		MC_BR_ConDelete_AcpTrak_0[i]();
 		MC_BR_ConDelete_AcpTrak_0[i].Execute := FALSE;
@@ -677,7 +674,7 @@ PROGRAM _CYCLIC
 	MC_BR_AsmReadErrorInfo_AcpTrak_0();
 
 	//************************* SEGMENTS ***************************
-	FOR i:=1 TO TRAK_MAX_SEGMENT DO
+	FOR i:=0 TO TRAK_MAX_SEGMENT_MINUS_ONE DO
 		
 		MC_BR_SegReadErrorInfo_AcpTrak_0[i].Segment := ADR(pTrakCtrl.Status.Segment[i].Segment);
 		MC_BR_SegReadErrorInfo_AcpTrak_0[i].Enable := (pTrakCtrl.Status.Segment[i].Segment.controlif <> 0);
@@ -686,7 +683,7 @@ PROGRAM _CYCLIC
 	END_FOR
 	
 	//************************* SHUTTLES ***************************
-	FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+	FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 		
 		MC_BR_ShReadErrorInfo_AcpTrak_0[i].Axis := ADR(pTrakCtrl.Status.Shuttle[i].Axis);
 		MC_BR_ShReadErrorInfo_AcpTrak_0[i].Enable := (pTrakCtrl.Status.Shuttle[i].Axis.controlif <> 0);
@@ -707,9 +704,6 @@ PROGRAM _CYCLIC
 	pTrakCtrl.Status.ReadyForPowerOn := MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.ReadyForPowerOn;
 	pTrakCtrl.Status.PowerOn := MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.PowerOn;
 	pTrakCtrl.Status.MovementDetected := MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.MovementDetected;
-	pTrakCtrl.Status.Error := MC_BR_AsmReadStatus_AcpTrak_0.AssemblyErrorStop 
-							OR MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.ShuttleCount.InErrorStop > 0 
-							OR MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.SegmentCount.InErrorStop > 0;
 		
 	pTrakCtrl.Status.PLCopenState.Disabled := MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.PLCopenState = mcACPTRAK_DISABLED;
 	pTrakCtrl.Status.PLCopenState.ErrorStop := MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.PLCopenState = mcACPTRAK_ERRORSTOP;
@@ -720,7 +714,7 @@ PROGRAM _CYCLIC
 	pTrakCtrl.Status.PLCopenState.Stopping := MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.PLCopenState = mcACPTRAK_STOPPING;
 	
 	//************************* SEGMENTS ***************************	
-	FOR i:=1 TO TRAK_MAX_SEGMENT DO
+	FOR i:=0 TO TRAK_MAX_SEGMENT_MINUS_ONE DO
 		
 		MC_BR_SegReadStatus_AcpTrak_0[i].Segment := ADR(pTrakCtrl.Status.Segment[i].Segment);
 		MC_BR_SegReadStatus_AcpTrak_0[i].Enable := (pTrakCtrl.Status.Segment[i].Segment.controlif <> 0);
@@ -785,7 +779,7 @@ PROGRAM _CYCLIC
 	END_FOR
 	
 	//************************* SHUTTLES ***************************	
-	FOR i:=1 TO TRAK_MAX_SHUTTLE DO
+	FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 	
 		MC_BR_ShReadInfo_AcpTrak_0[i].Axis := ADR(pTrakCtrl.Status.Shuttle[i].Axis);
 		MC_BR_ShReadInfo_AcpTrak_0[i].Enable := (pTrakCtrl.Status.Shuttle[i].Axis.controlif <> 0);

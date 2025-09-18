@@ -74,7 +74,7 @@ ACTION InitSequence:
 					MC_BR_AsmGetSegment_AcpTrak_0.Enable := FALSE;
 					InitState := INIT_STATE_ERROR;
 				ELSE
-					Counter := Counter + 1;
+					
 					pTrakCtrl.Status.Segment[Counter].Segment := MC_BR_AsmGetSegment_AcpTrak_0.Segment;
 					
 					// Check if all segments are read
@@ -99,6 +99,7 @@ ACTION InitSequence:
 		
 		INIT_STATE_GET_SEGMENT_NEXT:
 			
+			Counter := Counter + 1;
 			MC_BR_AsmGetSegment_AcpTrak_0.Next := TRUE;
 			InitState := INIT_STATE_GET_SEGMENT_WAIT;
 			

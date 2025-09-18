@@ -72,8 +72,11 @@ ACTION Halt:
 	
 END_ACTION
 
-ACTION ClearErrorTexts:
+ACTION ClearError:
 	
-	brsmemset(ADR(pTrakCtrl.Status.ErrorText),0, SIZEOF(pTrakCtrl.Status.ErrorText));
+	pTrakCtrl.Status.ErrorInfo.Text := '';
+	pTrakCtrl.Status.ErrorInfo.Initiator := '';
+	pTrakCtrl.Status.ErrorInfo.ID := 0;
+	pTrakCtrl.Status.Error := FALSE;
 	
 END_ACTION
