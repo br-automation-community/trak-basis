@@ -345,7 +345,11 @@ PROGRAM _CYCLIC
 			
 			IF MC_BR_ShSetUserID_AcpTrak_0.Done THEN
 				Counter := Counter + 1;
-				TrakState := TRAK_STATE_SH_RESTORE_UID;
+				IF Counter > TRAK_MAX_SHUTTLE_MINUS_ONE THEN
+                    TrakState := TRAK_STATE_STANDSTILL;
+                ELSE
+                    TrakState := TRAK_STATE_SH_RESTORE_UID;
+                END_IF;
 			END_IF		
 
 		TRAK_STATE_STANDSTILL:
@@ -477,7 +481,7 @@ PROGRAM _CYCLIC
 					MC_BR_AsmReset_AcpTrak_0.Execute := NOT MC_BR_AsmReset_AcpTrak_0.Error;	
 				// Shuttle errors can be reset using MC_Reset
 				ELSIF (MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.ShuttleCount.InErrorStop > 0) THEN
-					FOR i:=0 TO TRAK_MAX_SHUTTLE DO
+					FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 						MC_Reset_0[i].Axis := ADR(pTrakCtrl.Status.Shuttle[i].Axis);
 						MC_Reset_0[i].Execute := pTrakCtrl.Status.Shuttle[i].State.StatusErrorStop;
 					END_FOR
