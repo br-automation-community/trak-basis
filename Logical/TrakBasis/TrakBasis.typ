@@ -14,6 +14,15 @@
 *********************************************************************)
 
 TYPE
+	TrakApplicationErrorEnum :
+		(
+		TRAK_APP_ERROR_NONE := 0,
+		TRAK_APP_ERR_SIM_SH_COUNT_MAX := 100,
+		TRAK_APP_ERR_SH_COUNT_MAX := 101,
+		TRAK_APP_ERR_SEG_COUNT_MAX := 102,
+		TRAK_APP_ERR_SEG_INDEX_MAX := 103,
+		TRAK_APP_ERR_NO_SEGMENTS := 104
+		);
 	TrakCtrlType : 	STRUCT  (*Control structure*)
 		Command : TrakCtrlCmdType; (*Command structure*)
 		Parameter : TrakCtrlParType; (*Parameter structure*)
@@ -49,8 +58,8 @@ TYPE
 		ReadyForPowerOn : BOOL; (*Assembly can be powered on*)
 		PowerOn : BOOL; (*Assembly is powered in*)
 		MovementDetected : BOOL; (*There are movements in the assembly*)
-		Error : BOOL; (*The Assembly is in hardware error*)
-		ErrorInfo : TrakCtrlStatusErrorInfoType; (*Hardware error information*)
+		Error : BOOL; (*A hardware or application error is active*)
+		ErrorInfo : TrakCtrlStatusErrorInfoType; (*Hardware or application error information*)
 		PLCopenState : TrakCtrlStatusPLCopenStateType; (*PLC Open state of the assembly *)
 		ShRecoveryInfo : TrakCtrlStatusShRecoveryInfoType; (*Shuttle recovery information*)
 		Segment : ARRAY[0..TRAK_MAX_SEGMENT_MINUS_ONE]OF TrakCtrlStatusSegmentType; (*Overall count of the segments*)
