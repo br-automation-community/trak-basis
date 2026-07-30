@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* MpBase 6.2.0 */
+/* MpBase 6.7.0 */
 
 #ifndef _MPBASE_
 #define _MPBASE_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _MpBase_VERSION
-#define _MpBase_VERSION 6.2.0
+#define _MpBase_VERSION 6.7.0
 #endif
 
 #include <bur/plctypes.h>

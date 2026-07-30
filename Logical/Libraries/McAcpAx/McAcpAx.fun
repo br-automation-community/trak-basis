@@ -770,3 +770,72 @@ FUNCTION_BLOCK MC_BR_SetParIDText_AcpAx (*Set (write) a single ACOPOS parameter 
 		Internal : McInternalType; (*internal variable*)
 	END_VAR
 END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_GetParIDText_AcpAx (*Get (read) a single ACOPOS parameter in text format.*)
+	VAR_INPUT
+		Axis : REFERENCE TO McAxisType; (*Axis reference.*)
+		Execute : BOOL; (*execution of this FB is started on rising edge of the input*)
+		ParID : UINT; (*ACOPOS parameter ID to be got (written)*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*execution successful. FB finished*)
+		Busy : BOOL; (*FB is active and needs to be called*)
+		Error : BOOL; (*error occurred during operation*)
+		ErrorID : DINT; (*error number*)
+		DataText : STRING[32];
+	END_VAR
+	VAR
+		Internal : McInternalType; (*internal variable*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_ReadSafeOutData_AcpAx (*reads SafeOUT data of an SafeMOTION axis*)
+	VAR_INPUT
+		Axis : REFERENCE TO McAxisType;  (*axis reference*)
+		Enable : BOOL; (*FB is active as long as input is set*)
+	END_VAR
+	VAR_OUTPUT
+		Valid : BOOL; (*FB output values can be used*)
+		Busy : BOOL; (*FB is active and needs to be called*)
+		Error : BOOL; (*error occurred during operation*)
+		ErrorID : DINT; (*error number*)
+		SafeOutData : McAcpAxSafeOutDataType; (*SafeOUT data*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*internal variable*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_ReadSafeInData_AcpAx (*reads SafeIN data of an SafeMOTION axis*)
+	VAR_INPUT
+		Axis : REFERENCE TO McAxisType;  (*axis reference*)
+		Enable : BOOL; (*FB is active as long as input is set*)
+	END_VAR
+	VAR_OUTPUT
+		Valid : BOOL; (*FB output values can be used*)
+		Busy : BOOL; (*FB is active and needs to be called*)
+		Error : BOOL; (*error occurred during operation*)
+		ErrorID : DINT; (*error number*)
+		SafeInData : McAcpAxSafeInDataType; (*SafeIN data*)
+	END_VAR
+	VAR
+		Internal : McInternalType; (*internal variable*)
+	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_VibrationCtrlStatus_AcpAx (*outputs vibratory control status*)
+	VAR_INPUT
+		Axis : REFERENCE TO McAxisType; (*axis reference*)
+		Enable : BOOL; (*when set limitation is activated*)
+	END_VAR
+    VAR_OUTPUT
+		Valid : BOOL; (*FB output values can be used*)
+		Busy : BOOL; (*FB is active and needs to be called*)
+		Error : BOOL; (*error occurred during operation*)
+		ErrorID : DINT; (*error number*)
+		Status : McAcpAxVibCtrlStatusType; (*Status info*)
+	END_VAR
+    VAR
+		Internal : McInternalType; (*internal variable*)
+    END_VAR
+END_FUNCTION_BLOCK

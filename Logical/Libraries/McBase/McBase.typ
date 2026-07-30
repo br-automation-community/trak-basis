@@ -33,7 +33,8 @@ TYPE
 		mcBLENDING_LOW, (*The velocity is blended with the lowest velocity of both FBs*)
 		mcBLENDING_PREVIOUS, (*The velocity is blended with the velocity of the first FB*)
 		mcBLENDING_NEXT, (*The velocity is blended with velocity of the second FB*)
-		mcBLENDING_HIGH	(*The velocity is blended with highest velocity of both FBs*)
+		mcBLENDING_HIGH, (*The velocity is blended with highest velocity of both FBs*)
+		mcBLENDING	(*The geometry blended and split into two parts, each with its own velocity limit set by the FB*)
 	);
 
 	McBrakeCmdEnum :
@@ -96,7 +97,9 @@ TYPE
 		mcERROR_STOP_DEC_CTRL_OFF_CMD,  (*Generates an error, ends any active movement with the deceleration specified on configuration, written by the axis group or written via the function block MC_BR_CyclicDriveErrorDecel and switches off the controller*)
 		mcERROR_V_STOP_DEC_CTRL_OFF_CMD,  (*Generates an error, ends any active movement with a speed-controlled ramp with the deceleration specified on configuration, written by the axis group or written via the function block MC_BR_CyclicDriveErrorDecel and switches off the controller*)
 		mcERROR_ENCODER_CMD,  (*Generates an error, the encoder is set to error status and the configured stop reaction is carried out*)
-		mcERROR_CHANNEL_CMD  (*Generates a channel specific error and carries out the configured stop reaction*)
+		mcERROR_CHANNEL_CMD,  (*Generates a channel specific error and carries out the configured stop reaction*)
+		mcERROR_STOP_TRQ_CMD, (*Generates an error and ends an active movement torque limited*)
+		mcERROR_STOP_TRQ_JERK_CMD (*Generates an error and ends an active movement torque limited with configured Jerk Filter time*)
 	);
 
 	McEdgeEnum :
@@ -113,7 +116,9 @@ TYPE
 
 	McTransitionModeEnum :
 		( (*FB internals*)
-		mcTM_NONE (*No transition is added*)
+		mcTM_NONE, (*No transition is added*)
+		mcTM_CORNER_DISTANCE,
+		mcTM_MAX_CORNER_DEVIATION
 		);
 
 	McExecutionModeEnum:
@@ -184,11 +189,14 @@ TYPE
 
 	McProcessConfigModeEnum:
 	(
-		mcPCM_LOAD 	:= 0,	 	(*Load from Config*)
-		mcPCM_SAVE	:= 1,	 	(*Save to Config*)
-		mcPCM_CREATE:= 2,	 	(*Create Config*)
-		mcPCM_DELETE:= 3,		(*Delete Config*)
-		mcPCM_DEFAULT_VALUES:= 4(*Default Config Values*)
+		mcPCM_LOAD 	:= 0,	 		(*Load from Config*)
+		mcPCM_SAVE	:= 1,	 		(*Save to Config*)
+		mcPCM_CREATE:= 2,	 		(*Create Config*)
+		mcPCM_DELETE:= 3,			(*Delete Config*)
+		mcPCM_DEFAULT_VALUES:= 4,	(*Default Config Values*)
+		
+		mcPCM_LIST_ALL := 5,		(*Lists all Config*)
+		mcPCM_DELETE_ALL := 6		(*Deletes all Configs*)
 	);
 
 	McCommunicationStateEnum :

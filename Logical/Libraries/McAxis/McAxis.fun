@@ -1654,3 +1654,22 @@ FUNCTION_BLOCK MC_BR_PowerOnTest (*Tests if a power-on command would be successf
         Internal : McInternalType; (*internal variable*)
     END_VAR
 END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_ProcessSDO (*Reads or writes the value of a SDO parameter according to the input "Mode"*)
+    VAR_INPUT
+        Axis : REFERENCE TO McAxisType;  (*The axis reference establishes the connection between the function block and an axis*)
+        Execute : BOOL; (*Execution of the function block is started on a rising edge of the input*)
+        DataAddress : UDINT; (*Address of the variable or array of data type McProcessSdoType*)
+        NumberOfSdo : UDINT; (*Number of SDO parameters that should be read or written (equal to the number of elements of the array)*)
+        Mode : McProcessSdoModeEnum; (*Mode that defines whether the SDO parameters should be read or written*)
+    END_VAR
+    VAR_OUTPUT
+        Done : BOOL; (*Execution successful, function block finished*)
+        Busy : BOOL; (*The function block is active and must continue to be called*)
+        Error : BOOL; (*An error occurred during execution*)
+        ErrorID : DINT; (*Error number*)
+    END_VAR
+    VAR
+        Internal : McInternalType; (*internal variable*)
+    END_VAR
+END_FUNCTION_BLOCK

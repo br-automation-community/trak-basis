@@ -35,6 +35,7 @@ TYPE
 
 	McAcpTrakAdvAsmPowerOnParType : STRUCT (*Additional parameters for powering on the assembly or a subset of its segments.*)
 		SegmentGroup : STRING[32]; (*Segment group reference specifying a set of segments of the assembly.*)
+		HomingMode : McAcpTrakAsmHomingModeEnum; (*Specifies for which segments the initial shuttle identification should be processed.*)
 	END_STRUCT;
 
 	McAcpTrakAdvAsmReadInfoParType : STRUCT (*Additional parameters for reading out information about the assembly.*)
@@ -57,6 +58,8 @@ TYPE
 
 	McAcpTrakAdvConDeleteParType : STRUCT (*Additional parameters for deleting a convoy.*)
 		Mode : McAcpTrakConDeleteModeEnum; (*The mode specifies whether the convoy is deleted in any case or only if it is empty except for the convoy master.*)
+		ContinueMoveCmd : BOOL; (*Members different to the convoy master continue an elastic move velocity if true and are stopped with an error otherwise.*)
+		Sector : REFERENCE TO McSectorType; (*Sector on which the convoy members different to the master may switch if their movement is continued.*)
 	END_STRUCT;
 
 	McAcpTrakAdvConGetShParType : STRUCT (*Additional parameters for reading out convoy member shuttles.*)
@@ -69,6 +72,7 @@ TYPE
 		Trigger : McAcpTrakCopySegDataTriggerEnum; (*Trigger for saving data*)
 		DataAddress : UDINT; 			   (*Address of first element of an array of type McAcpTrakSegmentData*)
 		DataSize : UDINT; 			   (*Size of the array of type McAcpTrakSegmentData*)
+		NoLog : BOOL;		(*No logger entries are made. If an error occurs, an entry is still created.*)
 	END_STRUCT;
 
 	McAcpTrakAdvCopyShDataType : STRUCT (*Additional parameters for copying shuttle data.*)
@@ -76,6 +80,7 @@ TYPE
 		Trigger : McAcpTrakCopyShDataTriggerEnum; (*Specifies the event that triggers the copying of data.*)
 		DataAddress : UDINT; 		(*Address of array of the userdata.*)
 		DataSize : UDINT; 		(*Size of array of userdata.*)
+		NoLog : BOOL;		(*No logger entries are made. If an error occurs, an entry is still created.*)
 	END_STRUCT;
 
 	McAcpTrakAdvGetMinShDistParType : STRUCT (*Additional parameters for reading out the minimal distance between shuttles.*)
@@ -103,22 +108,41 @@ TYPE
     	Blocked : BOOL;
   		NumberDisabled : UDINT; (*The number of disabled segments on the route.*)
     	NumberErrorStop : UDINT; (*The number of segments in error stop on the route.*)
+    	Number : UDINT; (*Total number of segments on the route.*)
   	END_STRUCT;
 
   	McAcpTrakAdvRouteInfoShuttleType : STRUCT (*Information about shuttles along a route.*)
     	Blocked : BOOL;
 		NumberDisabled : UDINT; (*The number of disabled shuttles on the route.*)
     	NumberErrorStop : UDINT; (*The number of shuttles in error stop on the route.*)
+    	Number : UDINT; (*Total number of shuttles on the route.*)
+  	END_STRUCT;
+
+	McAcpTrakAdvRouteInfoProcPntType : STRUCT (*Information about process points along a route.*)
+		Number : UDINT; (*Total number of process points on the route.*)
   	END_STRUCT;
 
 	McAcpTrakAdvRouteInfoType : STRUCT (*Information about a route.*)
-		Validity       : McAcpTrakAdvRouteInfoValidEnum;
-		SectorInfo     : McAcpTrakAdvRouteInfoSectorType;
-		SegmentInfo    : McAcpTrakAdvRouteInfoSegmentType;
-		ShuttleInfo    : McAcpTrakAdvRouteInfoShuttleType;
-		BarrierInfo    : McAcpTrakAdvRouteInfoBarrierType;
+		Validity         : McAcpTrakAdvRouteInfoValidEnum;
+		SectorInfo       : McAcpTrakAdvRouteInfoSectorType;
+		SegmentInfo      : McAcpTrakAdvRouteInfoSegmentType;
+		ShuttleInfo      : McAcpTrakAdvRouteInfoShuttleType;
+		BarrierInfo      : McAcpTrakAdvRouteInfoBarrierType;
+		ProcessPointInfo : McAcpTrakAdvRouteInfoProcPntType;
 		Blocked        : BOOL; (*Set to true if any of the info Blocked outputs is true.*)
   	END_STRUCT;
+
+	McAcpTrakRouteInfoComponentsType : STRUCT (*Address and size of an array of components for GetRouteInfo.*)
+		DataAddress : UDINT; (*Address of the first element of the array.*)
+		DataSize : UDINT;	 (*Size of the array (sizeof).*)
+	END_STRUCT;
+
+	McAcpTrakRouteInfoParameters : STRUCT (*Segments, shuttles, and user barriers computed by MC_BR_GetRouteInfo_AcpTrak, and additional parameters.*)
+		ProcessPoints : McAcpTrakRouteInfoComponentsType;
+		Segments : McAcpTrakRouteInfoComponentsType;
+		Shuttles : McAcpTrakRouteInfoComponentsType;
+		Horizon : LREAL; (*Extension of target position*)
+	END_STRUCT;
 
 	McAcpTrakAdvRouteParType : STRUCT (*Additional parameters for reading information about a route.*)
 		StartDirection : McDirectionEnum;			      (*Direction in which the shuttle starts moving, based on the counting direction of the starting sector.*)
@@ -126,7 +150,16 @@ TYPE
 		ShuttleOrientation : McDirectionEnum;			      (*Orientation of the shuttle on the target sector.*)
 		TransitPoints : REFERENCE TO McAcpTrakRouteTransitPointsType; (*Points a shuttle should pass before reaching its destination.*)
 		NumberOfTransitPoints : UINT; 				      (*Number of transit points to be passed.*)
-		PosRelativeTo :  McAcpTrakRoutePosRelToEnum;		      (*Defines wheather the end position is calculated relative to the start or end of the sector.*)
+		PosRelativeTo :  McAcpTrakRoutePosRelToEnum;		      (*Defines whether the end position is calculated relative to the start or end of the sector.*)
+		RouteInfoParameters : McAcpTrakRouteInfoParameters; (*Additional input to GetRouteInfo*)
+		SMP : BOOL; (*Indicates whether symmetric multiprocessing should be used for the execution of the function block.*)
+	END_STRUCT;
+
+	McAcpTrakAdvMoveCycParType : STRUCT
+		Velocity : REAL; (*Maximum velocity [Measurement units/s]*)
+		Acceleration : REAL; (*Maximum acceleration [Measurement units/s]*)
+		Deceleration : REAL; (*Maximum deceleration [Measurement units/s]*)
+		DisableMotionFilter : McSwitchEnum; (*Disable the motion filter*)
 	END_STRUCT;
 
 	McAcpTrakAdvSecAddShuttleType : STRUCT (*Additional parameters for adding a shuttle to a sector.*)
@@ -412,6 +445,7 @@ TYPE
 	McAcpTrakSegInfoType : STRUCT (*Status information of a segment.*)
 		CommunicationReady : BOOL; 	(*The network is initialized and ready for communication.*)
 		ReadyForPowerOn : BOOL; 	(*The segment is ready to be enabled.*)
+		HomingActive : BOOL; 	(*Shuttle identification is being processed.*)
 		PowerOn : BOOL; 		(*The power output stage is switched on.*)
 		StartupCount : UDINT; 		(*Number of times the segment was started up since the last PLC start.*)
 		CommunicationState : McCommunicationStateEnum; (*Status of network communication.*)
@@ -578,6 +612,7 @@ TYPE
 		Name : STRING[32]; (*Name of the local limit that caused the ErrorStop to be initiated.*)
 		VelocityLimit : REAL; (*Permissible velocity in the area of the local limit.*)
 		AccelerationLimit : REAL; (*Permissible acceleration in the area of the local limit.*)
+		DecelerationLimit : REAL; (*Permissible deceleration in the area of the local limit.*)
 		InRange : BOOL; (*True if the shuttle was in the area of the local limit at the time of error.*)
 	END_STRUCT;
 
@@ -965,6 +1000,12 @@ TYPE
 		mcACPTRAK_GET_SH_VIRT_NONVIRTUAL (*Output only non-virtual shuttles.*)
 	); (*Specifies if virtual or non-virtual shuttles should be output.*)
 
+	McAcpTrakAsmHomingModeEnum:
+	(
+		mcACPTRAK_HOME_DISABLED := 0, (*Identification for all disabled segments of the selection and power on.*)
+		mcACPTRAK_HOME_ALL			  (*Identification for all segments of the selection and power on the disabled ones.*)
+	); (*Specifies which segments should be considered for initial shuttle identification.*)
+
 	McAcpTrakMoveCmdEnum :
 	(
 		mcACPTRAK_MOV_CMD_HALT,		  (*Execute a halt command.*)
@@ -985,6 +1026,12 @@ TYPE
 		mcACPTRAK_OBJECT_SHUTTLE, (*Object type Shuttle.*)
 		mcACPTRAK_OBJECT_CONVOY   (*Object type Convoy. The convoy is addressed by its convoy master shuttle.*)
 	); (*Reference object type.*)
+
+	McAcpTrakOutputArrayEnum :
+	(
+		mcACPTRAK_BASE_OUTPUT	(*Base output for the component is displayed.*),
+		mcACPTRAK_NO_OUTPUT 	(*No component output is displayed.*)
+	); (*Defines the array type for the component output.*)
 
 	McAcpTrakOverrideEnum :
 	(
@@ -1143,7 +1190,8 @@ TYPE
 		mcACPTRAK_REASON_CON_SECSWITCH := 14,	(*A shuttle cannot change sectors due to it not being on the sector to which the convoy is changing, triggering a standstill maneuver.*)
 		mcACPTRAK_REASON_CON_UNCONTR := 15,	(*At least one shuttle of a convoy is uncontrolled, triggering a standstill maneuver.*)
 		mcACPTRAK_REASON_CON_RIGID_MOVE := 16,	(*The set parameter "Elastic" conflicts with the selected movement command, triggering a standstill maneuver.*)
-		mcACPTRAK_REASON_CON_TCP := 17		(*The iterative method for calculating the shuttle position based on the TCP of the reference shuttle does not converge to any result, triggering a standstill maneuver.*)
+		mcACPTRAK_REASON_CON_TCP := 17,		(*The iterative method for calculating the shuttle position based on the TCP of the reference shuttle does not converge to any result, triggering a standstill maneuver.*)
+		mcACPTRAK_REASON_LOCAL_DEC_LIMIT := 18	(*Local deceleration limitation caused a maneuver to be executed.*)
 	); (*Reason for a shuttle maneuver.*)
 
 	McAcpTrakShManeuverTypeEnum :
@@ -1205,4 +1253,41 @@ TYPE
 		mcACPTRAK_TP_PASSED_NEGATIVE, (*Trigger point passed in negative direction by the shuttle.*)
 		mcACPTRAK_TP_PASSED_POSITIVE  (*Trigger point passed in positive direction by the shuttle.*)
 	); (*Direction of movement in which the trigger point was passed.*)
+
+	McAcpTrakMoveCycTcpVelModeEnum :
+	(
+		mcACPTRAK_TCP_COORDSYS_X_VEL, (*TCP velocity wrt the x-axis of the specified coordinate system.*)
+		mcACPTRAK_TCP_ABS_VEL (*Absolute velocity of the TCP.*)
+	); (*Mode to specify the TCP velocity.*)
+
+	MpAcpTrakStopModeType : STRUCT
+		Mode : McStopModeEnum;
+		Deceleration : REAL;
+	END_STRUCT;
+
+	McAcpTrakAdvRestoreShModeEnum :
+	(
+		mcACPTRAK_RESTORE_TRY_RESTORING, (*Try restoring all shuttle data via positions.*)
+		mcACPTRAK_RESTORE_RESET_DATA (*Reset data in the remanent variable.*)
+	);
+
+	McAcpTrakAdvRestoreShDataType : STRUCT (*Additional parameters MC_BR_AsmRestoreShData_AcpTrak.*)
+		Tolerance : LREAL ;	(*Tolerance for the shuttle positions.*)
+		Mode : McAcpTrakAdvRestoreShModeEnum; (*Function block modes.*)
+		UserID : STRING[32]; (*UserID*)
+	END_STRUCT;
+
+	McAcpTrakAdvRestoreShStatusEnum :
+	(
+		mcACPTRAK_RESTORE_NO_STATUS,
+		mcACPTRAK_RESTORE_SUCCESS, (*The fub was successful.*)
+		mcACPTRAK_RESTORE_NO_SH_RESTORED, (*No shuttle data was restored.*)
+		mcACPTRAK_RESTORE_IDNOTFOUND (*The specified UserID was not found.*)
+	);
+
+	McAcpTrakAdvRestoreShInfoType : STRUCT (*Additional out parameters for MC_BR_AsmRestoreShData_AcpTrak.*)
+		Status : McAcpTrakAdvRestoreShStatusEnum;
+	END_STRUCT;
+
 END_TYPE
+

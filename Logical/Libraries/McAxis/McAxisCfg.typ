@@ -481,7 +481,7 @@ TYPE
 		ACOPOSParID : McAFAVSValSrcAcpParIDType; (*Type mcAFAVSVS_ACP_PARID settings*)
 	END_STRUCT;
 	McCfgAxFeatAltValSrcType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AX_FEAT_ALT_VAL_SRC*)
-		ValueSource : McCfgUnboundedArrayType; (*Selection of the value source*)
+		ValueSource : McCfgUnboundedArrayType; (*Selection of the value source (Connect array of type McAFAVSValSrcType)*)
 	END_STRUCT;
 	McAFBBrkCtrlTypEnum :
 		( (*Brake control type selector setting*)
@@ -770,5 +770,35 @@ TYPE
 	END_STRUCT;
 	McCfgAxFeatAcpCycDatProcType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AX_FEAT_ACP_CYC_DAT_PROC*)
 		ProcessingTaskClass : McPTCEnum; (*Task class for cyclic data processing*)
+	END_STRUCT;
+	McAFSDOPTTranOrdEnum :
+		( (*Transfer order in reference to other configuration parameters*)
+		mcAFSDOPTTO_END_OF_INIT := 0, (*End of initialization - Transfer after other configuration parameters*)
+		mcAFSDOPTTO_ST_OF_INIT := 1 (*Start of initialization - Transfer before other configuration parameters*)
+		);
+	McCfgAxFeatSdoParTabType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_AX_FEAT_SDO_PAR_TAB*)
+		SDOParameterTableReference : McCfgReferenceType; (*Name of the SDO parameter table*)
+		TransferOrder : McAFSDOPTTranOrdEnum; (*Transfer order in reference to other configuration parameters*)
+	END_STRUCT;
+	McSDOPTRowDatTypEnum :
+		( (*Description text*)
+		mcSDOPTRDT_BOOL := 1, (*BOOL - Data type: Digital information, 1 bit (1 byte)*)
+		mcSDOPTRDT_SINT := 2, (*SINT - Data type: Integer, 1 byte*)
+		mcSDOPTRDT_INT := 3, (*INT - Data type: Integer, 2 bytes*)
+		mcSDOPTRDT_DINT := 4, (*DINT - Data type: Integer, 4 bytes*)
+		mcSDOPTRDT_USINT := 5, (*USINT - Data type: Integer, 1 byte, positive numbers only*)
+		mcSDOPTRDT_UINT := 6, (*UINT - Data type: Integer, 2 bytes, positive numbers only*)
+		mcSDOPTRDT_UDINT := 7, (*UDINT - Data type: Integer, 4 bytes, positive numbers only*)
+		mcSDOPTRDT_REAL := 8 (*REAL - Data type: Floating-point number, 4 bytes*)
+		);
+	McSDOPTRowType : STRUCT
+		Index : STRING[250]; (*Parameter index*)
+		Subindex : USINT; (*Parameter subindex*)
+		Value : REAL; (*Parameter value*)
+		DataType : McSDOPTRowDatTypEnum; (*Description text*)
+		Description : STRING[250];
+	END_STRUCT;
+	McCfgSdoParTabType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_SDO_PAR_TAB*)
+		Row : McCfgUnboundedArrayType; (*Connect array of type McSDOPTRowType*)
 	END_STRUCT;
 END_TYPE

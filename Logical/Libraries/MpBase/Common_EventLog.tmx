@@ -3,7 +3,7 @@
   <header creationtool="B&amp;R Automation Studio" creationtoolversion="4.2" datatype="unknown" segtype="sentence" adminlang="en" srclang="en" o-tmf="TMX">
     <note>Do not change anything in this file, else the tmx-file will not be recognized as a valid system text anymore</note>
     <prop type="x-BR-TS:Namespace">BR/EventLog</prop>
-    <prop type="x-BR-TS:systemtextsig">JhV0Zb/Im/DfHRbFQuYtTuVt4Z6xst/7hYR3qYzEHSOjiR3uGgZ8JwSbpqoACX5o/ihDm+lrXF/Qv0fON7vjGk2xS06rf3Y79wip9hwP8NA22tMSBufoli6BXwpcJAlinuBxUhLVEnVERD8C6crhtDKFW/Gwbc8MVXLESefYwgs=</prop>
+    <prop type="x-BR-TS:systemtextsig">BF5a7dq1HQHPwp22xewCkWfiD66yjQRCJRUdbTH2aonAG7TVkAspFZnPIguzy2fMlRH7B9X7BFjo7WPNWwpdZJHHYpeRAy40PjJQIoh9+SEx+/+iRVGCebVUzLhlaBet9JmEMt5BToy02OWQS3/1795iBbo9fVVdbnJnhI38m58=</prop>
   </header>
   <body>
     <tu tuid="1083180007">
@@ -462,6 +462,22 @@
         <seg>Konfiguration: Anegebener Schreib-Modus nicht gültig</seg>
       </tuv>
     </tu>
+    <tu tuid="-1064303566">
+      <tuv xml:lang="en">
+        <seg>Array element already exists</seg>
+      </tuv>
+      <tuv xml:lang="de">
+        <seg>Arrayelement existiert bereits</seg>
+      </tuv>
+    </tu>
+    <tu tuid="-1064303565">
+      <tuv xml:lang="en">
+        <seg>Configuration: Internal error (at {2})</seg>
+      </tuv>
+      <tuv xml:lang="de">
+        <seg>Konfiguration: Interner Fehler (bei {2})</seg>
+      </tuv>
+    </tu>
     <tu tuid="-1064303136">
       <tuv xml:lang="en">
         <seg>Invalid registry for desired operation</seg>
@@ -836,6 +852,14 @@
       </tuv>
       <tuv xml:lang="de">
         <seg>Komponente {2} ist im Fehlerzustand</seg>
+      </tuv>
+    </tu>
+    <tu tuid="-2137980912">
+      <tuv xml:lang="en">
+        <seg>Invalid task class #{2} was selected.</seg>
+      </tuv>
+      <tuv xml:lang="de">
+        <seg>Ungültige Taskklasse #{2} ausgewählt.</seg>
       </tuv>
     </tu>
   </body>

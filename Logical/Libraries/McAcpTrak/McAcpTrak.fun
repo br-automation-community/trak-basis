@@ -401,6 +401,24 @@ FUNCTION_BLOCK MC_BR_AsmStop_AcpTrak (*Stops all shuttles on the assembly and pe
 	END_VAR
 END_FUNCTION_BLOCK
 
+FUNCTION_BLOCK  MC_BR_AsmRestoreShData_AcpTrak (*Restores shuttle data and manages the variable containing shuttle data.*)
+	VAR_INPUT
+		Assembly : REFERENCE TO McAssemblyType; (*The assembly reference establishes the connection between the function block and the assembly.*)
+		Execute : BOOL;  (*Execution of the function block is started on a rising edge of the input.*)
+		AdvancedParameters : McAcpTrakAdvRestoreShDataType; (*Structure for using advanced functions.*)
+	END_VAR
+	VAR_OUTPUT
+		Done : BOOL; (*Execution successful, function block completed.*)
+		Busy : BOOL; (*Function block is active and must continue to be called.*)
+		Error : BOOL; (*An error occurred during execution.*)
+		ErrorID : DINT; (*Error number.*)
+		Info :  McAcpTrakAdvRestoreShInfoType; (*Output data of the function block*)
+	END_VAR
+	VAR
+		Internal : McInternalType;
+	END_VAR
+END_FUNCTION_BLOCK
+
 FUNCTION_BLOCK MC_BR_BarrierCommand_AcpTrak (*Opens or closes user-defined barriers or enables the ticket system for it.*)
 	VAR_INPUT
 		ProcessPoint : REFERENCE TO McProcessPointType; (*The ProcessPoint reference provides the link between the function block and the process point.*)
@@ -622,6 +640,51 @@ FUNCTION_BLOCK MC_BR_ElasticMoveVel_AcpTrak (*Starts an elastic movement with a 
 	VAR
 		Internal : McInternalType; (*Internal variable*)
 	END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_MoveCyclicTcpPos_AcpTrak (*Specifies the tcp position setpoint of a shuttle on a cyclic basis. A movement relative to the shuttle's current reference sector is being performed.*)
+        VAR_INPUT
+        Axis : REFERENCE TO McAxisType; (*The shuttle reference provides the link between the function block and the shuttle.*)
+        Enable : BOOL; (*The function block is active as long as this input is set.*)
+        CoordSystemName : STRING[260]; (*frame name*)
+        Tcp : McPosType; (*Position in the coordinate system*)
+        AdvancedParameters : McAcpTrakAdvMoveCycParType; (*Structure for using advanced functions.*)
+        CyclicPosition : LREAL; (*Cyclic position setpoint.*)
+    END_VAR
+    VAR_OUTPUT
+        Valid : BOOL; (*Initialization completed, position being transmitted cyclically.*)
+        Busy : BOOL; (*The function block is active and must continue to be called.*)
+        CommandAborted : BOOL; (*The command was aborted by another command.*)
+        Error : BOOL; (*An error occurred during execution.*)
+        ErrorID : DINT; (*Error number.*)
+        InCyclicPosition : BOOL; (*The specified cyclic position is reached in the current cycle.*)
+    END_VAR
+    VAR
+        Internal : McInternalType; (*Internal variable*)
+    END_VAR
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK MC_BR_MoveCyclicTcpVel_AcpTrak (*Specifies the tcp velocity of a shuttle on a cyclic basis. A movement relative to the shuttle's current reference sector is being performed.*)
+        VAR_INPUT
+        Axis : REFERENCE TO McAxisType; (*The shuttle reference provides the link between the function block and the shuttle.*)
+        Enable : BOOL; (*The function block is active as long as this input is set.*)
+        CoordSystemName : STRING[260]; (*frame name*)
+        Tcp : McPosType; (*Position in the coordinate system*)
+        Mode: McAcpTrakMoveCycTcpVelModeEnum; (*Specifies how the cyclic velocity in interpreted.*)
+        AdvancedParameters : McAcpTrakAdvMoveCycParType; (*Structure for using advanced functions.*)
+        CyclicVelocity : REAL; (*Cyclic velocity.*)
+    END_VAR
+    VAR_OUTPUT
+        Valid : BOOL; (*Initialization completed, position being transmitted cyclically.*)
+        Busy : BOOL; (*The function block is active and must continue to be called.*)
+        CommandAborted : BOOL; (*The command was aborted by another command.*)
+        Error : BOOL; (*An error occurred during execution.*)
+        ErrorID : DINT; (*Error number.*)
+        InCyclicVelocity : BOOL; (*The specified cyclic velocity is reached in the current cycle.*)
+    END_VAR
+    VAR
+        Internal : McInternalType; (*Internal variable*)
+    END_VAR
 END_FUNCTION_BLOCK
 
 FUNCTION_BLOCK MC_BR_GetPosition_AcpTrak (*Translates a position from a specified source component to a position on a specified target component*)
@@ -1490,3 +1553,4 @@ FUNCTION_BLOCK MC_BR_TrgPointReadInfo_AcpTrak (*Returns information about a trig
 		Internal : McInternalType;
 	END_VAR
 END_FUNCTION_BLOCK
+

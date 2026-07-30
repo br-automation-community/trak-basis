@@ -69,6 +69,7 @@ TYPE
 		Options : McAdvOffsetParType; (*Structure for using optional  functions
 Note:
 Parameters left at default values disable the associated optional functions.*)
+		ResetMode : MpAxisShiftResetModeEnum; (*Reset mode for command negative edge behavior in case of active shift movement*)
 	END_STRUCT;
 	MpAxisPhasingParType : 	STRUCT 
 		Shift : LREAL; (*Phase shift in the master position of the slave axis [Measurement units].*)
@@ -78,7 +79,13 @@ Parameters left at default values disable the associated optional functions.*)
 		Options : McAdvPhasingParType; (*Structure for using optional  functions
 Note:
 Parameters left at default values disable the associated optional functions.*)
+		ResetMode : MpAxisShiftResetModeEnum; (*Reset mode for command negative edge behavior in case of active shift movement*)
 	END_STRUCT;
+	MpAxisShiftResetModeEnum : 
+	(
+	mcSHIFT_RESET_MODE_END_OF_SHIFT, (*Shift ended at the end of shift movement*)
+	mcSHIFT_RESET_MODE_IMMEDIATE (*Shift aborted immediately. This might cause a velocity jump*)
+	);
 	MpAxisCouplingInfoType : 	STRUCT 
 		SlaveReady : BOOL; (*Slave axis ready for operation (Powered + IsHomed( when needed ))*)
 		MasterReady : BOOL; (*Master axis ready for operation (CommunicationReady)*)
@@ -450,7 +457,8 @@ Parameters left at "0" disable the associated advanced function. *)
 		(
 		mcAXB_CFG_SEC_ALL, (*Whole configuration structere is used*)
 		mcAXB_CFG_SEC_DRIVE_CTRL, (*Only Drive.Controller section is used*)
-		mcAXB_CFG_SEC_MOVE_LIMITS (*Only Axis.MovementLimits section is used*)
+		mcAXB_CFG_SEC_MOVE_LIMITS, (*Only Axis.MovementLimits section is used. Only for mcAXIS_BASIC_CFG_READ,mcAXIS_BASIC_CFG_WRITE *)
+		mcAXB_CFG_SEC_ALL_WITH_FEAT(*Whole configuration structere is used including Features. Only for mcAXIS_BASIC_CFG_LOAD,mcAXIS_BASIC_CFG_SAVE,mcAXIS_BASIC_CFG_CREATE *)
 		);
 	MpAxisBasicConfigCmdEnum : 
 		(
@@ -493,11 +501,92 @@ Parameters left at "0" disable the associated advanced function. *)
 		AxisType : MpAXBModuleAxTypeEnum;
 		Channel : MpAXBModuleChannelEnum;
 		Motor : MpAXBMotorType;
+		Encoder : MpAXBEncoderType;
 	END_STRUCT;
 
 	MpAXBMotorType : 	STRUCT
 		Type : MpAXBMotorDataTypeEnum; 
 		Data : UDINT;
+	END_STRUCT;
+
+	MpAXBEncPlInCrdType : STRUCT (*Encoder plug in card*)
+		Card : STRING[50]; (*Card order number*)
+		Subslot : MpAXBEncPlInCrdSubslotEnum; (*Drive subslot used for encoder plug-in card*)
+	END_STRUCT;
+
+	MpAXBEncPlInCrdSubslotEnum :
+		( (*Drive subslot for plugin card*)
+		mcAXB_ENC_SUB_SLOT_NOT_USE := 0, (*Subslot not used*)
+		mcAXB_ENC_SUB_SLOT_1 := 1, (*Sub slot 1*)
+		mcAXB_ENC_SUB_SLOT_2 := 2, (*Sub slot 2*)
+		mcAXB_ENC_SUB_SLOT_3 := 3 (*Sub slot 2*)
+		);
+
+	MpAXBEncModuleEnum :
+		( (*Encoder card type*)
+		mcAXB_ENC_ACP_ONBOARD := 0, (*ACOPOS onboard encoder*)
+		mcAXB_ENC_ACP_ENC_CRD := 1, (*ACOPOS encoder plug-in cards (8AC12x.6x-x)*)
+		mcAXB_ENC_ACP_MUL_ENC_CRD := 2, (*ACOPOSmulti encoder plug-in cards (8BAC012x.00x-x)*)
+		mcAXB_ENC_ACP_P3_ENC_CRD := 3, (*ACOPOS P3 triple-encoder plug-in cards (8EAC012x.003-1, 8EAC015x.003-1)*)
+		mcAXB_ENC_ACP_P3_SNG_ENC_CRD := 4, (*ACOPOS P3 single-encoder plug-in cards (8EAC012x.001-1, 8EAC015x.001-1)*)
+		mcAXB_ENC_STP_ONBOARD := 5 (*Stepper module onboard encoder*)
+		);
+
+	MpAXBEncTypeEnum :
+		( (*Encoder logical interface type*)
+		mcAXB_ENC_TYP_NOT_USE := 0, (*Not used*)
+		mcAXB_ENC_TYP_ENDAT := 1, (*EnDat*)
+		mcAXB_ENC_TYP_HIPERFACE := 2, (*Hiperface*)
+		mcAXB_ENC_TYP_HIPERFACE_DSL := 3, (*Hiperface DSL*)
+		mcAXB_ENC_TYP_TFORMAT := 4, (*T-Format - Tamagawa digital interface*)
+		mcAXB_ENC_TYP_BISS := 5, (*BISS*)
+		mcAXB_ENC_TYP_SSI := 6, (*SSI*)
+		mcAXB_ENC_TYP_SSI_SINE := 7, (*SSI sine*)
+		mcAXB_ENC_TYP_SINE := 8, (*Sine*)
+		mcAXB_ENC_TYP_SINE_W_DCM := 9, (*Sine with DCM*)
+		mcAXB_ENC_TYP_INCR := 10, (*Incremental*)
+		mcAXB_ENC_TYP_INCR_WITH_DCM := 11, (*Incremental with DCM*)
+		mcAXB_ENC_TYP_RES := 12, (*Resolver*)
+		mcAXB_ENC_TYP_LINMOT := 13, (*LinMot*)
+		mcAXB_ENC_TYP_ENDAT_3 := 14, (*EnDat 3*)
+		mcAXB_ENC_TYP_ENDAT_SAFE_MOTION := 15, (*EnDat Safe Motion*)
+		mcAXB_ENC_TYP_MOT_DAT_IF := 16  (*Motion Data Interface - B&R bi-directional asynchronous serial interface*)
+		);
+
+	MpAXBEncInterfaceEnum :
+	( (*Encoder physical interface type*)
+		mcAXB_ENC_PI_NOT_USE := 0, (*Not used*)
+		mcAXB_ENC_PI_ACP_ONB_ENC := 1, (*ACOPOS onboard encoder*)
+		mcAXB_ENC_PI_ACP_P3_ONB_X41 := 2, (*ACOPOS P3 onboard interface X41*)
+		mcAXB_ENC_PI_ACP_P3_ONB_X42 := 3, (*ACOPOS P3 onboard interface X42*)
+		mcAXB_ENC_PI_ACP_P3_ONB_X43 := 4, (*ACOPOS P3 onboard interface X43*)
+		mcAXB_ENC_PI_ACP_P3_PLIN_X41X := 5, (*ACOPOS P3 plug-in card interface X41x*)
+		mcAXB_ENC_PI_ACP_P3_PLIN_X42X := 6, (*ACOPOS P3 plug-in card interface X42x*)
+		mcAXB_ENC_PI_ACP_P3_PLIN_X43X := 7, (*ACOPOS P3 plug-in card interface X43x*)
+		mcAXB_ENC_PI_ACP_PLIN_X11 := 8, (*ACOPOS plug-in card interface X11*)
+		mcAXB_ENC_PI_ACP_MIC_ONB_X6A := 9, (*ACOPOSmicro onboard interface X6A*)
+		mcAXB_ENC_PI_ACP_MIC_ONB_X6B := 10, (*ACOPOSmicro onboard interface X6B*)
+		mcAXB_ENC_PI_ACPM_PLIN_X11 := 11, (*ACOPOSmulti plug-in interface X11*)
+		mcAXB_ENC_PI_ACPR_ONB_X11A := 12, (*ACOPOSremote onboard interface X11A*)
+		mcAXB_ENC_PI_ACP_MOT_ONB := 13, (*ACOPOSmotor onboard interface*)
+		mcAXB_ENC_PI_STP_MOD_ONB := 14, (*Stepper X20 module onboard interface*)
+		mcAXB_ENC_PI_ACP_MIC_STP_ONB_X6 := 15, (*ACOPOSmicro Stepper onboard interface X6*)
+		mcAXB_ENC_PI_ACP_MIC_STP_ONB_X6A := 16, (*ACOPOSmicro Stepper onboard interface X6A*)
+		mcAXB_ENC_PI_ACP_MIC_STP_ONB_X6B := 17, (*ACOPOSmicro Stepper onboard interface X6B*)
+		mcAXB_ENC_PI_STP_ONB_X3 := 18, (*Stepper module X67 onboard interface X3*)
+		mcAXB_ENC_PI_STP_ONB_X4 := 19 (*Stepper module X67 onboard interface X4*)
+	);
+
+	MpAXBEncDatType : STRUCT (*Encoder data*)
+		Interface : MpAXBEncInterfaceEnum := mcAXB_ENC_PI_NOT_USE; (*Encoder interface, physical plug-in card or onboard*)
+		Type : MpAXBEncTypeEnum := mcAXB_ENC_TYP_NOT_USE; (*Encoder interface type*)
+		Data : UDINT := 0; (*Reference do encoder data*)
+	END_STRUCT;
+	MpAXBEncoderType : STRUCT (*Encoder configuration*)
+		Module : MpAXBEncModuleEnum; (*Encoder source*)
+		PlugInCard : MpAXBEncPlInCrdType; (*Encoder plug in card when used*)
+		Data : UDINT; (*Encoder data. Address of variable of type MpAXBEncDatType[NumberOfEncoders]*)
+		NumberOfEncoders : USINT; (*Number of encoders in interface*)
 	END_STRUCT;
 
 	MpAxisBasicConfigParType : 	STRUCT 
@@ -506,4 +595,5 @@ Parameters left at "0" disable the associated advanced function. *)
 		AxisName : STRING[250];
 		Module : MpAXBModuleType;
 	END_STRUCT;
+	
 END_TYPE
