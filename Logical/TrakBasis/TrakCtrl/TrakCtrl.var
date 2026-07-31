@@ -90,6 +90,7 @@ VAR RETAIN
 END_VAR
 VAR
 	EquivalentShPos : ARRAY[0..TRAK_MAX_SHUTTLE] OF UINT; (*Checks equivalence between actual and previous shuttle positions (used in ID recovery)*)
+	EquivalentShPosFound : ARRAY[0..TRAK_MAX_SHUTTLE] OF BOOL; (*Marks if a match was actually found for index i, since 0 is both a valid slot and the array default (used in ID recovery)*)
 END_VAR
 (********************************************************************
  * Temp variables
