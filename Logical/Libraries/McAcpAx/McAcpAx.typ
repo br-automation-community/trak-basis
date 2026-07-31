@@ -58,6 +58,14 @@ TYPE
 		mcACPAX_LL_WITHOUT_FEED_FORWARD    (*Only the share of torque that results from control deviations is limited. Feed-forward torque is ignored*)
 	);
 
+	McAcpAxLimitLoadParIDModeEnum :
+	(
+		mcACPAX_LLPM_NO_INIT := 0, (*Value of ParID will not be initialized - default value*)
+		mcACPAX_LLPM_INIT_FB_INPUT := 1 (*Value of ParID will be initialized with the value of respective input*)
+
+	);
+
+
 	McAcpAxBrakeTestCmdEnum :
 	(
 		mcACPAX_BRAKE_TEST_INIT := 0,		 (*Transfers parameters for holding brake test*)
@@ -85,7 +93,8 @@ TYPE
 		mcACPAX_ACOPOS_MICRO,		 (*ACOPOSmicro*)
 		mcACPAX_ACOPOS_REMOTE, 	 (*ACOPOSremote*)
 		mcACPAX_ACOPOS_MOTOR,		 (*ACOPOSmotor*)
-		mcACPAX_ACOPOS_P3			 (*ACOPOS P3*)
+		mcACPAX_ACOPOS_P3,			 (*ACOPOS P3*)
+		mcACPAX_ACOPOS_XSB			 (*ACOPOS XSB*)
 	);
 
 	McAcpAxModuleTypeEnum :
@@ -218,6 +227,16 @@ TYPE
 		mcACPAX_SLL_LIMIT_AND_REPORT := 0  (*Limit load (torque) and report limitation status.*)
 	);
 
+	McAcpAxVibCtrlStatusEnum :
+	(
+		mcACPAX_VIBCRL_OFF := 0, (*Vibration control is not active*)
+		mcACPAX_VIBCTRL_IDLE := 1, (*Vibration control is idle*)
+		mcACPAX_VIBCTRL_BOOST := 2, (*Vibration control boost*)
+		mcACPAX_VIBCTRL_OPERATIONAL := 3, (*Vibration control is operational *)
+		mcACPAX_VIBCTRL_BRAKE := 4 (*Vibration control brake*)
+	);
+
+
 	McAcpAxHomingAddTorqLimParType : STRUCT
 		PositiveDirection : REAL; (*Positive torque limit value for homing to blocks. If '0.0' is specified, the value of 'TorqueLimit' is used for positive direction. [Nm]*)
 		NegativeDirection : REAL; (*Negative torque limit value for homing to blocks. If '0.0' is specified, the value of 'TorqueLimit' is used for negative direction. [Nm]*)
@@ -275,6 +294,9 @@ TYPE
 		LoadPosDecelParID : UINT; (*ParID with limit value for decelerating torque in the positive direction*)
 		LoadNegAccelParID : UINT; (*ParID with limit value for accelerating torque in the negative direction*)
 		LoadNegDecelParID : UINT; (*ParID with limit value for decelerating torque in the negative direction*)
+		LoadParIDMode : McAcpAxLimitLoadParIDModeEnum; (*Mode which defines if the ParID is initialized with the respective input value*)
+		StopMode : McLimitLoadStopModeEnum; (*Mode defines how and if limits are switched when movement is aborted*)
+		StopTorque : REAL; (*If Stop mode is mcLLSM_USER_DEFINED, switch over to limit value contained in StopTorque is performed*)
 	END_STRUCT;
 
 	McAcpAxBrakeParType : STRUCT
@@ -738,5 +760,87 @@ TYPE
 	McAcpAxAdvSctrlLimitLoadParType : STRUCT
 		LoadPositiveParID : UINT; (*Parameter ID of the positive load (torque) limit.*)
 		LoadNegativeParID : UINT; (*Parameter ID of the negative load (torque) limit.*)
+	END_STRUCT;
+
+	McAcpAxSafeOutDataType : STRUCT
+		Control_Reset : BOOL; (*Reset bit*)
+		Control_Activate : BOOL; (*Enable axis of the SafeMotion module*)
+		Control_STO : BOOL; (*STO control bit (FALSE = requested, if configured in safety application)*)
+		Control_SBC : BOOL; (*SBC control bit (FALSE = requested, if configured in safety application)*)
+		Control_SS1 : BOOL; (*SS1 control bit (FALSE = requested, if configured in safety application)*)
+		reserved_bit5 : BOOL; (*Reserved*)
+		Control_STO1 : BOOL; (*STO1 control bit (FALSE = requested, if configured in safety application)*)
+		reserved_bit7 : BOOL; (*Reserved*)
+		Control_SOS : BOOL; (*SOS control bit (FALSE = requested, if configured in safety application)*)
+		Control_SS2 : BOOL; (*SS2 control bit (FALSE = requested, if configured in safety application)*)
+		Control_SLA : BOOL; (*SLA control bit (FALSE = requested, if configured in safety application)*)
+		Control_SLS1 : BOOL; (*SLS1 control bit (FALSE = requested, if configured in safety application)*)
+		Control_SLS2 : BOOL; (*SLS2 control bit (FALSE = requested, if configured in safety application)*)
+		reserved_bit13 : BOOL; (*Reserved*)
+		Control_SLS3 : BOOL; (*SLS3 control bit (FALSE = requested, if configured in safety application)*)
+		Control_SLS4 : BOOL; (*SLS4 control bit (FALSE = requested, if configured in safety application)*)
+		Control_SDI_P : BOOL; (*SDI positive control bit (FALSE = requested, if configured in safety application)*)
+		Control_SDI_N : BOOL; (*SDI negative control bit (FALSE = requested, if configured in safety application)*)
+		Control_SLI : BOOL; (*SLI control bit (FALSE = requested, if configured in safety application)*)
+		Control_SBT : BOOL; (*SBT control bit (FALSE = requested, if configured in safety application)*)
+		reserved_bit20 : BOOL; (*Reserved*)
+		Control_SLT : BOOL; (*SLT control bit (FALSE = requested, if configured in safety application)*)
+		Control_SwitchUserData : BOOL; (*Switch between output of SafeSpeed (FALSE) and SafeTorque (TRUE) on output SafeUserData*)
+		reserved_bit23 : BOOL; (*Reserved*)
+		reserved_bit24 : BOOL; (*Reserved*)
+		Control_Homing : BOOL; (*Homing control bit (TRUE = safe homing requested)*)
+		Control_RefSwitch : BOOL; (*Reference switch input*)
+		Control_SLP : BOOL; (*SLP control bit (FALSE = requested, if configured in safety application)*)
+		reserved_bit28 : BOOL; (*Reserved*)
+		reserved_bit29 : BOOL; (*Reserved*)
+		Control_SwitchHomingMode : BOOL; (*Switch between configured homing mode (FALSE) and restore Remanent Safe Position (TRUE)*)
+		reserved_bit31 : BOOL; (*Reserved*)
+	END_STRUCT;
+
+	McAcpAxSafeInDataType : STRUCT
+		Status_NotErrFunc : BOOL; (*Functional Fail Safe status bit (FALSE = functional error)*)
+		Status_Operational : BOOL; (*Axis is in state Operational*)
+		Status_STO : BOOL; (*STO status bit (TRUE = active)*)
+		Status_SBC : BOOL; (*SBC status bit (TRUE = active)*)
+		Status_SS1 : BOOL; (*SS1 status bit (TRUE = active)*)
+		Status_NotErrEnc : BOOL; (*Encoder error status bit (FALSE = encoder error)*)
+		Status_STO1 : BOOL; (*STO1 status bit (TRUE = active)*)
+		Status_SDC : BOOL; (*SDC status bit (TRUE = active)*)
+		Status_SOS : BOOL; (*SOS status bit (TRUE = active)*)
+		Status_SS2 : BOOL; (*SS2 status bit (TRUE = active)*)
+		Status_SLA : BOOL; (*SLA status bit (TRUE = active)*)
+		Status_SLS1 : BOOL; (*SLS1 status bit (TRUE = active)*)
+		Status_SLS2 : BOOL; (*SLS2 status bit (TRUE = active)*)
+		reserved_bit13 : BOOL; (*Reserved*)
+		Status_SLS3 : BOOL; (*SLS3 status bit (TRUE = active)*)
+		Status_SLS4 : BOOL; (*SLS4 status bit (TRUE = active)*)
+		Status_SDI_P : BOOL; (*SDI positive status bit (TRUE = active)*)
+		Status_SDI_N : BOOL; (*SDI negative status bit (TRUE = active)*)
+		Status_SLI : BOOL; (*SLI status bit (TRUE = active)*)
+		Status_SBT_Valid : BOOL; (*SBT valid bit (TRUE = valid)*)
+		Status_SBT_Active : BOOL; (*SBT active bit (TRUE = active)*)
+		Status_SLT : BOOL; (*SLT status bit (TRUE = active)*)
+		Status_SFR : BOOL; (*At least one safety function is requested*)
+		Status_AllReqActive : BOOL; (*All requested safety functions are active*)
+		Status_NotErrEnc2 : BOOL; (*Encoder error status bit 2 (FALSE = encoder error)*)
+		Status_Homing : BOOL; (*Safe position valid bit (TRUE = valid)*)
+		Status_ReqHomingOK : BOOL; (*State of the safe homing request*)
+		Status_SLP : BOOL; (*SLP status bit (TRUE = active)*)
+		Status_SMP : BOOL; (*SMP status bit (TRUE = active)*)
+		Status_SafeUserData : BOOL; (*SafeUserData status bit (TRUE = SafeUserData active)*)
+		Status_RSP_Valid : BOOL; (*RSP valid bit (TRUE = valid)*)
+		Status_SetPosAlive : BOOL; (*Alive-testing of set position is valid*)
+		SafePosition : DINT; (*Safe position*)
+		SafeUserData : DINT; (*Safe speed or safe torque*)
+	END_STRUCT;
+
+
+	McAcpAxVibCtrlStatusType : STRUCT
+		Status : McAcpAxVibCtrlStatusEnum; (*Vibration control status*)
+		PhaseDifference : REAL; (*Difference of the phase (3rd to 1st harmonic)*)
+		Amplitude : REAL; (*Amplitude of 3rd harmonic*)
+		AdditionalAmplitude : REAL; (*Change of the amplitude*)
+		AdditionalFrequency : REAL; (*Change of the frequency*)
+		ReferenceSignal : REAL; (*Reference excitation signal*)
 	END_STRUCT;
 END_TYPE

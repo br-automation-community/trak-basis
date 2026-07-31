@@ -1,6 +1,6 @@
 /* Automation Studio generated header file */
 /* Do not edit ! */
-/* McAxis 6.3.0 */
+/* McAxis 6.7.2 */
 
 #ifndef _MCAXIS_
 #define _MCAXIS_
@@ -9,7 +9,7 @@ extern "C"
 {
 #endif
 #ifndef _McAxis_VERSION
-#define _McAxis_VERSION 6.3.0
+#define _McAxis_VERSION 6.7.2
 #endif
 
 #include <bur/plctypes.h>
@@ -21,11 +21,11 @@ extern "C"
 #ifdef _SG4
 #include <McBase.h>
 #endif
- 
+
 #ifdef _SG3
 #include <McBase.h>
 #endif
- 
+
 #ifdef _SGC
 #include <McBase.h>
 #endif
@@ -163,7 +163,9 @@ typedef enum McShiftModeEnum
 {	mcSHIFT_ABSOLUTE,
 	mcSHIFT_RELATIVE,
 	mcSHIFT_ABSOLUTE_NO_RESET,
-	mcSHIFT_RELATIVE_NO_RESET
+	mcSHIFT_RELATIVE_NO_RESET,
+	mcSHIFT_ABSOLUTE_RESET_ENABLE,
+	mcSHIFT_RELATIVE_RESET_ENABLE
 } McShiftModeEnum;
 
 typedef enum McProfileBaseEnum
@@ -359,6 +361,25 @@ typedef enum McAutoTuneStateEnum
 	mcAT_SYNCHRON_MOTOR = 10
 } McAutoTuneStateEnum;
 
+typedef enum McSdoDataTypeEnum
+{	mcSDO_PARTYPE_BOOL = 1,
+	mcSDO_PARTYPE_SINT,
+	mcSDO_PARTYPE_INT,
+	mcSDO_PARTYPE_DINT,
+	mcSDO_PARTYPE_USINT,
+	mcSDO_PARTYPE_UINT,
+	mcSDO_PARTYPE_UDINT,
+	mcSDO_PARTYPE_REAL,
+	mcSDO_PARTYPE_VOID = 65535
+} McSdoDataTypeEnum;
+
+typedef enum McProcessSdoModeEnum
+{	mcSDO_GET = 0,
+	mcSDO_SET,
+	mcSDO_GET_NO_NCT,
+	mcSDO_GET_NO_LOG
+} McProcessSdoModeEnum;
+
 typedef enum McCamAutPrepRestartModeEnum
 {	mcPREP_RESTART_POSITIVE,
 	mcPREP_RESTART_NEGATIVE,
@@ -388,6 +409,12 @@ typedef enum McLimitLoadModeEnum
 {	mcLL_WITH_FEED_FORWARD,
 	mcLL_WITHOUT_FEED_FORWARD
 } McLimitLoadModeEnum;
+
+typedef enum McLimitLoadStopModeEnum
+{	mcLLSM_DEFAULT = 0,
+	mcLLSM_USER_DEFINED = 1,
+	mcLLSM_MAX_TORQUE = 2
+} McLimitLoadStopModeEnum;
 
 typedef enum McAcpAxAutoTuneOrientationEnum
 {	mcACPAX_ORIENTATION_HORIZONTAL,
@@ -740,6 +767,22 @@ typedef enum McAFANERNetwErrReacEnum
 {	mcAFANERNER_DEF = 0,
 	mcAFANERNER_DELAYED = 1
 } McAFANERNetwErrReacEnum;
+
+typedef enum McAFSDOPTTranOrdEnum
+{	mcAFSDOPTTO_END_OF_INIT = 0,
+	mcAFSDOPTTO_ST_OF_INIT = 1
+} McAFSDOPTTranOrdEnum;
+
+typedef enum McSDOPTRowDatTypEnum
+{	mcSDOPTRDT_BOOL = 1,
+	mcSDOPTRDT_SINT = 2,
+	mcSDOPTRDT_INT = 3,
+	mcSDOPTRDT_DINT = 4,
+	mcSDOPTRDT_USINT = 5,
+	mcSDOPTRDT_UINT = 6,
+	mcSDOPTRDT_UDINT = 7,
+	mcSDOPTRDT_REAL = 8
+} McSDOPTRowDatTypEnum;
 
 typedef struct McAdvCycDriveErrDecParType
 {	enum McDisableModeEnum DisableMode;
@@ -1105,6 +1148,8 @@ typedef struct McAdvBrLimitLoadCamParType
 	signed long LoadFactorPos;
 	signed long PositionFactorNeg;
 	signed long LoadFactorNeg;
+	enum McLimitLoadStopModeEnum StopMode;
+	float StopTorque;
 } McAdvBrLimitLoadCamParType;
 
 typedef struct McMechDevCompDataType
@@ -1270,6 +1315,15 @@ typedef struct McCheckAutCompResultType
 {	plcbit LimitsExceeded;
 	double CalculatedValue;
 } McCheckAutCompResultType;
+
+typedef struct McProcessSdoType
+{	unsigned short Index;
+	unsigned char SubIndex;
+	unsigned long VariableAddress;
+	enum McSdoDataTypeEnum DataType;
+	plcbit Valid;
+	unsigned long ErrorInfo;
+} McProcessSdoType;
 
 typedef struct McABTLinBdType
 {	enum McCfgLocLenUnitEnum MeasurementUnit;
@@ -1831,6 +1885,23 @@ typedef struct McCfgAxFeatAcpNetwErrReacType
 typedef struct McCfgAxFeatAcpCycDatProcType
 {	enum McPTCEnum ProcessingTaskClass;
 } McCfgAxFeatAcpCycDatProcType;
+
+typedef struct McCfgAxFeatSdoParTabType
+{	struct McCfgReferenceType SDOParameterTableReference;
+	enum McAFSDOPTTranOrdEnum TransferOrder;
+} McCfgAxFeatSdoParTabType;
+
+typedef struct McSDOPTRowType
+{	plcstring Index[251];
+	unsigned char Subindex;
+	float Value;
+	enum McSDOPTRowDatTypEnum DataType;
+	plcstring Description[251];
+} McSDOPTRowType;
+
+typedef struct McCfgSdoParTabType
+{	struct McCfgUnboundedArrayType Row;
+} McCfgSdoParTabType;
 
 typedef struct MC_BR_CyclicDriveErrorDecel
 {
@@ -3505,6 +3576,25 @@ typedef struct MC_BR_PowerOnTest
 	plcbit Error;
 } MC_BR_PowerOnTest_typ;
 
+typedef struct MC_BR_ProcessSDO
+{
+	/* VAR_INPUT (analog) */
+	struct McAxisType* Axis;
+	unsigned long DataAddress;
+	unsigned long NumberOfSdo;
+	enum McProcessSdoModeEnum Mode;
+	/* VAR_OUTPUT (analog) */
+	signed long ErrorID;
+	/* VAR (analog) */
+	struct McInternalType Internal;
+	/* VAR_INPUT (digital) */
+	plcbit Execute;
+	/* VAR_OUTPUT (digital) */
+	plcbit Done;
+	plcbit Busy;
+	plcbit Error;
+} MC_BR_ProcessSDO_typ;
+
 
 
 /* Prototyping of functions and function blocks */
@@ -3584,6 +3674,7 @@ _BUR_PUBLIC void MC_WriteDigitalOutput(struct MC_WriteDigitalOutput* inst);
 _BUR_PUBLIC void MC_BR_CamGetObjectData(struct MC_BR_CamGetObjectData* inst);
 _BUR_PUBLIC void MC_BR_CheckAutCompensation(struct MC_BR_CheckAutCompensation* inst);
 _BUR_PUBLIC void MC_BR_PowerOnTest(struct MC_BR_PowerOnTest* inst);
+_BUR_PUBLIC void MC_BR_ProcessSDO(struct MC_BR_ProcessSDO* inst);
 
 
 #ifdef __cplusplus

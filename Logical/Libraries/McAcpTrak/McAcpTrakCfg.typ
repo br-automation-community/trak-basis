@@ -1,6 +1,6 @@
 TYPE
 	McASMTrkSegType : STRUCT (*Segments which define the track*)
-		SegmentReference : McCfgUnboundedArrayType; (*Name of the referenced segment component*)
+		SegmentReference : McCfgUnboundedArrayType; (*Name of the referenced segment component (Connect array of type STRING)*)
 	END_STRUCT;
 	McASMTrkPosEnum :
 		( (*Position selector setting*)
@@ -55,7 +55,7 @@ TYPE
 	END_STRUCT;
 	McASMTrksType : STRUCT (*Settings for all tracks that define the assembly*)
 		TrackSeparation : LREAL; (*Gap between the stator surfaces of opposite tracks [measurement units]*)
-		Track : McCfgUnboundedArrayType; (*Track definition*)
+		Track : McCfgUnboundedArrayType; (*Track definition (Connect array of type McASMTrkType)*)
 	END_STRUCT;
 	McASMCSSActSegSimOnPLCEnum :
 		( (*All segments of the assembly are simulated on the PLC*)
@@ -65,10 +65,20 @@ TYPE
 	McASMCSSStopReacEnum :
 		( (*Stop reaction selector setting*)
 		mcASMCSSSR_INDUCT_HALT := 0, (*Induction halt - Shuttle stop by setting current in all segment coils*)
-		mcASMCSSSR_COAST_TO_STANDSTILL := 1 (*Coast to standstill - Shuttle stop by reseting current in all segment coils - stop by friction*)
+		mcASMCSSSR_COAST_TO_STANDSTILL := 1, (*Coast to standstill - Shuttle stop by reseting current in all segment coils - stop by friction*)
+		mcASMCSSSR_SSMAN := 2 (*Standstillmaneuver - Shuttle stop by controlled standstill maneuver*)
 		);
+	McASMCSSStopReacSsmanFbEnum :
+		( (*Reaction in case standstill maneuver is not possible*)
+		mcASMCSSSRSF_INDUCT_HALT := 0, (*Induction halt - Shuttle stop by setting current in all segment coils*)
+		mcASMCSSSRSF_COAST_TO_STANDSTILL := 1 (*Coast to standstill - Shuttle stop by reseting current in all segment coils - stop by friction*)
+		);
+	McASMCSSStopReacSsmanType : STRUCT (*Type mcASMCSSSR_SSMAN settings*)
+		Fallback : McASMCSSStopReacSsmanFbEnum; (*Reaction in case standstill maneuver is not possible*)
+	END_STRUCT;
 	McASMCSSStopReacType : STRUCT (*Reaction in case of certain stop conditions*)
 		Type : McASMCSSStopReacEnum; (*Stop reaction selector setting*)
+		Standstillmaneuver : McASMCSSStopReacSsmanType; (*Type mcASMCSSSR_SSMAN settings*)
 	END_STRUCT;
 	McASMCSSSpdFltrEnum :
 		( (*Speed filter selector setting*)
@@ -192,7 +202,7 @@ TYPE
 		Diverter : McASMCSSCPAPSUPSDivType; (*Diverter parameters*)
 	END_STRUCT;
 	McASMCSSCPAPSUseType : STRUCT (*Type mcASMCSSCPAPS_USE settings*)
-		ParameterSet : McCfgUnboundedArrayType; (*Additional parameter set*)
+		ParameterSet : McCfgUnboundedArrayType; (*Additional parameter set (Connect array of type McASMCSSCPAPSUseParSetType)*)
 	END_STRUCT;
 	McASMCSSCPAPSType : STRUCT (*Enable additional parameter sets that can be switched during runtime*)
 		Type : McASMCSSCPAPSEnum; (*Additional parameter sets selector setting*)
@@ -301,14 +311,16 @@ TYPE
 		CollisionAvoidance : LREAL; (*Safety distance which is added to the distance a shuttle has to keep to obstacles [measurement units]*)
 		ErrorStopAvoidance : LREAL; (*Additional safety distance between shuttles in order to avoid error stops [measurement units]*)
 		ConflictZoneStopDistance : LREAL; (*Additional safety distance between a shuttle and a conflict zone barrier [measurement units]*)
+		SegmentBarrierStopDistance : LREAL; (*Stop distance in front of segment barrier [measurement units]*)
 	END_STRUCT;
 	McASMShShSttType : STRUCT (*Parameter settings for the shuttles*)
-		ShuttleStereotypeReference : McCfgUnboundedArrayType; (*Name of the shuttle stereotype reference*)
+		ShuttleStereotypeReference : McCfgUnboundedArrayType; (*Name of the shuttle stereotype reference (Connect array of type McCfgReferenceType)*)
 	END_STRUCT;
 	McASMShMagnPltCfgShTypEnum :
 		( (*Shuttle type 1-1 selector setting*)
 		mcASMSMPCST_ST8F1SX100 := 0, (*ST8F1Sx100 - 5 magnet poles on both sides of the shuttle (standard and legacy)*)
 		mcASMSMPCST_ST8F1SX102 := 1, (*ST8F1Sx102 - 5 magnet poles on one side of the shuttle (standard and legacy)*)
+		mcASMSMPCST_ST8F1SM102 := 9, (*ST8F1SM102 - 5 magnet poles on one side of the shuttle (metal-to-metal)*)
 		mcASMSMPCST_ST8F1SA104 := 2, (*ST8F1SA104 - 5 magnet poles skewed on both sides of the shuttle (legacy)*)
 		mcASMSMPCST_ST8F1SA106 := 3, (*ST8F1SA106 - 5 magnet poles skewed on one side of the shuttle (legacy)*)
 		mcASMSMPCST_ST8F1SA201 := 4, (*ST8F1SA201 - 10 magnet poles on both sides of the shuttle (legacy)*)
@@ -321,7 +333,7 @@ TYPE
 		Type : McASMShMagnPltCfgShTypEnum; (*Shuttle type 1-1 selector setting*)
 	END_STRUCT;
 	McASMShMagnPltCfgType : STRUCT (*Parameter settings for the magnet plates*)
-		ShuttleType : McCfgUnboundedArrayType; (*Parameters of the magnet plate*)
+		ShuttleType : McCfgUnboundedArrayType; (*Parameters of the magnet plate (Connect array of type McASMShMagnPltCfgShTypType)*)
 	END_STRUCT;
 	McASMShColAvStratEnum :
 		( (*Strategy selector setting*)
@@ -332,6 +344,14 @@ TYPE
 		);
 	McASMShColAvStratType : STRUCT (*Type of active collision avoidance*)
 		Type : McASMShColAvStratEnum; (*Strategy selector setting*)
+	END_STRUCT;
+	McASMShColAvAdjModEnum :
+		( (*Adjustment mode selector setting*)
+		mcASMSCAAM_BASIC := 0, (*Basic - Mode for moderate distances between elastic shuttles*)
+		mcASMSCAAM_DENSE := 1 (*Dense - Mode to minimize the distance between elastic shuttles*)
+		);
+	McASMShColAvAdjModType : STRUCT (*Adjustment mode*)
+		Type : McASMShColAvAdjModEnum; (*Adjustment mode selector setting*)
 	END_STRUCT;
 	McASMShColAvMaxMdlDimLenType : STRUCT (*Length of the shuttle model*)
 		ExtentToFront : LREAL; (*Extent from the center point of the magnet plate to the front of the shuttle [measurement units]*)
@@ -355,6 +375,7 @@ TYPE
 	END_STRUCT;
 	McASMShColAvType : STRUCT (*Parameter settings for the collision avoidance*)
 		Strategy : McASMShColAvStratType; (*Type of active collision avoidance*)
+		AdjustmentMode : McASMShColAvAdjModType; (*Adjustment mode*)
 		MaximumModelDimensions : McASMShColAvMaxMdlDimType; (*Maximum model dimensions for calculating the diverters*)
 		VirtualShuttlesScope : McASMShVSCASType; (*Scope for collision avoidance of virtual shuttles*)
 	END_STRUCT;
@@ -363,6 +384,18 @@ TYPE
 	END_STRUCT;
 	McASMShCplgType : STRUCT
 		CouplingFeature : McASMShCplgCplgFeatType; (*Settings for Cam or GearIn coupling*)
+	END_STRUCT;
+	McASMShBaReDatEnum :
+		( (*Backup and restore data selector setting*)
+		mcASMSHBAREDAT_NOT_USE := 0, (*Not used -*)
+		mcASMSHBAREDAT_USE := 1 (*Used -*)
+		);
+	McASMShBaReDatUseType : STRUCT (*Type mcASMSHBAREDAT_USE settings*)
+		Variable : STRING[250]; (*USINT[n] variable. Choose n according to the documentation.*)
+	END_STRUCT;
+	McASMShBaReDatType : STRUCT (*Backup and restore data*)
+		Type : McASMShBaReDatEnum; (*Backup and restore data selector setting*)
+		Used : McASMShBaReDatUseType; (*Type mcASMSHBAREDAT_USE settings*)
 	END_STRUCT;
 	McASMShType : STRUCT (*Settings for the shuttles*)
 		MaximumCount : UINT; (*Maximum count of shuttles in the assembly*)
@@ -374,9 +407,10 @@ TYPE
 		MagnetPlateConfigurations : McASMShMagnPltCfgType; (*Parameter settings for the magnet plates*)
 		CollisionAvoidance : McASMShColAvType; (*Parameter settings for the collision avoidance*)
 		Coupling : McASMShCplgType;
+		BackupAndRestoreData : McASMShBaReDatType; (*Backup and restore data*)
 	END_STRUCT;
 	McASMAsmFeatType : STRUCT (*Features for an assembly*)
-		AssemblyFeatureReference : McCfgUnboundedArrayType; (*Name of the assembly feature reference*)
+		AssemblyFeatureReference : McCfgUnboundedArrayType; (*Name of the assembly feature reference (Connect array of type McCfgReferenceType)*)
 	END_STRUCT;
 	McASMVisProcTskCEnum :
 		( (*Cyclic task class for command processing*)
@@ -433,6 +467,21 @@ TYPE
 	McCfgAsmDiverter : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_DIVERTER*)
 		Diverter : McASMCSSDiverterType; (*Diverter parameters*)
 	END_STRUCT;
+	McCfgAsmColAvoidStrategy : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_STRATEGY*)
+		Strategy : McASMShColAvStratType; (*Type of active collision avoidance*)
+	END_STRUCT;
+	McCfgAsmColAvoidAdjustMode : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_ADJUSTMENT_MODE*)
+		AdjustmentMode : McASMShColAvAdjModType; (*Adjustment mode*)
+	END_STRUCT;
+	McCfgAsmDistReserves : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_DIST_RESERVES*)
+		DistanceReserves : McASMShDistResType; (*Parameter setting for shuttle distance reserves*)
+	END_STRUCT;
+	McCfgAsmColAvoidVirtShScope : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_VIRT_SH_SCOPE*)
+		VirtualShuttlesScope : McASMShVSCASType; (*Scope for collision avoidance of virtual shuttles*)
+	END_STRUCT;
+	McCfgAsmBaReShDatType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_BR_SH_DATA*)
+		BackupAndRestoreData : McASMShBaReDatType; (*Backup and restore data*)
+	END_STRUCT;
 	McAFCCplgObjType : STRUCT (*Coupling object*)
 		Name : STRING[250]; (*Name of the coupling object*)
 		ShuttleCount : UINT; (*Maximum number of simultaneously coupled shuttles*)
@@ -440,7 +489,7 @@ TYPE
 		CamListReference : McCfgReferenceType; (*Name of the cam list reference*)
 	END_STRUCT;
 	McCfgAsmFeatCplgType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_FEAT_CPLG*)
-		CouplingObject : McCfgUnboundedArrayType; (*Coupling object*)
+		CouplingObject : McCfgUnboundedArrayType; (*Coupling object (Connect array of type McAFCCplgObjType)*)
 	END_STRUCT;
 	McAFSSDShOnSecOrientEnum :
 		( (*Orientation of the shuttle*)
@@ -453,7 +502,7 @@ TYPE
 		mcAFSSDSOSD_SET_OF_SH := 1 (*Set of shuttles - Definition of the whole shuttle set*)
 		);
 	McAFSSDShOnSecDefSngShType : STRUCT (*Type mcAFSSDSOSD_SNG_SH settings*)
-		Position : McCfgUnboundedArrayType; (*Position on the sector [measurement units]*)
+		Position : McCfgUnboundedArrayType; (*Position on the sector [measurement units] (Connect array of type LREAL)*)
 	END_STRUCT;
 	McAFSSDShOnSecDefSetOfShType : STRUCT (*Type mcAFSSDSOSD_SET_OF_SH settings*)
 		StartPosition : LREAL; (*Position of the first shuttle on the sector [measurement units]*)
@@ -471,7 +520,7 @@ TYPE
 		Definition : McAFSSDShOnSecDefType; (*Type of shuttle definition*)
 	END_STRUCT;
 	McCfgAsmFeatSimShDefType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_FEAT_SIM_SH_DEF*)
-		ShuttleOnSector : McCfgUnboundedArrayType; (*Shuttle to be initialized*)
+		ShuttleOnSector : McCfgUnboundedArrayType; (*Shuttle to be initialized (Connect array of type McAFSSDShOnSecType)*)
 	END_STRUCT;
 	McAFSTSecTrcCfgSecRstEnum :
 		( (*Sector restricted*)
@@ -497,7 +546,7 @@ TYPE
 		Orientation : McAFSAAPrioOrientEnum; (*Orientation of the shuttle*)
 	END_STRUCT;
 	McCfgAsmFeatShAutAttType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_FEAT_SH_AUT_ATT*)
-		Priority : McCfgUnboundedArrayType; (*Sector priority definition for the shuttle auto attachment*)
+		Priority : McCfgUnboundedArrayType; (*Sector priority definition for the shuttle auto attachment (Connect array of type McAFSAAPrioType)*)
 	END_STRUCT;
 	McAFLLScpEnum :
 		( (*Scope selector setting*)
@@ -554,9 +603,23 @@ TYPE
 		Type : McAFLLMotLimAccEnum; (*Acceleration selector setting*)
 		Basic : McAFLLMotLimAccBasicType; (*Type mcAFLLMLA_BASIC settings*)
 	END_STRUCT;
+	McAFLLMotLimDecEnum :
+		( (*Deceleration selector setting*)
+		mcAFLLMLD_NOT_USE := 0, (*Not used - Acceleration limit not used*)
+		mcAFLLMLD_BASIC := 1, (*Basic -*)
+		mcAFLLMLD_ADV := 2 (*Advanced -*)
+		);
+	McAFLLMotLimDecBasicType : STRUCT (*Type mcAFLLMLD_BASIC settings*)
+		Deceleration : REAL; (*Deceleration limit in any movement direction [measurement units/s²]*)
+	END_STRUCT;
+	McAFLLMotLimDecType : STRUCT (*Limit the deceleration*)
+		Type : McAFLLMotLimDecEnum; (*Deceleration selector setting*)
+		Basic : McAFLLMotLimDecBasicType; (*Type mcAFLLMLD_BASIC settings*)
+	END_STRUCT;
 	McAFLLMotLimType : STRUCT (*Limits which are effective*)
 		Velocity : McAFLLMotLimVelType; (*Limit the velocity*)
 		Acceleration : McAFLLMotLimAccType; (*Limit the acceleration*)
+		Deceleration : McAFLLMotLimDecType; (*Limit the deceleration*)
 	END_STRUCT;
 	McAFLLType : STRUCT (*Local limit definition*)
 		Scope : McAFLLScpType; (*Defines for which shuttles the local limit applies*)
@@ -564,14 +627,14 @@ TYPE
 		MotionLimits : McAFLLMotLimType; (*Limits which are effective*)
 	END_STRUCT;
 	McCfgAsmFeatLocLimType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_FEAT_LOC_LIM*)
-		LocalLimit : McCfgUnboundedArrayType; (*Local limit definition*)
+		LocalLimit : McCfgUnboundedArrayType; (*Local limit definition (Connect array of type McAFLLType)*)
 	END_STRUCT;
 	McAFESExFromEnum :
 		( (*Exclusion from selector setting*)
 		mcAFESEF_ASM_PWR_ON := 0 (*Assembly power on - Exclude segments from assembly power on*)
 		);
 	McAFESExFromAsmPwrOnType : STRUCT (*Type mcAFESEF_ASM_PWR_ON settings*)
-		SegmentReference : McCfgUnboundedArrayType; (*Name of the referenced segment component*)
+		SegmentReference : McCfgUnboundedArrayType; (*Name of the referenced segment component (Connect array of type STRING)*)
 	END_STRUCT;
 	McAFESExFromType : STRUCT (*Scope of exclusion*)
 		Type : McAFESExFromEnum; (*Exclusion from selector setting*)
@@ -592,19 +655,21 @@ TYPE
 		Width : McAFSSRSetWidType; (*Width of the shuttle model*)
 	END_STRUCT;
 	McCfgAsmFeatShShpRegType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_FEAT_SH_SHP_REG*)
-		Set : McCfgUnboundedArrayType; (*Model dimensions set*)
+		Set : McCfgUnboundedArrayType; (*Model dimensions set (Connect array of type McAFSSRSetType)*)
 	END_STRUCT;
 	McAFSGSegGrpSegType : STRUCT (*List of segments*)
-		SegmentReference : McCfgUnboundedArrayType; (*Name of the referenced segment component*)
+		SegmentReference : McCfgUnboundedArrayType; (*Name of the referenced segment component (Connect array of type STRING)*)
 	END_STRUCT;
 	McAFSGSegGrpType : STRUCT (*Group of segments accessed by assembly functionality*)
 		Name : STRING[250]; (*Name of the group*)
 		Segments : McAFSGSegGrpSegType; (*List of segments*)
 	END_STRUCT;
 	McCfgAsmFeatSegGrpType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_FEAT_SEG_GRP*)
-		SegmentGroup : McCfgUnboundedArrayType; (*Group of segments accessed by assembly functionality*)
+		SegmentGroup : McCfgUnboundedArrayType; (*Group of segments accessed by assembly functionality (Connect array of type McAFSGSegGrpType)*)
 	END_STRUCT;
 	McAFSNAsmSnType : STRUCT (*Assembly snapshot*)
+		RecordedCycles : UDINT; (*Buffer size of recorded cycles*)
+		RecorderStopDelay : UDINT; (*Number of cycles to wait until the recording of data is stopped after a snapshot is triggered*)
 	END_STRUCT;
 	McCfgAsmFeatSnapType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ASM_FEAT_SNAP*)
 		AssemblySnapshot : McAFSNAsmSnType; (*Assembly snapshot*)
@@ -625,7 +690,7 @@ TYPE
 		PositionRelativeTo : McSCSegPosRelToEnum; (*Absolute position from which the position is counted*)
 	END_STRUCT;
 	McSCIntmSegType : STRUCT (*Segments between the start and the end segment*)
-		SegmentReference : McCfgUnboundedArrayType; (*Name of the referenced segment component*)
+		SegmentReference : McCfgUnboundedArrayType; (*Name of the referenced segment component (Connect array of type STRING)*)
 	END_STRUCT;
 	McCfgSecCompType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_SEC_COMP*)
 		StartSegment : McSCSegType; (*Begin of the sector*)
@@ -812,7 +877,7 @@ TYPE
 	McSEGAppearEmuType : STRUCT (*Type mcSEGA_EMU settings*)
 		NodeNumber : UINT; (*Node number of the segment to be emulated*)
 	END_STRUCT;
-	McSEGAppearType : STRUCT (*Appearance of the segment*)
+	McSEGAppearType : STRUCT (*Appearance of the segment (Deprecated)*)
 		Type : McSEGAppearEnum; (*Appearance selector setting*)
 		Emulation : McSEGAppearEmuType; (*Type mcSEGA_EMU settings*)
 	END_STRUCT;
@@ -835,10 +900,20 @@ TYPE
 		( (*Stop reaction selector setting*)
 		mcSEGSR_USE_ASM_SET := 0, (*Use assembly setting - Use the defined setting from the assembly configuration*)
 		mcSEGSR_INDUCT_HALT := 1, (*Induction halt - Shuttle stop by setting current in all segment coils*)
-		mcSEGSR_COAST_TO_STANDSTILL := 2 (*Coast to standstill - Shuttle stop by reseting current in all segment coils - stop by friction*)
+		mcSEGSR_COAST_TO_STANDSTILL := 2, (*Coast to standstill - Shuttle stop by reseting current in all segment coils - stop by friction*)
+		mcSEGSR_SSMAN := 3 (*Standstillmaneuver - Shuttle stop by controlled standstill maneuver*)
 		);
+	McSEGStopReacSsmanFbEnum :
+		( (*Reaction in case standstill maneuver is not possible*)
+		mcSEGSRSF_INDUCT_HALT := 0, (*Induction halt - Shuttle stop by setting current in all segment coils*)
+		mcSEGSRSF_COAST_TO_STANDSTILL := 1 (*Coast to standstill - Shuttle stop by reseting current in all segment coils - stop by friction*)
+		);
+	McSEGStopReacSsmanType : STRUCT (*Type mcSEGSR_SSMAN settings*)
+		Fallback : McSEGStopReacSsmanFbEnum; (*Reaction in case standstill maneuver is not possible*)
+	END_STRUCT;
 	McSEGStopReacType : STRUCT (*Reaction in case of certain stop conditions*)
 		Type : McSEGStopReacEnum; (*Stop reaction selector setting*)
+		Standstillmaneuver : McSEGStopReacSsmanType; (*Type mcSEGSR_SSMAN settings*)
 	END_STRUCT;
 	McSEGSpdFltrEnum :
 		( (*Speed filter selector setting*)
@@ -870,10 +945,36 @@ TYPE
 		SegmentReference : STRING[250]; (*Name of the referenced segment component*)
 		SegmentSectorReference : STRING[250]; (*Name of the referenced sector component*)
 		SegmentSectorDirection : McSEGSegSecDirEnum; (*Direction of the referenced sector component*)
-		Appearance : McSEGAppearType; (*Appearance of the segment*)
+		Appearance : McSEGAppearType; (*Appearance of the segment (Deprecated)*)
 		Compensation : McSEGCompType; (*Segment compensation settings*)
 		StopReaction : McSEGStopReacType; (*Reaction in case of certain stop conditions*)
 		SpeedFilter : McSEGSpdFltrType; (*Filter for actual speed calculation*)
 		PositionControllerLagMonitor : McSEGPosLagMonType; (*Monitor the position controller lag*)
+	END_STRUCT;
+	McVIRTSEGSegShpEnum :
+		( (*Shape of the virutal segment component*)
+		mcVIRTSEGSS_STR := 0, (*Straight - Straight segment*)
+		mcVIRTSEGSS_CRV_AB := 1, (*Curve AB - Curve segment A*)
+		mcVIRTSEGSS_CRV_BA := 2, (*Curve BA - Curve segment B*)
+		mcVIRTSEGSS_CIR := 3, (*Circular - Circular arc segment*)
+		mcVIRTSEGSS_CMPCT_CRV_180 := 4 (*Compact curve 180° - Compact 180° curve*)
+		);
+	McVIRTSEGEmuEnum :
+		( (*Emulation selector setting*)
+		mcVIRTSEGE_INACT := 0, (*Inactive - No emulation of a physical segment*)
+		mcVIRTSEGE_ACT := 1 (*Active - Virtual segment emulates a physical segment*)
+		);
+	McVIRTSEGEmuActType : STRUCT (*Type mcVIRTSEGE_ACT settings*)
+		NodeNumber : UINT; (*Node number of the segment to be emulated*)
+	END_STRUCT;
+	McVIRTSEGEmuType : STRUCT (*Virtual segment emulates a physical segment*)
+		Type : McVIRTSEGEmuEnum; (*Emulation selector setting*)
+		Active : McVIRTSEGEmuActType; (*Type mcVIRTSEGE_ACT settings*)
+	END_STRUCT;
+	McCfgVirtSegType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_VIRT_SEG*)
+		SegmentSectorReference : STRING[250]; (*Name of the referenced sector component*)
+		SegmentSectorDirection : McSEGSegSecDirEnum; (*Direction of the referenced sector component*)
+		SegmentShape : McVIRTSEGSegShpEnum; (*Shape of the virutal segment component*)
+		Emulation : McVIRTSEGEmuType; (*Virtual segment emulates a physical segment*)
 	END_STRUCT;
 END_TYPE

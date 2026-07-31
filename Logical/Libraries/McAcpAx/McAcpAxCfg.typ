@@ -643,6 +643,174 @@ TYPE
 		Encoder : McMSAMCEncType; (*Motor encoder*)
 		Gearbox : McMSAMCGBType; (*Gearbox*)
 	END_STRUCT;
+	McMBLDCMotEnum :
+		( (*Motor selector setting*)
+		mcMBLDCM_DEF := 0 (*Default -*)
+		);
+	McMSBEMAngEnum :
+		( (*Angle selector setting*)
+		mcMBLDCMDEMA_USRDEF := 0, (*User-defined -*)
+		mcMBLDCMDEMA_UDEF := 1 (*Undefined -*)
+		);
+	McMSBEMAngUsrDefType : STRUCT (*Type mcMBLDCMDEMA_USRDEF settings*)
+		CommutationOffset : REAL; (*Angle between motor encoder zero point and flux space vector [rad]*)
+	END_STRUCT;
+	McMSBEMAngUdefAutIdentEnum :
+		( (*Automatic identification selector setting*)
+		mcMBLDCMDEMAUAI_NOT_USE := 0, (*Not used -*)
+		mcMBLDCMDEMAUAI_SAT := 1, (*Saturation -*)
+		mcMBLDCMDEMAUAI_DIT := 2, (*Dither -*)
+		mcMBLDCMDEMAUAI_DIT2 := 5 (*Dither2 -*)
+		);
+	McMSBEMAngUdefAutIdentSatType : STRUCT (*Type mcMBLDCMDEMAUAI_SAT settings*)
+		PhasingCurrent : REAL; (*Current for identification (optional) [A]*)
+	END_STRUCT;
+	McMSBEMAngUdefAutIdentDitType : STRUCT (*Type mcMBLDCMDEMAUAI_DIT settings*)
+		PhasingCurrent : REAL; (*Current for identification (optional) [A]*)
+		PhasingTime : REAL; (*Duration of identification (optional) [s]*)
+	END_STRUCT;
+	McMSBEMAngUdefAutIdentDit2Type : STRUCT (*Type mcMBLDCMDEMAUAI_DIT2 settings*)
+		PhasingCurrent : REAL; (*Current for identification (optional) [A]*)
+		PhasingTime : REAL; (*Duration of identification (optional) [s]*)
+	END_STRUCT;
+	McMSBEMAngUdefAutIdentType : STRUCT (*Automatic identification of the angle when switching on the controller*)
+		Type : McMSBEMAngUdefAutIdentEnum; (*Automatic identification selector setting*)
+		Saturation : McMSBEMAngUdefAutIdentSatType; (*Type mcMBLDCMDEMAUAI_SAT settings*)
+		Dither : McMSBEMAngUdefAutIdentDitType; (*Type mcMBLDCMDEMAUAI_DIT settings*)
+		Dither2 : McMSBEMAngUdefAutIdentDit2Type; (*Type mcMBLDCMDEMAUAI_DIT2 settings*)
+	END_STRUCT;
+	McMSBEMAngUdefType : STRUCT (*Type mcMBLDCMDEMA_UDEF settings*)
+		AutomaticIdentification : McMSBEMAngUdefAutIdentType; (*Automatic identification of the angle when switching on the controller*)
+	END_STRUCT;
+	McMSBEMAngType : STRUCT (*Angle between motor encoder zero point and flux space vector*)
+		Type : McMSBEMAngEnum; (*Angle selector setting*)
+		UserDefined : McMSBEMAngUsrDefType; (*Type mcMBLDCMDEMA_USRDEF settings*)
+		Undefined : McMSBEMAngUdefType; (*Type mcMBLDCMDEMA_UDEF settings*)
+	END_STRUCT;
+	McMBLDCMotDefEncMntType : STRUCT (*Encoder mounting*)
+		Angle : McMSBEMAngType; (*Angle between motor encoder zero point and flux space vector*)
+	END_STRUCT;
+	McMMSBTmpMdlEnum :
+		( (*Temperature model selector setting*)
+		mcMMSBTM_CURBASED := 0, (*Current-based -*)
+		mcMMSBTM_NOT_USE := 1 (*Not used -*)
+		);
+	McMMSBTMCurBsdType : STRUCT (*Type mcMMSBTM_CURBASED settings*)
+		LimitTemperature : REAL; (*Maximum permissible winding temperature [°C]*)
+		WindingCrossSection : REAL; (*Phase conductor cross section [mm²]*)
+	END_STRUCT;
+	McMMSBTmpMdlType : STRUCT (*Model for winding temperature monitoring*)
+		Type : McMMSBTmpMdlEnum; (*Temperature model selector setting*)
+		CurrentBased : McMMSBTMCurBsdType; (*Type mcMMSBTM_CURBASED settings*)
+	END_STRUCT;
+	McMBLDCMotDefType : STRUCT (*Type mcMBLDCM_DEF settings*)
+		NumberOfPolePairs : USINT; (*Number of pole pairs*)
+		NominalSpeed : REAL; (*Nominal speed [rpm]*)
+		MaximumSpeed : REAL; (*Maximum permissible speed [rpm]*)
+		NominalCurrent : REAL; (*Phase current for generating the nominal torque at nominal speed (RMS value) [A]*)
+		StallCurrent : REAL; (*Phase current for generating the stall torque (RMS value) [A]*)
+		PeakCurrent : REAL; (*Phase current for generating the peak torque (RMS value) [A]*)
+		NominalTorque : REAL; (*Motor torque at nominal current [Nm]*)
+		StallTorque : REAL; (*Motor torque at stall current [Nm]*)
+		PeakTorque : REAL; (*Motor torque at peak current [Nm]*)
+		VoltageConstant : REAL; (*Induced voltage per speed (RMS value of voltage at 1000 rpm, phase-phase) [mV/rpm]*)
+		TorqueConstant : REAL; (*Torque constant [Nm/A]*)
+		StatorResistance : REAL; (*Stator resistance (phase-phase) [Ω]*)
+		StatorInductance : REAL; (*Stator inductance (phase-phase) [mH]*)
+		MomentOfInertia : REAL; (*Mass moment of inertia [kgcm²]*)
+		EncoderMounting : McMBLDCMotDefEncMntType; (*Encoder mounting*)
+		TemperatureModel : McMMSBTmpMdlType; (*Model for winding temperature monitoring*)
+	END_STRUCT;
+	McMBLDCMotType : STRUCT
+		Type : McMBLDCMotEnum; (*Motor selector setting*)
+		Default : McMBLDCMotDefType; (*Type mcMBLDCM_DEF settings*)
+	END_STRUCT;
+	McMBLDCBrkEnum :
+		( (*Brake selector setting*)
+		mcMBLDCB_NOT_USE := 0, (*Not used -*)
+		mcMBLDCB_USE := 1 (*Used -*)
+		);
+	McMBLDCBrkUseType : STRUCT (*Type mcMBLDCB_USE settings*)
+		NominalCurrent : REAL; (*Current of the holding brake [A]*)
+		NominalTorque : REAL; (*Minimum holding torque of the holding brake [Nm]*)
+		ActivationDelay : REAL; (*Holding torque build-up time after switching off the operating voltage [s]*)
+		ReleaseDelay : REAL; (*Holding torque decaying time after switching on the operating voltage [s]*)
+		MomentOfInertia : REAL; (*Moment of inertia for the holding brake [kgcm²]*)
+	END_STRUCT;
+	McMBLDCBrkType : STRUCT (*Holding brake*)
+		Type : McMBLDCBrkEnum; (*Brake selector setting*)
+		Used : McMBLDCBrkUseType; (*Type mcMBLDCB_USE settings*)
+	END_STRUCT;
+	McCfgMotBLDCType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MOT_BLDC*)
+		Motor : McMBLDCMotType;
+		Brake : McMBLDCBrkType; (*Holding brake*)
+	END_STRUCT;
+	McMSTEPMotEnum :
+		( (*Motor selector setting*)
+		mcMSTEPM_DEF := 0, (*Default -*)
+		mcMSTEPM_SIMPLE := 1 (*Simple - Only Encoderless current control possible*)
+		);
+	McMSTEPMotDefEncMntType : STRUCT (*Encoder mounting*)
+		Angle : McMSBEMAngType; (*Angle between motor encoder zero point and flux space vector*)
+	END_STRUCT;
+	McMSTEPMotDefType : STRUCT (*Type mcMSTEPM_DEF settings*)
+		StepAngle : REAL; (*Step angle [°]*)
+		NominalSpeed : REAL; (*Nominal speed [rpm]*)
+		MaximumSpeed : REAL; (*Maximum permissible speed [rpm]*)
+		NominalCurrent : REAL; (*Phase current for generating the nominal torque at nominal speed (RMS value) [A]*)
+		ContinuousStallCurrent : REAL; (*Phase current for generating the holding torque (RMS value) [A]*)
+		PeakCurrent : REAL; (*Phase current for generating the peak torque (RMS value) [A]*)
+		NominalTorque : REAL; (*Motor torque at nominal current [Nm]*)
+		HoldingTorque : REAL; (*Motor torque at continuous stall current [Nm]*)
+		PeakTorque : REAL; (*Motor torque at peak current [Nm]*)
+		VoltageConstant : REAL; (*Induced voltage per speed (RMS value of voltage at 1000 rpm, phase-phase) [mV/rpm]*)
+		TorqueConstant : REAL; (*Torque constant [Nm/A]*)
+		StatorResistance : REAL; (*Stator resistance (phase-phase) [Ω]*)
+		StatorInductance : REAL; (*Stator inductance (phase-phase) [mH]*)
+		MomentOfInertia : REAL; (*Mass moment of inertia [kgcm²]*)
+		EncoderMounting : McMSTEPMotDefEncMntType; (*Encoder mounting*)
+		TemperatureModel : McMMSBTmpMdlType; (*Model for winding temperature monitoring*)
+	END_STRUCT;
+	McMSTEPMotSimpleEncMntType : STRUCT (*Encoder mounting*)
+		Angle : McMSBEMAngType; (*Angle between motor encoder zero point and flux space vector*)
+	END_STRUCT;
+	McMSTEPMotSimpleType : STRUCT (*Type mcMSTEPM_SIMPLE settings*)
+		StepAngle : REAL; (*Step angle [°]*)
+		MaximumSpeed : REAL; (*Maximum permissible speed [rpm]*)
+		ContinuousCurrent : REAL; (*Phase current (RMS value) that does not overheat the motor, required for temperature model [A]*)
+		PeakCurrent : REAL; (*Maximum phase current (RMS value) [A]*)
+		HoldingTorque : REAL; (*Motor torque at continuous stall current [Nm]*)
+		StatorResistance : REAL; (*Stator resistance (phase-phase) [Ω]*)
+		StatorInductance : REAL; (*Stator inductance (phase-phase) [mH]*)
+		MomentOfInertia : REAL; (*Mass moment of inertia [kgcm²]*)
+		EncoderMounting : McMSTEPMotSimpleEncMntType; (*Encoder mounting*)
+		TemperatureModel : McMMSBTmpMdlType; (*Model for winding temperature monitoring*)
+	END_STRUCT;
+	McMSTEPMotType : STRUCT
+		Type : McMSTEPMotEnum; (*Motor selector setting*)
+		Default : McMSTEPMotDefType; (*Type mcMSTEPM_DEF settings*)
+		Simple : McMSTEPMotSimpleType; (*Type mcMSTEPM_SIMPLE settings*)
+	END_STRUCT;
+	McMSTEPBrkEnum :
+		( (*Brake selector setting*)
+		mcMSTEPB_NOT_USE := 0, (*Not used -*)
+		mcMSTEPB_USE := 1 (*Used -*)
+		);
+	McMSTEPBrkUseType : STRUCT (*Type mcMSTEPB_USE settings*)
+		NominalCurrent : REAL; (*Current of the holding brake [A]*)
+		NominalTorque : REAL; (*Minimum holding torque of the holding brake [Nm]*)
+		ActivationDelay : REAL; (*Holding torque build-up time after switching off the operating voltage [s]*)
+		ReleaseDelay : REAL; (*Holding torque decaying time after switching on the operating voltage [s]*)
+		MomentOfInertia : REAL; (*Moment of inertia for the holding brake [kgcm²]*)
+	END_STRUCT;
+	McMSTEPBrkType : STRUCT (*Holding brake*)
+		Type : McMSTEPBrkEnum; (*Brake selector setting*)
+		Used : McMSTEPBrkUseType; (*Type mcMSTEPB_USE settings*)
+	END_STRUCT;
+	McCfgMotStepType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_MOT_STEP*)
+		Motor : McMSTEPMotType;
+		Brake : McMSTEPBrkType; (*Holding brake*)
+	END_STRUCT;
 	McAPICEIfTypEnum :
 		( (*Interface type selector setting*)
 		mcAPICEIT_NOT_USE := 0, (*Not used -*)
@@ -1397,6 +1565,29 @@ TYPE
 		ThermalCapacity : REAL; (*Thermal capacity [Ws/K]*)
 		Mounting : McBRMntType; (*Mounting variant*)
 	END_STRUCT;
+	McVUTmpMdlEnum :
+		( (*Temperature model selector setting*)
+		mcVUTM_CURBASED := 1, (*Current-based -*)
+		mcVUTM_NOT_USE := 2 (*Not used -*)
+		);
+	McVUTMCurBsdType : STRUCT (*Type mcVUTM_CURBASED settings*)
+		LimitTemperature : REAL; (*Maximum permissible winding temperature [°C]*)
+		WindingCrossSection : REAL; (*Phase conductor cross section [mm²]*)
+		ThermalTimeConstant : REAL; (*Thermal time constant [s]*)
+	END_STRUCT;
+	McVUTmpMdlType : STRUCT (*Model for winding temperature monitoring*)
+		Type : McVUTmpMdlEnum; (*Temperature model selector setting*)
+		CurrentBased : McVUTMCurBsdType; (*Type mcVUTM_CURBASED settings*)
+	END_STRUCT;
+	McCfgVibrUnitType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_VIBR_UNIT*)
+		MaximumMechanicalFrequency : REAL; (*Maximum mechanical frequency of the unit [Hz]*)
+		NominalVoltage : REAL; (*Nominal voltage (RMS value, phase-phase) [V]*)
+		NominalCurrent : REAL; (*Phase current rated (RMS value) [A]*)
+		PeakCurrent : REAL; (*Peak phase current (RMS value) [A]*)
+		StatorResistance : REAL; (*Stator resistance (phase-phase) [Ω]*)
+		StatorInductance : REAL; (*Stator inductance (phase-phase) [mH]*)
+		TemperatureModel : McVUTmpMdlType; (*Model for winding temperature monitoring*)
+	END_STRUCT;
 	McAMEType : STRUCT (*Parameter of hardware elements situated between motor encoder and load which influence the scaling*)
 		Gearbox : McCfgGearBoxType; (*Specifies a gearbox by defining the ratio between a gearbox input and output*)
 		RotaryToLinearTransformation : McCfgRotToLinTrfType; (*Specifies a transformation factor between the output of the gear and the actual load movement*)
@@ -1411,21 +1602,238 @@ TYPE
 		( (*Motor and position encoder selector setting*)
 		mcAELAE_ENC_X6A := 0, (*Encoder X6A - OnBoard encoder 1*)
 		mcAELAE_ENC_X6B := 1, (*Encoder X6B - OnBoard encoder 2*)
-		mcAELAE_ENC := 2, (*Encoder*)
+		mcAELAE_ENC := 2, (*Encoder -*)
 		mcAELAE_ENC_SS1X11 := 3, (*Encoder SS1.X11 - Plug-in module in SS1*)
 		mcAELAE_ENC_SS2X11 := 4, (*Encoder SS2.X11 - Plug-in module in SS2*)
-		mcAELAE_ENC_X11A := 5, (*Encoder X11A*)
+		mcAELAE_ENC_X11A := 5, (*Encoder X11A -*)
 		mcAELAE_ENC_SS3X11 := 6, (*Encoder SS3.X11 - Plug-in module in SS3*)
 		mcAELAE_ENC_SS4X11 := 7, (*Encoder SS4.X11 - Plug-in module in SS4*)
-		mcAELAE_ENC_X41 := 8, (*Encoder X41*)
+		mcAELAE_ENC_X41 := 8, (*Encoder X41 -*)
 		mcAELAE_ENC_SS1X41X := 9, (*Encoder SS1.X41x - Plug-in module in SS1*)
-		mcAELAE_ENC_X42 := 10, (*Encoder X42*)
+		mcAELAE_ENC_X42 := 10, (*Encoder X42 -*)
 		mcAELAE_ENC_SS1X42X := 11, (*Encoder SS1.X42x - Plug-in module in SS1*)
-		mcAELAE_ENC_X43 := 12, (*Encoder X43*)
-		mcAELAE_ENC_SS1X43X := 13 (*Encoder SS1.X43x - Plug-in module in SS1*)
+		mcAELAE_ENC_X43 := 12, (*Encoder X43 -*)
+		mcAELAE_ENC_SS1X43X := 13, (*Encoder SS1.X43x - Plug-in module in SS1*)
+		mcAELAE_ENC_1 := 14, (*Encoder 1 - OnBoard encoder 1*)
+		mcAELAE_ENC_2 := 15, (*Encoder 2 - OnBoard encoder 2*)
+		mcAELAE_EXT := 16 (*External - External encoder is used*)
 		);
+	McAELOEExtPosTypEnum :
+		( (*Position type selector setting*)
+		mcAELOEEPT_ABS := 0, (*Absolute - Get position from an absolute encoder*)
+		mcAELOEEPT_INCR := 1 (*Incremental - Get position from an incremental encoder*)
+		);
+	McAELOEExtPosTypAbsPosRngType : STRUCT (*Defines the range of the position value*)
+		LowerLimit : DINT; (*Lower limit of encoder range*)
+		UpperLimit : UDINT; (*Upper limit of encoder range*)
+	END_STRUCT;
+	McAELOEExtPosTypAbsType : STRUCT (*Type mcAELOEEPT_ABS settings*)
+		PositionRange : McAELOEExtPosTypAbsPosRngType; (*Defines the range of the position value*)
+	END_STRUCT;
+	McAELOEExtPosTypType : STRUCT (*Type of the encoder*)
+		Type : McAELOEExtPosTypEnum; (*Position type selector setting*)
+		Absolute : McAELOEExtPosTypAbsType; (*Type mcAELOEEPT_ABS settings*)
+	END_STRUCT;
+	McAELOEExtPosSrcEnum :
+		( (*Position source selector setting*)
+		mcAELOEEPS_IO_CH_DINT := 0, (*I/O channel DINT - Get position from a signed 32 bit I/O channel*)
+		mcAELOEEPS_IO_CH_UDINT := 1, (*I/O channel UDINT - Get position from an unsigned 32 bit I/O channel*)
+		mcAELOEEPS_IO_CH_INT := 2, (*I/O channel INT - Get position from a signed 16 bit I/O channel*)
+		mcAELOEEPS_IO_CH_UINT := 3, (*I/O channel UINT - Get position from an unsigned 16 bit I/O channel*)
+		mcAELOEEPS_VAR_DINT := 4, (*Variable DINT - Get position from a signed 32 bit variable*)
+		mcAELOEEPS_VAR_UDINT := 5, (*Variable UDINT - Get position from an unsigned 32 bit variable*)
+		mcAELOEEPS_VAR_INT := 6, (*Variable INT - Get position from a signed 16 bit variable*)
+		mcAELOEEPS_VAR_UINT := 7 (*Variable UINT - Get position from an unsigned 16 bit variable*)
+		);
+	McAELOEExtPosSrcIOChDINTType : STRUCT (*Type mcAELOEEPS_IO_CH_DINT settings*)
+		ChannelMapping : STRING[250]; (*Input source for the position*)
+	END_STRUCT;
+	McAELOEExtPosSrcIOChUDINTType : STRUCT (*Type mcAELOEEPS_IO_CH_UDINT settings*)
+		ChannelMapping : STRING[250]; (*Input source for the position*)
+	END_STRUCT;
+	McAELOEExtPosSrcIOChINTType : STRUCT (*Type mcAELOEEPS_IO_CH_INT settings*)
+		ChannelMapping : STRING[250]; (*Input source for the position*)
+	END_STRUCT;
+	McAELOEExtPosSrcIOChUINTType : STRUCT (*Type mcAELOEEPS_IO_CH_UINT settings*)
+		ChannelMapping : STRING[250]; (*Input source for the position*)
+	END_STRUCT;
+	McAELOEExtPosSrcVarDINTType : STRUCT (*Type mcAELOEEPS_VAR_DINT settings*)
+		PVMapping : STRING[250]; (*Input source for the position*)
+	END_STRUCT;
+	McAELOEExtPosSrcVarUDINTType : STRUCT (*Type mcAELOEEPS_VAR_UDINT settings*)
+		PVMapping : STRING[250]; (*Input source for the position*)
+	END_STRUCT;
+	McAELOEExtPosSrcVarINTType : STRUCT (*Type mcAELOEEPS_VAR_INT settings*)
+		PVMapping : STRING[250]; (*Input source for the position*)
+	END_STRUCT;
+	McAELOEExtPosSrcVarUINTType : STRUCT (*Type mcAELOEEPS_VAR_UINT settings*)
+		PVMapping : STRING[250]; (*Input source for the position*)
+	END_STRUCT;
+	McAELOEExtPosSrcType : STRUCT (*Position source*)
+		Type : McAELOEExtPosSrcEnum; (*Position source selector setting*)
+		IOChannelDINT : McAELOEExtPosSrcIOChDINTType; (*Type mcAELOEEPS_IO_CH_DINT settings*)
+		IOChannelUDINT : McAELOEExtPosSrcIOChUDINTType; (*Type mcAELOEEPS_IO_CH_UDINT settings*)
+		IOChannelINT : McAELOEExtPosSrcIOChINTType; (*Type mcAELOEEPS_IO_CH_INT settings*)
+		IOChannelUINT : McAELOEExtPosSrcIOChUINTType; (*Type mcAELOEEPS_IO_CH_UINT settings*)
+		VariableDINT : McAELOEExtPosSrcVarDINTType; (*Type mcAELOEEPS_VAR_DINT settings*)
+		VariableUDINT : McAELOEExtPosSrcVarUDINTType; (*Type mcAELOEEPS_VAR_UDINT settings*)
+		VariableINT : McAELOEExtPosSrcVarINTType; (*Type mcAELOEEPS_VAR_INT settings*)
+		VariableUINT : McAELOEExtPosSrcVarUINTType; (*Type mcAELOEEPS_VAR_UINT settings*)
+	END_STRUCT;
+	McAELOEExtValCkModOkEnum :
+		( (*Module ok selector setting*)
+		mcAELOEEVCMO_POS_SRC_DEV := 0, (*Position source device - Get module ok from the same device as the position source*)
+		mcAELOEEVCMO_IO_CH := 1, (*I/O channel - Get module ok from an I/O channel*)
+		mcAELOEEVCMO_VAR := 2, (*Variable - Get module ok from a variable*)
+		mcAELOEEVCMO_NOT_USE := 3 (*Not used - Module ok is not used*)
+		);
+	McAELOEExtValCkModOkIOChType : STRUCT (*Type mcAELOEEVCMO_IO_CH settings*)
+		ChannelMapping : STRING[250]; (*Input source for module ok*)
+	END_STRUCT;
+	McAELOEExtValCkModOkVarType : STRUCT (*Type mcAELOEEVCMO_VAR settings*)
+		PVMapping : STRING[250]; (*Input source for module ok*)
+	END_STRUCT;
+	McAELOEExtValCkModOkType : STRUCT (*Use module ok for validity check*)
+		Type : McAELOEExtValCkModOkEnum; (*Module ok selector setting*)
+		IOChannel : McAELOEExtValCkModOkIOChType; (*Type mcAELOEEVCMO_IO_CH settings*)
+		Variable : McAELOEExtValCkModOkVarType; (*Type mcAELOEEVCMO_VAR settings*)
+	END_STRUCT;
+	McAELOEExtValCkStDatEnum :
+		( (*Stale data selector setting*)
+		mcAELOEEVCSD_POS_SRC_DEV := 0, (*Position source device - Get stale data from the same device as the position source*)
+		mcAELOEEVCSD_IO_CH := 1, (*I/O channel - Get stale data from an I/O channel*)
+		mcAELOEEVCSD_VAR := 2, (*Variable - Get stale data from a variable*)
+		mcAELOEEVCSD_NOT_USE := 3 (*Not used - Stale data is not used*)
+		);
+	McAELOEExtValCkStDatIOChType : STRUCT (*Type mcAELOEEVCSD_IO_CH settings*)
+		ChannelMapping : STRING[250]; (*Input source for stale data*)
+	END_STRUCT;
+	McAELOEExtValCkStDatVarType : STRUCT (*Type mcAELOEEVCSD_VAR settings*)
+		PVMapping : STRING[250]; (*Input source for stale data*)
+	END_STRUCT;
+	McAELOEExtValCkStDatType : STRUCT (*Use stale data for validity check*)
+		Type : McAELOEExtValCkStDatEnum; (*Stale data selector setting*)
+		IOChannel : McAELOEExtValCkStDatIOChType; (*Type mcAELOEEVCSD_IO_CH settings*)
+		Variable : McAELOEExtValCkStDatVarType; (*Type mcAELOEEVCSD_VAR settings*)
+	END_STRUCT;
+	McAELOEExtValCkNetTimeEnum :
+		( (*Net time selector setting*)
+		mcAELOEEVCNT_NOT_USE := 0, (*Not used - Net time is not used*)
+		mcAELOEEVCNT_IO_CH := 1, (*I/O channel - Get net time from an I/O channel*)
+		mcAELOEEVCNT_VAR := 2 (*Variable - Get net time from a variable*)
+		);
+	McAELOEExtValCkNetTimeIOChType : STRUCT (*Type mcAELOEEVCNT_IO_CH settings*)
+		ChannelMapping : STRING[250]; (*Input source for net time*)
+	END_STRUCT;
+	McAELOEExtValCkNetTimeVarType : STRUCT (*Type mcAELOEEVCNT_VAR settings*)
+		PVMapping : STRING[250]; (*Input source for net time*)
+	END_STRUCT;
+	McAELOEExtValCkNetTimeType : STRUCT (*Use net time for validity check*)
+		Type : McAELOEExtValCkNetTimeEnum; (*Net time selector setting*)
+		IOChannel : McAELOEExtValCkNetTimeIOChType; (*Type mcAELOEEVCNT_IO_CH settings*)
+		Variable : McAELOEExtValCkNetTimeVarType; (*Type mcAELOEEVCNT_VAR settings*)
+	END_STRUCT;
+	McAELOEExtValCkEncOkEnum :
+		( (*Encoder ok selector setting*)
+		mcAELOEEVCEO_NOT_USE := 0, (*Not used - Encoder ok is not used*)
+		mcAELOEEVCEO_IO_CH := 1, (*I/O channel - Get encoder ok from an I/O channel*)
+		mcAELOEEVCEO_VAR := 2 (*Variable - Get encoder ok from a variable*)
+		);
+	McAELOEExtValCkEncOkIOChType : STRUCT (*Type mcAELOEEVCEO_IO_CH settings*)
+		ChannelMapping : STRING[250]; (*Input source for encoder ok*)
+	END_STRUCT;
+	McAELOEExtValCkEncOkVarType : STRUCT (*Type mcAELOEEVCEO_VAR settings*)
+		PVMapping : STRING[250]; (*Input source for encoder ok*)
+	END_STRUCT;
+	McAELOEExtValCkEncOkType : STRUCT (*Use encoder ok flag for validity check (True = position valid)*)
+		Type : McAELOEExtValCkEncOkEnum; (*Encoder ok selector setting*)
+		IOChannel : McAELOEExtValCkEncOkIOChType; (*Type mcAELOEEVCEO_IO_CH settings*)
+		Variable : McAELOEExtValCkEncOkVarType; (*Type mcAELOEEVCEO_VAR settings*)
+	END_STRUCT;
+	McAELOEExtValCkType : STRUCT (*Check if given position is valid*)
+		ModuleOk : McAELOEExtValCkModOkType; (*Use module ok for validity check*)
+		StaleData : McAELOEExtValCkStDatType; (*Use stale data for validity check*)
+		NetTime : McAELOEExtValCkNetTimeType; (*Use net time for validity check*)
+		EncoderOk : McAELOEExtValCkEncOkType; (*Use encoder ok flag for validity check (True = position valid)*)
+	END_STRUCT;
+	McAELOEExtRefPEnum :
+		( (*Reference pulse selector setting*)
+		mcAELOEERP_NOT_USE := 0, (*Not used - Reference pulse is not used*)
+		mcAELOEERP_IO_CH := 1, (*I/O channel - Reference pulse is used with I/O channel*)
+		mcAELOEERP_VAR := 2, (*Variable - Reference pulse is used with variable*)
+		mcAELOEERP_IO_CH_DINT := 3, (*I/O channel DINT - Reference pulse is used with I/O channel*)
+		mcAELOEERP_VAR_DINT := 4 (*Variable DINT - Reference pulse is used with variable*)
+		);
+	McAELOEExtRefPIOChPosType : STRUCT (*Position of the reference pulse*)
+		ChannelMapping : STRING[250]; (*Input source for the reference pulse position*)
+	END_STRUCT;
+	McAELOEExtRefPIOChCntType : STRUCT (*Count of the reference pulse*)
+		ChannelMapping : STRING[250]; (*Input source for the reference pulse count*)
+	END_STRUCT;
+	McAELOEExtRefPIOChType : STRUCT (*Type mcAELOEERP_IO_CH settings*)
+		Position : McAELOEExtRefPIOChPosType; (*Position of the reference pulse*)
+		Count : McAELOEExtRefPIOChCntType; (*Count of the reference pulse*)
+	END_STRUCT;
+	McAELOEExtRefPVarPosType : STRUCT (*Position of the reference pulse*)
+		PVMapping : STRING[250]; (*Input source for the reference pulse position*)
+	END_STRUCT;
+	McAELOEExtRefPVarCntType : STRUCT (*Count of the reference pulse*)
+		PVMapping : STRING[250]; (*Input source for the reference pulse count*)
+	END_STRUCT;
+	McAELOEExtRefPVarType : STRUCT (*Type mcAELOEERP_VAR settings*)
+		Position : McAELOEExtRefPVarPosType; (*Position of the reference pulse*)
+		Count : McAELOEExtRefPVarCntType; (*Count of the reference pulse*)
+	END_STRUCT;
+	McAELOEExtRefPIOChDINTPosType : STRUCT (*Position of the reference pulse*)
+		ChannelMapping : STRING[250]; (*Input source for the reference pulse position*)
+	END_STRUCT;
+	McAELOEExtRefPIOChDINTCntType : STRUCT (*Count of the reference pulse*)
+		ChannelMapping : STRING[250]; (*Input source for the reference pulse count*)
+	END_STRUCT;
+	McAELOEExtRefPIOChDINTType : STRUCT (*Type mcAELOEERP_IO_CH_DINT settings*)
+		Position : McAELOEExtRefPIOChDINTPosType; (*Position of the reference pulse*)
+		Count : McAELOEExtRefPIOChDINTCntType; (*Count of the reference pulse*)
+	END_STRUCT;
+	McAELOEExtRefPVarDINTPosType : STRUCT (*Position of the reference pulse*)
+		PVMapping : STRING[250]; (*Input source for the reference pulse position*)
+	END_STRUCT;
+	McAELOEExtRefPVarDINTCntType : STRUCT (*Count of the reference pulse*)
+		PVMapping : STRING[250]; (*Input source for the reference pulse count*)
+	END_STRUCT;
+	McAELOEExtRefPVarDINTType : STRUCT (*Type mcAELOEERP_VAR_DINT settings*)
+		Position : McAELOEExtRefPVarDINTPosType; (*Position of the reference pulse*)
+		Count : McAELOEExtRefPVarDINTCntType; (*Count of the reference pulse*)
+	END_STRUCT;
+	McAELOEExtRefPType : STRUCT (*Usage and settings for the evaluation of the reference pulse of the encoder*)
+		Type : McAELOEExtRefPEnum; (*Reference pulse selector setting*)
+		IOChannel : McAELOEExtRefPIOChType; (*Type mcAELOEERP_IO_CH settings*)
+		Variable : McAELOEExtRefPVarType; (*Type mcAELOEERP_VAR settings*)
+		IOChannelDINT : McAELOEExtRefPIOChDINTType; (*Type mcAELOEERP_IO_CH_DINT settings*)
+		VariableDINT : McAELOEExtRefPVarDINTType; (*Type mcAELOEERP_VAR_DINT settings*)
+	END_STRUCT;
+	McAELOEEPosFltrEnum :
+		( (*Position filter selector setting*)
+		mcAELOEEPF_EXTPOL_AND_DIST := 0 (*Extrapolation and disturbance - An extrapolation and disturbance filter is used*)
+		);
+	McAELOEEPosFltrExtpolDistType : STRUCT (*Type mcAELOEEPF_EXTPOL_AND_DIST settings*)
+		PositionFilterTimeConstant : REAL; (*Time constant for actual position filter*)
+		ExtrapolationTime : REAL; (*Extrapolation time for actual position filter*)
+	END_STRUCT;
+	McAELOEEPosFltrType : STRUCT (*Filter for the encoder position*)
+		Type : McAELOEEPosFltrEnum; (*Position filter selector setting*)
+		ExtrapolationAndDisturbance : McAELOEEPosFltrExtpolDistType; (*Type mcAELOEEPF_EXTPOL_AND_DIST settings*)
+	END_STRUCT;
+	McAELOneEncMotAndPosEncExtType : STRUCT (*Type mcAELAE_EXT settings*)
+		LinesPerEncoderRevolution : UDINT; (*Absolute number of lines of an encoder revolution [Lines/Rev]*)
+		PositionType : McAELOEExtPosTypType; (*Type of the encoder*)
+		PositionSource : McAELOEExtPosSrcType; (*Position source*)
+		ValidityCheck : McAELOEExtValCkType; (*Check if given position is valid*)
+		ReferencePulse : McAELOEExtRefPType; (*Usage and settings for the evaluation of the reference pulse of the encoder*)
+		PositionFilter : McAELOEEPosFltrType; (*Filter for the encoder position*)
+	END_STRUCT;
 	McAELOneEncMotAndPosEncType : STRUCT
 		Type : McAELAllEncEnum; (*Motor and position encoder selector setting*)
+		External : McAELOneEncMotAndPosEncExtType; (*Type mcAELAE_EXT settings*)
 	END_STRUCT;
 	McAELEncParSetEnum :
 		( (*Encoder parameter set selection*)
@@ -1464,17 +1872,116 @@ TYPE
 		PositionEncoder : McAELTwoEncPosEncType;
 		PositionDifferenceLimit : REAL; (*Position difference limit between motor and position encoder for stopping a movement [measurement units]*)
 	END_STRUCT;
+	McAELNoEncELCtrlModEnum :
+		( (*Encoderless control mode selector setting*)
+		mcAELNEECM_NOT_USE_ := 0, (*Not used - Encoderless control is not used*)
+		mcAELNEECM_EL_CUR_CTRL := 1, (*Encoderless current control - Motor follows the current space vector*)
+		mcAELNEECM_EL_POS_CTRL := 2 (*Encoderless position control - Actual position is estimated from magnetic flux*)
+		);
+	McACELCSetCurEnum :
+		( (*Set current direct component selector setting*)
+		mcACELCSC_AUT := 0, (*Automatic - Default value from drive is used*)
+		mcACELCSC_USR := 1 (*User - Defined value is used*)
+		);
+	McACELCSetCurUsrType : STRUCT (*Type mcACELCSC_USR settings*)
+		Value : REAL; (*Encoderless control: Set current direct component [A]*)
+	END_STRUCT;
+	McACELCSetCurType : STRUCT (*Encoderless control: Set current direct component*)
+		Type : McACELCSetCurEnum; (*Set current direct component selector setting*)
+		User : McACELCSetCurUsrType; (*Type mcACELCSC_USR settings*)
+	END_STRUCT;
+	McACELCKeepHomeEnum :
+		( (*Keep homing status selector setting*)
+		mcACELCKH_NOT_USE := 0, (*Not used - Homing status is reset when controller is switched off*)
+		mcACELCKH_USE := 1 (*Used - Homing status is kept when controller is switched off*)
+		);
+	McACELCKeepHomeType : STRUCT (*Keep homing status when controller is switched off*)
+		Type : McACELCKeepHomeEnum; (*Keep homing status selector setting*)
+	END_STRUCT;
+	McACELCKeepPhaseEnum :
+		( (*Keep phasing status selector setting*)
+		mcACELCKP_NOT_USE := 0, (*Not used - Phasing status is reset when controller is switched off*)
+		mcACELCKP_USE := 1 (*Used - Phasing status is kept when controller is switched off*)
+		);
+	McACELCKeepPhaseType : STRUCT (*Keep phasing status when controller is switched off*)
+		Type : McACELCKeepPhaseEnum; (*Keep phasing status selector setting*)
+	END_STRUCT;
+	McACELCCurType : STRUCT (*Type mcAELNEECM_EL_CUR_CTRL settings*)
+		SetCurrent : McACELCSetCurType; (*Encoderless control: Set current direct component*)
+		KeepHoming : McACELCKeepHomeType; (*Keep homing status when controller is switched off*)
+		KeepPhasing : McACELCKeepPhaseType; (*Keep phasing status when controller is switched off*)
+	END_STRUCT;
+	McACELCPosTlEnum :
+		( (*Transition level selector setting*)
+		mcACELCPT_TLAUTOMATIC := 0, (*TlAutomatic - Default value from drive is used (10/Number of motor pol pairs)*)
+		mcACELCPT_TLUSER := 1 (*TlUser - Defined value is used*)
+		);
+	McACELCPosTlTlUserType : STRUCT (*Type mcACELCPT_TLUSER settings*)
+		Value : REAL; (*Encoderless control: Transition level [1/s]*)
+	END_STRUCT;
+	McACELCPosTlType : STRUCT (*Encoderless control: Transition level*)
+		Type : McACELCPosTlEnum; (*Transition level selector setting*)
+		TlUser : McACELCPosTlTlUserType; (*Type mcACELCPT_TLUSER settings*)
+	END_STRUCT;
+	McACELCPosTzEnum :
+		( (*Transition zone selector setting*)
+		mcACELCPT_TZAUTOMATIC := 0, (*TzAutomatic - Default value from drive is used (5/Number of motor pol pairs)*)
+		mcACELCPT_TZUSER := 1 (*TzUser - Defined value is used*)
+		);
+	McACELCPosTzTzUserType : STRUCT (*Type mcACELCPT_TZUSER settings*)
+		Value : REAL; (*Encoderless control: Transition zone [1/s]*)
+	END_STRUCT;
+	McACELCPosTzType : STRUCT (*Encoderless control: Transition zone*)
+		Type : McACELCPosTzEnum; (*Transition zone selector setting*)
+		TzUser : McACELCPosTzTzUserType; (*Type mcACELCPT_TZUSER settings*)
+	END_STRUCT;
+	McACELCStalDetEnum :
+		( (*Stall detection selector setting*)
+		mcACELCSD_NOT_USE := 0, (*Not used - Stall detection is inactive*)
+		mcACELCSD_USE := 1 (*Used - Stall detection is active after given stall detection time*)
+		);
+	McACELCStalDetUseType : STRUCT (*Type mcACELCSD_USE settings*)
+		StallDetectionTime : REAL; (*Encoderless control: Stall detection time [s]*)
+	END_STRUCT;
+	McACELCStalDetType : STRUCT (*Encoderless control: Stall detection*)
+		Type : McACELCStalDetEnum; (*Stall detection selector setting*)
+		Used : McACELCStalDetUseType; (*Type mcACELCSD_USE settings*)
+	END_STRUCT;
+	McACELCInvAdjType : STRUCT (*Encoderless control: Inverter parameters of characteristic current-voltage curve*)
+		GainFactor : REAL; (*Encoderless control: Inverter Amplification factor*)
+		Exponent : REAL; (*Encoderless control: Inverter Exponent [1/A]*)
+	END_STRUCT;
+	McACELCPosType : STRUCT (*Type mcAELNEECM_EL_POS_CTRL settings*)
+		SetCurrent : McACELCSetCurType; (*Encoderless control: Set current direct component*)
+		Tl : McACELCPosTlType; (*Encoderless control: Transition level*)
+		Tz : McACELCPosTzType; (*Encoderless control: Transition zone*)
+		KeepHoming : McACELCKeepHomeType; (*Keep homing status when controller is switched off*)
+		KeepPhasing : McACELCKeepPhaseType; (*Keep phasing status when controller is switched off*)
+		TransferTime : REAL; (*Encoderless control: Transfer time [s]*)
+		StallDetection : McACELCStalDetType; (*Encoderless control: Stall detection*)
+		InverterAdjustment : McACELCInvAdjType; (*Encoderless control: Inverter parameters of characteristic current-voltage curve*)
+	END_STRUCT;
+	McAELNoEncELCtrlModType : STRUCT (*Encoderless control mode*)
+		Type : McAELNoEncELCtrlModEnum; (*Encoderless control mode selector setting*)
+		EncoderlessCurrentControl : McACELCCurType; (*Type mcAELNEECM_EL_CUR_CTRL settings*)
+		EncoderlessPositionControl : McACELCPosType; (*Type mcAELNEECM_EL_POS_CTRL settings*)
+	END_STRUCT;
+	McAELNoEncType : STRUCT (*Type mcAEL_NO_ENC settings*)
+		EncoderlessControlMode : McAELNoEncELCtrlModType; (*Encoderless control mode*)
+	END_STRUCT;
 	McAELType : STRUCT
 		Type : McAELEnum; (*Encoder link selector setting*)
 		OneEncoder : McAELOneEncType; (*Type mcAEL_ONE_ENC settings*)
 		TwoEncoders : McAELTwoEncType; (*Type mcAEL_TWO_ENC settings*)
+		NoEncoder : McAELNoEncType; (*Type mcAEL_NO_ENC settings*)
 	END_STRUCT;
 	McACModEnum :
 		( (*Mode selector setting*)
 		mcACM_POS_CTRL := 0, (*Position controller - Automatic speed feed-forward with prediction time > 0*)
 		mcACM_POS_CTRL_TORQ_FF := 1, (*Position controller torque ff - Torque feed-forward with specified parameters*)
 		mcACM_POS_CTRL_MDL_BASED := 3, (*Position controller model based - Model based control with specified parameters*)
-		mcACM_V_FREQ_CTRL := 2 (*Voltage frequency control - Voltage/frequency control of induction motor with specified parameters*)
+		mcACM_V_FREQ_CTRL := 2, (*Voltage frequency control - Voltage/frequency control of induction motor with specified parameters*)
+		mcACM_VIB_CTRL := 4 (*Vibration control - Vibration control with specified parameters*)
 		);
 	McACPCType : STRUCT (*Position controller parameters*)
 		ProportionalGain : REAL; (*Proportional amplification [1/s]*)
@@ -1595,11 +2102,21 @@ TYPE
 	McACCTMSgenType : STRUCT (*Selects if set value generation is done in the faster position controller cycle*)
 		Type : McACCTMSgenEnum; (*Set value generation selector setting*)
 	END_STRUCT;
+	McACCTMIOsEnum :
+		( (*IOs on plug-in cards selector setting*)
+		mcACCTMIOs_STD := 0, (*Standard - Standard: 400µs*)
+		mcACCTMIOs_CYCLE_TIME_OF_CTRL := 1 (*Cycle time of controller - Position controller cycle time*)
+		);
+	McACCTMIOsType : STRUCT (*Selects if DIO/AIOs on plug-in cards are handled in faster position controller cycle*)
+		Type : McACCTMIOsEnum; (*IOs on plug-in cards selector setting*)
+	END_STRUCT;
 	McACCTMAdvType : STRUCT (*Type mcACCTM_ADV settings*)
 		SetValueGeneration : McACCTMSgenType; (*Selects if set value generation is done in the faster position controller cycle*)
+		IOsOnPlugInCards : McACCTMIOsType; (*Selects if DIO/AIOs on plug-in cards are handled in faster position controller cycle*)
 	END_STRUCT;
 	McACCTMPwrType : STRUCT (*Type mcACCTM_PWR settings*)
 		SetValueGeneration : McACCTMSgenType; (*Selects if set value generation is done in the faster position controller cycle*)
+		IOsOnPlugInCards : McACCTMIOsType; (*Selects if DIO/AIOs on plug-in cards are handled in faster position controller cycle*)
 	END_STRUCT;
 	McACCTMType : STRUCT (*Controller cascade cycle time mode; Position/Speed/Current; Check documentation for limitations*)
 		Type : McACCTMEnum; (*Cycle time mode selector setting*)
@@ -1650,7 +2167,8 @@ TYPE
 		( (*Feed-forward selector setting*)
 		mcACMPCMBCFF_STD := 0, (*Standard - Based on several parameters the torque feed-forward calculation is done on the axis*)
 		mcACMPCMBCFF_PRED_SPD := 1, (*Predictive speed - Predictive speed*)
-		mcACMPCMBCFF_TWO_MASS_MDL_BASED := 2 (*Two mass model based - Two mass model based*)
+		mcACMPCMBCFF_TWO_MASS_MDL_BASED := 2, (*Two mass model based - Two mass model based*)
+		mcACMPCMBCFF_FRICT_COMP := 3 (*Friction compensation - Friction compensation*)
 		);
 	McACMPCMBCFFStdType : STRUCT (*Type mcACMPCMBCFF_STD settings*)
 		TorqueLoad : REAL; (*Load torque [Nm]*)
@@ -1669,11 +2187,23 @@ TYPE
 		TorqueNegative : REAL; (*Torque in negative direction [Nm]*)
 		AccelerationFilterTime : REAL; (*Acceleration filter time constant [s]*)
 	END_STRUCT;
+	McACMPCMBCFFFrictCompType : STRUCT (*Type mcACMPCMBCFF_FRICT_COMP settings*)
+		TorqueLoad : REAL; (*Load torque [Nm]*)
+		TorquePositive : REAL; (*Torque in positive direction [Nm]*)
+		TorqueNegative : REAL; (*Torque in negative direction [Nm]*)
+		SpeedTorqueFactor : REAL; (*Speed torque factor [Nms]*)
+		Inertia : REAL; (*Mass moment of inertia [kgm²]*)
+		AccelerationFilterTime : REAL; (*Acceleration filter time constant [s]*)
+		ActivationSpeed : REAL; (*Compensation is activated when the speed enters this window [measurement units/s]*)
+		DeactivationLagError : REAL; (*Compensation is deactivated when the lag error enters this window [measurement units]*)
+		TimeConstant : REAL; (*Time constant of the filter for smoothing the feed-forward signal [s]*)
+	END_STRUCT;
 	McACMPCMBCFFType : STRUCT (*Feed-forward control parameters*)
 		Type : McACMPCMBCFFEnum; (*Feed-forward selector setting*)
 		Standard : McACMPCMBCFFStdType; (*Type mcACMPCMBCFF_STD settings*)
 		PredictiveSpeed : McACMPCMBCFFPredSpdType; (*Type mcACMPCMBCFF_PRED_SPD settings*)
 		TwoMassModelBased : McACMPCMBCFFTwoMassMdlBasedType; (*Type mcACMPCMBCFF_TWO_MASS_MDL_BASED settings*)
+		FrictionCompensation : McACMPCMBCFFFrictCompType; (*Type mcACMPCMBCFF_FRICT_COMP settings*)
 	END_STRUCT;
 	McACMPCMBCFdbkEnum :
 		( (*Feedback selector setting*)
@@ -1752,12 +2282,80 @@ TYPE
 	McACMVFCType : STRUCT (*Type mcACM_V_FREQ_CTRL settings*)
 		VoltageFrequency : McACMVFCVFType; (*V/f control parameters*)
 	END_STRUCT;
+	McACMVCFreqAdptEnum :
+		( (*Frequency adaption selector setting*)
+		mcACMVCFA_NOT_USE := 0, (*Not used - The frequency adaption is not used*)
+		mcACMVCFA_USE := 1 (*Used - The frequency adaption is not used*)
+		);
+	McACMVCFreqAdptUseType : STRUCT (*Type mcACMVCFA_USE settings*)
+		ProportionalGain : REAL; (*Vibration control: Amplification factor frequency control [Hz/rad]*)
+		IntegrationTime : REAL; (*Vibration control: Integration time frequency control [s]*)
+		ReferenceValue : REAL; (*Vibration control: Reference value of 3rd harmonic phase shift [rad]*)
+	END_STRUCT;
+	McACMVCFreqAdptType : STRUCT (*Usage of the frequency adaption*)
+		Type : McACMVCFreqAdptEnum; (*Frequency adaption selector setting*)
+		Used : McACMVCFreqAdptUseType; (*Type mcACMVCFA_USE settings*)
+	END_STRUCT;
+	McACMVCAmpAdptEnum :
+		( (*Amplitude adaption selector setting*)
+		mcACMVCAA_NOT_USE := 0, (*Not used - The amplitude adaption is not used*)
+		mcACMVCAA_USE := 1 (*Used - The amplitude adaption is not used*)
+		);
+	McACMVCAmpAdptUseType : STRUCT (*Type mcACMVCAA_USE settings*)
+		ProportionalGain : REAL; (*Vibration control: Amplification factor amplitude control [A/V]*)
+		IntegrationTime : REAL; (*Vibration control: Integration time amplitude control [s]*)
+		ReferenceValue : REAL; (*Vibration control: Reference value of 3rd harmonic amplitude [V]*)
+	END_STRUCT;
+	McACMVCAmpAdptType : STRUCT (*Usage of the amplitude adaption*)
+		Type : McACMVCAmpAdptEnum; (*Amplitude adaption selector setting*)
+		Used : McACMVCAmpAdptUseType; (*Type mcACMVCAA_USE settings*)
+	END_STRUCT;
+	McACMVCCurCtrlEnum :
+		( (*Current controller selector setting*)
+		mcACMVCCC_DEF := 0, (*Default - Usage of the default values calculated on the drive*)
+		mcACMVCCC_USR_DEF := 1 (*User defined - The current controller parameters are set by the user*)
+		);
+	McACMVCCurCtrlUsrDefType : STRUCT (*Type mcACMVCCC_USR_DEF settings*)
+		ProportionalGain : REAL; (*Current controller Proportional gain [V/A]*)
+		IntegrationTime : REAL; (*Current controller Integration time [s]*)
+	END_STRUCT;
+	McACMVCCurCtrlType : STRUCT (*Current controller settings*)
+		Type : McACMVCCurCtrlEnum; (*Current controller selector setting*)
+		UserDefined : McACMVCCurCtrlUsrDefType; (*Type mcACMVCCC_USR_DEF settings*)
+	END_STRUCT;
+	McACMVCOptParAmpScEnum :
+		( (*Amplitude scaling selector setting*)
+		mcACMVCOPAS_NOT_USE := 0, (*Not used - Scaling is not used*)
+		mcACMVCOPAS_USE := 1 (*Used - Scaling is used*)
+		);
+	McACMVCOptParAmpScType : STRUCT (*Vibration control: Mode for scaling of amplitude of 3rd harmonic*)
+		Type : McACMVCOptParAmpScEnum; (*Amplitude scaling selector setting*)
+	END_STRUCT;
+	McACMVCOptParType : STRUCT (*Optional parameters*)
+		BoostGain : REAL; (*Vibration control: Boost gain*)
+		BoostTime : REAL; (*Vibration control: Boost time [s]*)
+		BrakeTime : REAL; (*Vibration control: Brake time [s]*)
+		AmplitudeLimit : REAL; (*Vibration control: Upper amplitude limit [A]*)
+		AmplitudeScaling : McACMVCOptParAmpScType; (*Vibration control: Mode for scaling of amplitude of 3rd harmonic*)
+	END_STRUCT;
+	McACMVCType : STRUCT (*Type mcACM_VIB_CTRL settings*)
+		ExcitationFrequency : REAL; (*Vibration control: Excitation frequency. Range 10..MOTOR_SPEED_MAX/60*0.5 [Hz]*)
+		ExcitationAmplitude : REAL; (*Vibration control: Excitation amplitude [A]*)
+		AmplificationFactorFirstHarmonic : REAL; (*Vibration control: Amplification factor fundamental first harmonic*)
+		AmplificationFactorThirdHarmonic : REAL; (*Vibration control: Amplification factor third harmonic*)
+		FrequencyAdaption : McACMVCFreqAdptType; (*Usage of the frequency adaption*)
+		AmplitudeAdaption : McACMVCAmpAdptType; (*Usage of the amplitude adaption*)
+		CurrentController : McACMVCCurCtrlType; (*Current controller settings*)
+		OptionalParameters : McACMVCOptParType; (*Optional parameters*)
+		CycleTimeMode : McACCTMType; (*Controller cascade cycle time mode; Position/Speed/Current; Check documentation for limitations*)
+	END_STRUCT;
 	McACModType : STRUCT (*Mode of the axis controller*)
 		Type : McACModEnum; (*Mode selector setting*)
 		PositionController : McACMPCType; (*Type mcACM_POS_CTRL settings*)
 		PositionControllerTorqueFf : McACMPCFFType; (*Type mcACM_POS_CTRL_TORQ_FF settings*)
 		PositionControllerModelBased : McACMPCMBCType; (*Type mcACM_POS_CTRL_MDL_BASED settings*)
 		VoltageFrequencyControl : McACMVFCType; (*Type mcACM_V_FREQ_CTRL settings*)
+		VibrationControl : McACMVCType; (*Type mcACM_VIB_CTRL settings*)
 	END_STRUCT;
 	McACType : STRUCT (*Axis controller parameters*)
 		Mode : McACModType; (*Mode of the axis controller*)
@@ -1792,12 +2390,18 @@ TYPE
 		mcAHMKD_NO := 0, (*No - mcSWITCH_OFF*)
 		mcAHMKD_YES := 1 (*Yes - mcSWITCH_ON*)
 		);
+	McAHRPUBDUEnum :
+		( (*Unit of reference pulse blocking distance*)
+		mcAHRPUBDU_MEAS_UNIT := 0, (*Measurement units - Reference pulse blocking distance in measurement units*)
+		mcAHRPUBDU_ENC_REV := 1 (*Encoder revolutions - Reference pulse blocking distance in encoder revolutions*)
+		);
 	McAHModDirRefPUseType : STRUCT (*Type mcAHMDRP_USE settings*)
 		HomingVelocity : REAL; (*Speed which is used while searching for the homing event (e.g. after reference switch has been reached) [measurement units/s]*)
 		Acceleration : REAL; (*Acceleration for homing movement [measurement units/s²]*)
 		HomingDirection : McAHModHomeDirEnum; (*Movement direction in which the homing event is evaluated*)
 		KeepDirection : McAHModKeepDirEnum; (*Keep direction (move only in one direction)*)
-		ReferencePulseBlockingDistance : LREAL; (*Distance for blocking the activation of triggering reference pulse [measurement units]*)
+		ReferencePulseBlockingDistance : LREAL; (*Distance for blocking the activation of triggering reference pulse*)
+		BlockingDistanceUnit : McAHRPUBDUEnum; (*Unit of reference pulse blocking distance*)
 	END_STRUCT;
 	McAHModDirRefPType : STRUCT (*Use reference pulse of encoder*)
 		Type : McAHModDirRefPEnum; (*Reference pulse selector setting*)
@@ -1818,7 +2422,8 @@ TYPE
 		mcAHMRP_USE := 1 (*Used - Reference pulse is used*)
 		);
 	McAHModRefPUseType : STRUCT (*Type mcAHMRP_USE settings*)
-		ReferencePulseBlockingDistance : LREAL; (*Distance for blocking the activation of triggering reference pulse [measurement units]*)
+		ReferencePulseBlockingDistance : LREAL; (*Distance for blocking the activation of triggering reference pulse*)
+		BlockingDistanceUnit : McAHRPUBDUEnum; (*Unit of reference pulse blocking distance*)
 	END_STRUCT;
 	McAHModRefPType : STRUCT (*Use reference pulse of encoder*)
 		Type : McAHModRefPEnum; (*Reference pulse selector setting*)
@@ -1884,7 +2489,8 @@ TYPE
 		MinimumReturnDistance : LREAL; (*Minimum return distance after the blockade is reached [measurement units]*)
 	END_STRUCT;
 	McAHModBlkRefPUseType : STRUCT (*Type mcAHMRP_USE settings*)
-		ReferencePulseBlockingDistance : LREAL; (*Distance for blocking the activation of triggering reference pulse [measurement units]*)
+		ReferencePulseBlockingDistance : LREAL; (*Distance for blocking the activation of triggering reference pulse*)
+		BlockingDistanceUnit : McAHRPUBDUEnum; (*Unit of reference pulse blocking distance*)
 	END_STRUCT;
 	McAHModBlkRefPType : STRUCT (*Use reference pulse of encoder*)
 		Type : McAHModRefPEnum; (*Reference pulse selector setting*)
@@ -1963,41 +2569,64 @@ TYPE
 		BlockTorque : McAHModBlkTorqType; (*Type mcAHM_BLK_TORQ settings*)
 		BlockLagError : McAHModBlkLagErrType; (*Type mcAHM_BLK_LAG_ERR settings*)
 	END_STRUCT;
+	McAHMRPAPCEnum :
+		( (*Restore position axis scaling check selector setting*)
+		mcAHMRPAPC_NOT_USE := 0, (*Not used - Axis parameterization check is not performed*)
+		mcAHMRPAPC_USE := 1 (*Used - Axis parameterization check is performed*)
+		);
+	McAHMRPAPCType : STRUCT (*Activate check if axis parameterization has change for restore position*)
+		Type : McAHMRPAPCEnum; (*Restore position axis scaling check selector setting*)
+	END_STRUCT;
 	McAHType : STRUCT (*Homing mode and parameters which can be used within the application program as preconfigured setting*)
 		Mode : McAHModType; (*Homing mode*)
 		RestorePositionVariable : STRING[250]; (*Remanent variable used for homing mode: Restore position*)
+		AxParCk : McAHMRPAPCType; (*Activate check if axis parameterization has change for restore position*)
 	END_STRUCT;
 	McASRQstopEnum :
 		( (*Quickstop selector setting*)
 		mcASRQ_DEC_LIM := 0, (*Deceleration limit - Stop with deceleration limits*)
 		mcASRQ_DEC_LIM_W_JERK_FLTR := 1, (*Deceleration limit with jerk filter - Stop with deceleration limits and jerk filter*)
 		mcASRQ_TORQ_LIM := 2, (*Torque limit - Stop with torque limits*)
+		mcASRQ_TORQ_LIM_W_JERK_FLTR := 4, (*Torque limit with jerk filter - Stop with torque limits and jerk filter*)
+		mcASRQ_VEL_CTRL := 5, (*Velocity control - Stop velocity controlled with axis limits*)
 		mcASRQ_INDUCT_HALT := 3 (*Induction halt - Stop with an induction halt*)
 		);
 	McASRQstopDecLimWJerkFltrType : STRUCT (*Type mcASRQ_DEC_LIM_W_JERK_FLTR settings*)
 		JerkTime : REAL; (*Jerk filter time, max. Axis Jerk time / 2 [s]*)
 	END_STRUCT;
+	McASRQstopTorqLimWJerkFltrType : STRUCT (*Type mcASRQ_TORQ_LIM_W_JERK_FLTR settings*)
+		JerkTime : REAL; (*Jerk filter time, max. Axis Jerk time / 2 [s]*)
+	END_STRUCT;
 	McASRQstopType : STRUCT (*Deceleration ramp / reaction in case of a quickstop which is caused by an active quickstop input*)
 		Type : McASRQstopEnum; (*Quickstop selector setting*)
 		DecelerationLimitWithJerkFilter : McASRQstopDecLimWJerkFltrType; (*Type mcASRQ_DEC_LIM_W_JERK_FLTR settings*)
+		TorqueLimitWithJerkFilter : McASRQstopTorqLimWJerkFltrType; (*Type mcASRQ_TORQ_LIM_W_JERK_FLTR settings*)
 	END_STRUCT;
 	McASRDrvErrEnum :
 		( (*Drive error selector setting*)
 		mcASRDE_DEC_LIM := 0, (*Deceleration limit - Stop with deceleration limits*)
+		mcASRDE_TORQ_LIM := 4, (*Torque limit - Stop with torque limits*)
+		mcASRDE_TORQ_LIM_W_JERK_FLTR := 5, (*Torque limit with jerk filter - Stop with torque limits and jerk filter*)
+		mcASRDE_VEL_CTRL := 6, (*Velocity control - Stop velocity controlled with axis limits*)
 		mcASRDE_INDUCT_HALT := 1, (*Induction halt - Stop with an induction halt*)
 		mcASRDE_COAST_TO_STANDSTILL := 2, (*Coast to standstill - Controller is deactivated*)
 		mcASRDE_CYC_DEC_FROM_AX_GRP := 3 (*Cyclic deceleration from axes group - The deceleration calculation is done by the axes group on the PLC and the value is forwarded to the axis*)
 		);
+	McASRDrvErrTorqLimWJerkFltrType : STRUCT (*Type mcASRDE_TORQ_LIM_W_JERK_FLTR settings*)
+		JerkTime : REAL; (*Jerk filter time, max. Axis Jerk time / 2 [s]*)
+	END_STRUCT;
 	McASRDrvErrCycDecFromAxGrpType : STRUCT (*Type mcASRDE_CYC_DEC_FROM_AX_GRP settings*)
-		DefaultDeceleration : REAL; (*Default deceleration value. If 0.0, the maximum allowed value is used [measurement units/s²]*)
+		DefaultDeceleration : REAL; (*Default deceleration value. If 0.0, the maximum allowed value is used [Measurement units/s²]*)
 	END_STRUCT;
 	McASRDrvErrType : STRUCT (*Deceleration ramp / Response in the event of ErrorStop caused by drive error*)
 		Type : McASRDrvErrEnum; (*Drive error selector setting*)
+		TorqueLimitWithJerkFilter : McASRDrvErrTorqLimWJerkFltrType; (*Type mcASRDE_TORQ_LIM_W_JERK_FLTR settings*)
 		CyclicDecelerationFromAxesGroup : McASRDrvErrCycDecFromAxGrpType; (*Type mcASRDE_CYC_DEC_FROM_AX_GRP settings*)
 	END_STRUCT;
 	McASRType : STRUCT (*Reactions of the axis in case of certain stop conditions*)
 		Quickstop : McASRQstopType; (*Deceleration ramp / reaction in case of a quickstop which is caused by an active quickstop input*)
 		DriveError : McASRDrvErrType; (*Deceleration ramp / Response in the event of ErrorStop caused by drive error*)
+		FilterTime : REAL; (*Filter time for stop reaction [s]*)
 	END_STRUCT;
 	McAMELVelErrMonEnum :
 		( (*Velocity error monitoring selector setting*)
@@ -2020,14 +2649,20 @@ TYPE
 	McAJFEnum :
 		( (*Jerk filter selector setting*)
 		mcAJF_NOT_USE := 0, (*Not used - No jerk filter is applied*)
-		mcAJF_USE := 1 (*Used - Jerk filter is applied*)
+		mcAJF_USE := 1, (*Used - Jerk filter is applied*)
+		mcAJF_JERK_LIM := 2 (*Jerk limited - Jerk is considered in the profile generator*)
 		);
 	McAJFUseType : STRUCT (*Type mcAJF_USE settings*)
-		JerkTime : REAL; (*Jerk filter time [s]*)
+		JerkTime : REAL; (*Used jerk filter time ('Jerk time' <= 'Maximum jerk time') [s]*)
+		MaximumJerkTime : REAL; (*Maximum configurable jerk filter time [s]*)
+	END_STRUCT;
+	McAJFJerkLimType : STRUCT (*Type mcAJF_JERK_LIM settings*)
+		JerkLimit : REAL; (*Jerk limit in any movement direction [Measurement units/s³]*)
 	END_STRUCT;
 	McAJFType : STRUCT (*Jerk filter*)
 		Type : McAJFEnum; (*Jerk filter selector setting*)
 		Used : McAJFUseType; (*Type mcAJF_USE settings*)
+		JerkLimited : McAJFJerkLimType; (*Type mcAJF_JERK_LIM settings*)
 	END_STRUCT;
 	McAZVFEnum :
 		( (*Zero vibration filter selector setting*)
@@ -2036,7 +2671,8 @@ TYPE
 		);
 	McAZVFUseType : STRUCT (*Type mcAZVF_USE settings*)
 		ZeroVibrationFilterCoefficient : REAL; (*Zero vibration filter coefficient*)
-		ZeroVibrationFilterTime : REAL; (*Zero vibration filter time [s]*)
+		ZeroVibrationFilterTime : REAL; (*Zero vibration filter time ('Zero vibration filter time' <= 'Maximum zero vibration filter time') [s]*)
+		MaximumZeroVibrationFilterTime : REAL; (*Maximum configurable zero vibration filter time [s]*)
 	END_STRUCT;
 	McAZVFType : STRUCT (*Zero vibration filter*)
 		Type : McAZVFEnum; (*Zero vibration filter selector setting*)
@@ -2068,14 +2704,97 @@ TYPE
 		mcADIAS_DIG_IN_X1POS_HW_LIM := 21, (*Digital in X1.Positive HW limit -*)
 		mcADIAS_DIG_IN_X1NEG_HW_LIM := 22, (*Digital in X1.Negative HW limit -*)
 		mcADIAS_FOR_BY_FUN_BLK := 23, (*Force by function block -*)
-		mcADIAS_VAR := 24 (*Variable -*)
+		mcADIAS_VAR := 24, (*Variable -*)
+		mcADIAS_IO_CH := 25 (*I/O channel - Get value from an I/O channel*)
 		);
+	McADIAllSrcVarTSEnum :
+		( (*Time stamp selector setting*)
+		mcADIASVTS_NOT_USE := 0, (*Not used - Not used*)
+		mcADIASVTS_USE := 1, (*Used - Used*)
+		mcADIASVTS_RIS_AND_FALL_EDG := 2 (*Rising and falling edge - Detect the trigger by using a rising and a falling time stamp*)
+		);
+	McADIAllSrcVarTSUseType : STRUCT (*Type mcADIASVTS_USE settings*)
+		PVMapping : STRING[250]; (*Name of the process variable (DINT) representing trigger time stamp*)
+	END_STRUCT;
+	McADIASVTSRAFERECntType : STRUCT (*Count*)
+		PVMapping : STRING[250]; (*Name of the process variable (SINT) representing the rising trigger edge count*)
+	END_STRUCT;
+	McADIASVTSRAFERETimStmpType : STRUCT (*Time stamp*)
+		PVMapping : STRING[250]; (*Name of the process variable (INT) representing the rising trigger edge time*)
+	END_STRUCT;
+	McADIASVTSRAFERisEdgType : STRUCT (*Parameters for the rising trigger edge*)
+		Count : McADIASVTSRAFERECntType; (*Count*)
+		TimeStamp : McADIASVTSRAFERETimStmpType; (*Time stamp*)
+	END_STRUCT;
+	McADIASVTSRAFEFECntType : STRUCT (*Count*)
+		PVMapping : STRING[250]; (*Name of the process variable (SINT) representing the falling trigger edge count*)
+	END_STRUCT;
+	McADIASVTSRAFEFETimStmpType : STRUCT (*Time stamp*)
+		PVMapping : STRING[250]; (*Name of the process variable (INT) representing the falling trigger edge time*)
+	END_STRUCT;
+	McADIASVTSRAFEFallEdgType : STRUCT (*Parameters for the falling trigger edge*)
+		Count : McADIASVTSRAFEFECntType; (*Count*)
+		TimeStamp : McADIASVTSRAFEFETimStmpType; (*Time stamp*)
+	END_STRUCT;
+	McADIASVTSRisAndFallEdgType : STRUCT (*Type mcADIASVTS_RIS_AND_FALL_EDG settings*)
+		RisingEdge : McADIASVTSRAFERisEdgType; (*Parameters for the rising trigger edge*)
+		FallingEdge : McADIASVTSRAFEFallEdgType; (*Parameters for the falling trigger edge*)
+	END_STRUCT;
+	McADIAllSrcVarTSType : STRUCT (*Trigger time stamp*)
+		Type : McADIAllSrcVarTSEnum; (*Time stamp selector setting*)
+		Used : McADIAllSrcVarTSUseType; (*Type mcADIASVTS_USE settings*)
+		RisingAndFallingEdge : McADIASVTSRisAndFallEdgType; (*Type mcADIASVTS_RIS_AND_FALL_EDG settings*)
+	END_STRUCT;
 	McADIAllSrcVarType : STRUCT (*Type mcADIAS_VAR settings*)
 		PVMapping : STRING[250];
+		TimeStamp : McADIAllSrcVarTSType; (*Trigger time stamp*)
+	END_STRUCT;
+	McADIAllSrcIOChTSEnum :
+		( (*Time stamp selector setting*)
+		mcADIASIOCTS_NOT_USE := 0, (*Not used - Not used*)
+		mcADIASIOCTS_USE := 1, (*Used - Used*)
+		mcADIASIOCTS_RIS_AND_FALL_EDG := 2 (*Rising and falling edge - Detect the trigger by using a rising and a falling time stamp*)
+		);
+	McADIAllSrcIOChTSUseType : STRUCT (*Type mcADIASIOCTS_USE settings*)
+		ChannelMapping : STRING[250]; (*Input source (DINT) for representing the trigger time stamp*)
+	END_STRUCT;
+	McADIASIOCTSRAFERECntType : STRUCT (*Count*)
+		ChannelMapping : STRING[250]; (*Input source (SINT) for representing the rising trigger edge count*)
+	END_STRUCT;
+	McADIASIOCTSRAFERETimStmpType : STRUCT (*Time stamp*)
+		ChannelMapping : STRING[250]; (*Input source (INT) for representing the rising trigger edge time*)
+	END_STRUCT;
+	McADIASIOCTSRAFERisEdgType : STRUCT (*Parameters for the rising trigger edge*)
+		Count : McADIASIOCTSRAFERECntType; (*Count*)
+		TimeStamp : McADIASIOCTSRAFERETimStmpType; (*Time stamp*)
+	END_STRUCT;
+	McADIASIOCTSRAFEFECntType : STRUCT (*Count*)
+		ChannelMapping : STRING[250]; (*Input source (SINT) for representing the falling trigger edge count*)
+	END_STRUCT;
+	McADIASIOCTSRAFEFETimStmpType : STRUCT (*Time stamp*)
+		ChannelMapping : STRING[250]; (*Input source (INT) for representing the falling trigger edge time*)
+	END_STRUCT;
+	McADIASIOCTSRAFEFallEdgType : STRUCT (*Parameters for the falling trigger edge*)
+		Count : McADIASIOCTSRAFEFECntType; (*Count*)
+		TimeStamp : McADIASIOCTSRAFEFETimStmpType; (*Time stamp*)
+	END_STRUCT;
+	McADIASIOCTSRisAndFallEdgType : STRUCT (*Type mcADIASIOCTS_RIS_AND_FALL_EDG settings*)
+		RisingEdge : McADIASIOCTSRAFERisEdgType; (*Parameters for the rising trigger edge*)
+		FallingEdge : McADIASIOCTSRAFEFallEdgType; (*Parameters for the falling trigger edge*)
+	END_STRUCT;
+	McADIAllSrcIOChTSType : STRUCT (*Trigger time stamp*)
+		Type : McADIAllSrcIOChTSEnum; (*Time stamp selector setting*)
+		Used : McADIAllSrcIOChTSUseType; (*Type mcADIASIOCTS_USE settings*)
+		RisingAndFallingEdge : McADIASIOCTSRisAndFallEdgType; (*Type mcADIASIOCTS_RIS_AND_FALL_EDG settings*)
+	END_STRUCT;
+	McADIAllSrcIOChType : STRUCT (*Type mcADIAS_IO_CH settings*)
+		ChannelMapping : STRING[250]; (*Channel input source*)
+		TimeStamp : McADIAllSrcIOChTSType; (*Trigger time stamp*)
 	END_STRUCT;
 	McADIHomeSwSrcType : STRUCT (*Source of the digital input hardware which is used for this functionality*)
 		Type : McADIAllSrcEnum; (*Source selector setting*)
 		Variable : McADIAllSrcVarType; (*Type mcADIAS_VAR settings*)
+		IOChannel : McADIAllSrcIOChType; (*Type mcADIAS_IO_CH settings*)
 	END_STRUCT;
 	McADILvlEnum :
 		( (*Level of the digital input hardware which leads to an active level of the functionality, not used with 'Force by function block'*)
@@ -2089,6 +2808,7 @@ TYPE
 	McADIPosLimSwSrcType : STRUCT (*Source of the digital input hardware which is used for this functionality*)
 		Type : McADIAllSrcEnum; (*Source selector setting*)
 		Variable : McADIAllSrcVarType; (*Type mcADIAS_VAR settings*)
+		IOChannel : McADIAllSrcIOChType; (*Type mcADIAS_IO_CH settings*)
 	END_STRUCT;
 	McADIPosLimSwType : STRUCT (*Positive limit switch input functionality*)
 		Source : McADIPosLimSwSrcType; (*Source of the digital input hardware which is used for this functionality*)
@@ -2097,6 +2817,7 @@ TYPE
 	McADINegLimSwSrcType : STRUCT (*Source of the digital input hardware which is used for this functionality*)
 		Type : McADIAllSrcEnum; (*Source selector setting*)
 		Variable : McADIAllSrcVarType; (*Type mcADIAS_VAR settings*)
+		IOChannel : McADIAllSrcIOChType; (*Type mcADIAS_IO_CH settings*)
 	END_STRUCT;
 	McADINegLimSwType : STRUCT (*Negative limit switch input functionality*)
 		Source : McADINegLimSwSrcType; (*Source of the digital input hardware which is used for this functionality*)
@@ -2105,6 +2826,7 @@ TYPE
 	McADITrg1SrcType : STRUCT (*Source of the digital input hardware which is used for this functionality*)
 		Type : McADIAllSrcEnum; (*Source selector setting*)
 		Variable : McADIAllSrcVarType; (*Type mcADIAS_VAR settings*)
+		IOChannel : McADIAllSrcIOChType; (*Type mcADIAS_IO_CH settings*)
 	END_STRUCT;
 	McADITrg1Type : STRUCT (*Trigger 1 input functionality*)
 		Source : McADITrg1SrcType; (*Source of the digital input hardware which is used for this functionality*)
@@ -2113,6 +2835,7 @@ TYPE
 	McADITrg2SrcType : STRUCT (*Source of the digital input hardware which is used for this functionality*)
 		Type : McADIAllSrcEnum; (*Source selector setting*)
 		Variable : McADIAllSrcVarType; (*Type mcADIAS_VAR settings*)
+		IOChannel : McADIAllSrcIOChType; (*Type mcADIAS_IO_CH settings*)
 	END_STRUCT;
 	McADITrg2Type : STRUCT (*Trigger 2 input functionality*)
 		Source : McADITrg2SrcType; (*Source of the digital input hardware which is used for this functionality*)
@@ -2206,7 +2929,7 @@ TYPE
 		ModeOnACOPOS : McASAMType; (*Parameters for the motor and load simulation on the drive*)
 	END_STRUCT;
 	McAAFType : STRUCT (*Features for an axis*)
-		FeatureReference : McCfgUnboundedArrayType; (*Name of the axis feature reference*)
+		FeatureReference : McCfgUnboundedArrayType; (*Name of the axis feature reference (Connect array of type McCfgReferenceType)*)
 	END_STRUCT;
 	McCfgAcpAxType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ACP_AX*)
 		AxisReference : McCfgReferenceType; (*Name of the referenced axis component*)
@@ -2375,7 +3098,8 @@ TYPE
 		mcAMPS_AC := 0, (*AC -*)
 		mcAMPS_DC_PWR_SUP_MOD_REF := 1, (*DC power supply module reference -*)
 		mcAMPS_DC_BUS_V := 2, (*DC bus voltage -*)
-		mcAMPS_ETA_SYS_FOR_TR_ONLY := 3 (*ETA system (for training only) - This mode can be used for training purpose, when using the drive within an ETA system with 24 VDC supply voltage*)
+		mcAMPS_ETA_SYS_FOR_TR_ONLY := 3, (*ETA system (for training only) - This mode can be used for training purpose, when using the drive within an ETA system with 24 VDC supply voltage*)
+		mcAMPS_AUT_DETECT := 4 (*Automatic detection -*)
 		);
 	McAMPwrSupACSngPhOpEnum :
 		( (*Single phase operation selector setting*)
@@ -3042,6 +3766,136 @@ TYPE
 	McAEEncType : STRUCT
 		InterfaceType : McAEEncIfTypType;
 	END_STRUCT;
+	McAEEnc1IfTypEnum :
+		( (*Interface type selector setting*)
+		mcAE1IT_NOT_USE := 0, (*Not used -*)
+		mcAE1IT_INCR := 1, (*Incremental -*)
+		mcAE1IT_SSI := 2, (*SSI -*)
+		mcAE1IT_BISS := 3 (*BiSS -*)
+		);
+	McAEEnc1IfTypIncrSymEnum :
+		( (*Symmetry selector setting*)
+		mcAE1ITIS_SYM := 0, (*Symmetrical -*)
+		mcAE1ITIS_ASYM := 1 (*Asymmetrical -*)
+		);
+	McAEISAOutDrvEnum :
+		( (*Output driver of the encoder*)
+		mcAEISAOD_PUSH_PULL := 0, (*Push pull - Push pull*)
+		mcAEISAOD_PULL := 1 (*Pull - Pull*)
+		);
+	McAEISAType : STRUCT (*Type mcAE1ITIS_ASYM settings*)
+		OutputDriver : McAEISAOutDrvEnum; (*Output driver of the encoder*)
+	END_STRUCT;
+	McAEEnc1IfTypIncrSymType : STRUCT (*Symmetry of the encoder signals*)
+		Type : McAEEnc1IfTypIncrSymEnum; (*Symmetry selector setting*)
+		Asymmetrical : McAEISAType; (*Type mcAE1ITIS_ASYM settings*)
+	END_STRUCT;
+	McAEEnc1IfTypIncrRefPDetectEnum :
+		( (*Reference pulse detection*)
+		mcAE1ITIRPD_NORM_MOD := 0, (*Normal mode - Normal mode*)
+		mcAE1ITIRPD_EDG_TRG_MOD := 1 (*Edge triggered mode - Edge triggered mode*)
+		);
+	McAEEnc1IfTypIncrRefPMonEnum :
+		( (*Reference pulse monitoring selector setting*)
+		mcAE1ITIRPM_NOT_USE := 0, (*Not used -*)
+		mcAE1ITIRPM_USE := 1 (*Used -*)
+		);
+	McAEEnc1IfTypIncrRefPMonUseType : STRUCT (*Type mcAE1ITIRPM_USE settings*)
+		CheckWindow : UDINT; (*Encoder 1: Incremental Reference pulse check window [Increments]*)
+		Interval : UDINT; (*Encoder 1: Incremental Reference pulse interval [Increments]*)
+		Width : UDINT; (*Encoder 1: Incremental Reference pulse width [Increments]*)
+	END_STRUCT;
+	McAEEnc1IfTypIncrRefPMonType : STRUCT
+		Type : McAEEnc1IfTypIncrRefPMonEnum; (*Reference pulse monitoring selector setting*)
+		Used : McAEEnc1IfTypIncrRefPMonUseType; (*Type mcAE1ITIRPM_USE settings*)
+	END_STRUCT;
+	McAEEnc1IfTypIncrType : STRUCT (*Type mcAE1IT_INCR settings*)
+		Symmetry : McAEEnc1IfTypIncrSymType; (*Symmetry of the encoder signals*)
+		LinesPerEncoderRevolution : UDINT; (*Absolute number of lines of an encoder revolution*)
+		ReferencePulseDetection : McAEEnc1IfTypIncrRefPDetectEnum; (*Reference pulse detection*)
+		ReferencePulseMonitoring : McAEEnc1IfTypIncrRefPMonType;
+	END_STRUCT;
+	McAEEnc1IfTypSSIType : STRUCT (*Type mcAE1IT_SSI settings*)
+		SSIFrameConfiguration : McAPICEITSSIFCType; (*Frame structure in the order of transfer*)
+		IncrementsPerEncoderRevolution : UDINT; (*Absolute resolution of an encoder revolution*)
+		BaudRate : DINT; (*Transfer rate [kBaud]*)
+	END_STRUCT;
+	McAEEnc1IfTypBiSSType : STRUCT (*Type mcAE1IT_BISS settings*)
+		BiSSFrameConfiguration : McAPICEITBiSSFCType; (*Frame structure in the order of transfer*)
+		CRCPolynomial : UDINT; (*Data verification via CRC (decimal value, 0 deactivates verification)*)
+		IncrementsPerEncoderRevolution : UDINT; (*Absolute resolution of an encoder revolution*)
+		BaudRate : DINT; (*Transfer rate [kBaud]*)
+	END_STRUCT;
+	McAEEnc1IfTypType : STRUCT
+		Type : McAEEnc1IfTypEnum; (*Interface type selector setting*)
+		Incremental : McAEEnc1IfTypIncrType; (*Type mcAE1IT_INCR settings*)
+		SSI : McAEEnc1IfTypSSIType; (*Type mcAE1IT_SSI settings*)
+		BiSS : McAEEnc1IfTypBiSSType; (*Type mcAE1IT_BISS settings*)
+	END_STRUCT;
+	McAEEnc1Type : STRUCT
+		InterfaceType : McAEEnc1IfTypType;
+	END_STRUCT;
+	McAEEnc2IfTypEnum :
+		( (*Interface type selector setting*)
+		mcAE2IT_NOT_USE := 0, (*Not used -*)
+		mcAE2IT_INCR := 1, (*Incremental -*)
+		mcAE2IT_SSI := 2, (*SSI -*)
+		mcAE2IT_BISS := 3 (*BiSS -*)
+		);
+	McAEEnc2IfTypIncrSymEnum :
+		( (*Symmetry selector setting*)
+		mcAE2ITIS_SYM := 0, (*Symmetrical -*)
+		mcAE2ITIS_ASYM := 1 (*Asymmetrical -*)
+		);
+	McAEEnc2IfTypIncrSymType : STRUCT (*Symmetry of the encoder signals*)
+		Type : McAEEnc2IfTypIncrSymEnum; (*Symmetry selector setting*)
+		Asymmetrical : McAEISAType; (*Type mcAE2ITIS_ASYM settings*)
+	END_STRUCT;
+	McAEEnc2IfTypIncrRefPDetectEnum :
+		( (*Reference pulse detection*)
+		mcAE2ITIRPD_NORM_MOD := 0, (*Normal mode - Normal mode*)
+		mcAE2ITIRPD_EDG_TRG_MOD := 1 (*Edge triggered mode - Edge triggered mode*)
+		);
+	McAEEnc2IfTypIncrRefPMonEnum :
+		( (*Reference pulse monitoring selector setting*)
+		mcAE2ITIRPM_NOT_USE := 0, (*Not used -*)
+		mcAE2ITIRPM_USE := 1 (*Used -*)
+		);
+	McAEEnc2IfTypIncrRefPMonUseType : STRUCT (*Type mcAE2ITIRPM_USE settings*)
+		CheckWindow : UDINT; (*Encoder 1: Incremental Reference pulse check window [Increments]*)
+		Interval : UDINT; (*Encoder 1: Incremental Reference pulse interval [Increments]*)
+		Width : UDINT; (*Encoder 1: Incremental Reference pulse width [Increments]*)
+	END_STRUCT;
+	McAEEnc2IfTypIncrRefPMonType : STRUCT
+		Type : McAEEnc2IfTypIncrRefPMonEnum; (*Reference pulse monitoring selector setting*)
+		Used : McAEEnc2IfTypIncrRefPMonUseType; (*Type mcAE2ITIRPM_USE settings*)
+	END_STRUCT;
+	McAEEnc2IfTypIncrType : STRUCT (*Type mcAE2IT_INCR settings*)
+		Symmetry : McAEEnc2IfTypIncrSymType; (*Symmetry of the encoder signals*)
+		LinesPerEncoderRevolution : UDINT; (*Absolute number of lines of an encoder revolution*)
+		ReferencePulseDetection : McAEEnc2IfTypIncrRefPDetectEnum; (*Reference pulse detection*)
+		ReferencePulseMonitoring : McAEEnc2IfTypIncrRefPMonType;
+	END_STRUCT;
+	McAEEnc2IfTypSSIType : STRUCT (*Type mcAE2IT_SSI settings*)
+		SSIFrameConfiguration : McAPICEITSSIFCType; (*Frame structure in the order of transfer*)
+		IncrementsPerEncoderRevolution : UDINT; (*Absolute resolution of an encoder revolution*)
+		BaudRate : DINT; (*Transfer rate [kBaud]*)
+	END_STRUCT;
+	McAEEnc2IfTypBiSSType : STRUCT (*Type mcAE2IT_BISS settings*)
+		BiSSFrameConfiguration : McAPICEITBiSSFCType; (*Frame structure in the order of transfer*)
+		CRCPolynomial : UDINT; (*Data verification via CRC (decimal value, 0 deactivates verification)*)
+		IncrementsPerEncoderRevolution : UDINT; (*Absolute resolution of an encoder revolution*)
+		BaudRate : DINT; (*Transfer rate [kBaud]*)
+	END_STRUCT;
+	McAEEnc2IfTypType : STRUCT
+		Type : McAEEnc2IfTypEnum; (*Interface type selector setting*)
+		Incremental : McAEEnc2IfTypIncrType; (*Type mcAE2IT_INCR settings*)
+		SSI : McAEEnc2IfTypSSIType; (*Type mcAE2IT_SSI settings*)
+		BiSS : McAEEnc2IfTypBiSSType; (*Type mcAE2IT_BISS settings*)
+	END_STRUCT;
+	McAEEnc2Type : STRUCT
+		InterfaceType : McAEEnc2IfTypType;
+	END_STRUCT;
 	McCfgAcpEncType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ACP_ENC*)
 		EncoderX6A : McAEEncX6AType;
 		EncoderX6B : McAEEncX6BType;
@@ -3050,6 +3904,8 @@ TYPE
 		EncoderX43 : McAEEncX43Type;
 		EncoderX11A : McAEEncX11AType;
 		Encoder : McAEEncType;
+		Encoder1 : McAEEnc1Type;
+		Encoder2 : McAEEnc2Type;
 	END_STRUCT;
 	McAVAVirtAxEnum :
 		( (*Virtual axis selector setting*)
@@ -3072,6 +3928,7 @@ TYPE
 	McAVAVirtAxUseHomeType : STRUCT (*Homing mode and parameters which can be used within the application program as preconfigured setting*)
 		Mode : McAVAVirtAxUseHomeModType; (*Homing mode*)
 		RestorePositionVariable : STRING[250]; (*Remanent variable used for homing mode: Restore position*)
+		AxParCk : McAHMRPAPCType; (*Activate check if axis parameterization has change for restore position*)
 	END_STRUCT;
 	McAVAVirtAxUseType : STRUCT (*Type mcAVAVA_USE settings*)
 		AxisReference : McCfgReferenceType; (*Name of the referenced axis component*)
@@ -3106,6 +3963,7 @@ TYPE
 	McAVHHomeType : STRUCT (*Homing mode and parameters which can be used within the application program as preconfigured setting*)
 		Mode : McAVHHomeModType; (*Homing mode*)
 		RestorePositionVariable : STRING[250]; (*Remanent variable used for homing mode: Restore position*)
+		AxParCk : McAHMRPAPCType; (*Activate check if axis parameterization has change for restore position*)
 	END_STRUCT;
 	McCfgAcpVirtHomeType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ACP_VIRT_HOME*)
 		Homing : McAVHHomeType; (*Homing mode and parameters which can be used within the application program as preconfigured setting*)
@@ -3120,7 +3978,7 @@ TYPE
 		ZeroVibrationFilter : McAZVFType; (*Zero vibration filter*)
 	END_STRUCT;
 	McACFChFeatType : STRUCT (*Features for the channel of a module*)
-		FeatureReference : McCfgUnboundedArrayType; (*Name of the axis feature reference*)
+		FeatureReference : McCfgUnboundedArrayType; (*Name of the axis feature reference (Connect array of type McCfgReferenceType)*)
 	END_STRUCT;
 	McCfgAcpChFeatType : STRUCT (*Main data type corresponding to McCfgTypeEnum mcCFG_ACP_CH_FEAT*)
 		ChannelFeatures : McACFChFeatType; (*Features for the channel of a module*)
@@ -3515,7 +4373,7 @@ TYPE
 		);
 	McAEEAUELOEPosFltrExtpolDistType : STRUCT (*Type mcAEEAUELOEPF_EXTPOL_AND_DIST settings*)
 		PositionFilterTimeConstant : REAL; (*Time constant for acutal position filter*)
-		ExtrapolationTime : REAL; (*Extrapolation time for acutal position filter*)
+		ExtrapolationTime : REAL; (*Extrapolation time for acutal position filter [s]*)
 	END_STRUCT;
 	McAEEAUELOneEncPosFltrType : STRUCT (*Filter for the encoder position*)
 		Type : McAEEAUELOneEncPosFltrEnum; (*Position filter selector setting*)
@@ -3560,6 +4418,7 @@ TYPE
 	McAEEAHType : STRUCT (*Homing mode and parameters which can be used within the application program as preconfigured setting*)
 		Mode : McAEEAHModType; (*Homing mode*)
 		RestorePositionVariable : STRING[250]; (*Remanent variable used for homing mode: Restore position*)
+		AxParCk : McAHMRPAPCType; (*Activate check if axis parameterization has change for restore position*)
 	END_STRUCT;
 	McAEEAExtEncAxUseType : STRUCT (*Type mcAEEAEEA_USE settings*)
 		AxisReference : McCfgReferenceType; (*Name of the referenced axis component*)
@@ -3624,7 +4483,7 @@ TYPE
 		Common : McAFAIACPAnInCmnType; (*Common settings for all Type values*)
 	END_STRUCT;
 	McAFAIACPType : STRUCT (*Type mcAFAIPF_ACP settings*)
-		AnalogInput : McCfgUnboundedArrayType;
+		AnalogInput : McCfgUnboundedArrayType; (*Connect array of type McAFAIACPAnInType*)
 	END_STRUCT;
 	McAFAIACPmultiAnInEnum :
 		( (*Analog input 1-4 selector setting*)
@@ -3641,7 +4500,7 @@ TYPE
 		Common : McAFAIACPmultiAnInCmnType; (*Common settings for all Type values*)
 	END_STRUCT;
 	McAFAIACPmultiType : STRUCT (*Type mcAFAIPF_ACPM settings*)
-		AnalogInput : McCfgUnboundedArrayType;
+		AnalogInput : McCfgUnboundedArrayType; (*Connect array of type McAFAIACPmultiAnInType*)
 	END_STRUCT;
 	McAFAIACPP3AnInEnum :
 		( (*Analog input 1-3 selector setting*)
@@ -3657,7 +4516,7 @@ TYPE
 		Common : McAFAIACPP3AnInCmnType; (*Common settings for all Type values*)
 	END_STRUCT;
 	McAFAIACPP3Type : STRUCT (*Type mcAFAIPF_ACP_P3 settings*)
-		AnalogInput : McCfgUnboundedArrayType;
+		AnalogInput : McCfgUnboundedArrayType; (*Connect array of type McAFAIACPP3AnInType*)
 	END_STRUCT;
 	McAFAIProdFamType : STRUCT
 		Type : McAFAIProdFamEnum; (*ACOPOS product family selector setting*)

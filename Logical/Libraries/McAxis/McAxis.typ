@@ -180,8 +180,10 @@ TYPE
 	(
 		mcSHIFT_ABSOLUTE,  (*The value on input "XxxShift" is interpreted as an absolute value*)
 		mcSHIFT_RELATIVE,  (*The value on input "XxxShift" is interpreted as a relative value*)
-		mcSHIFT_ABSOLUTE_NO_RESET,  (*The functionality here is effectively the same as for mcSHIFT_ABSOLUTE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion and input "Enable" is still set*)
-		mcSHIFT_RELATIVE_NO_RESET  (*The functionality here is effectively the same as for mcSHIFT_RELATIVE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion and input "Enable" is still set*)
+		mcSHIFT_ABSOLUTE_NO_RESET,  (*The functionality here is effectively the same as for mcSHIFT_ABSOLUTE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion regardless of "Enable"*)
+		mcSHIFT_RELATIVE_NO_RESET,  (*The functionality here is effectively the same as for mcSHIFT_RELATIVE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion regardless of "Enable*)
+		mcSHIFT_ABSOLUTE_RESET_ENABLE,  (*The functionality here is effectively the same as for mcSHIFT_ABSOLUTE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion and input "Enable" is still set*)
+		mcSHIFT_RELATIVE_RESET_ENABLE  (*The functionality here is effectively the same as for mcSHIFT_RELATIVE. With this setting, however, the shift value on the drive is not set to 0 if the slave axis leaves state Synchronized Motion and input "Enable" is still set*)
 	);
 
 	McProfileBaseEnum:
@@ -443,6 +445,27 @@ TYPE
 		mcAT_MOTOR_PHASING := 8, (* Auto tuning for motor phasing is active*)
 		mcAT_INDUCTION_MOTOR := 9, (* Auto tuning for induction motor is active*)
 		mcAT_SYNCHRON_MOTOR := 10 (* Auto tuning for synchronous motor is active*)
+	);
+	
+	McSdoDataTypeEnum  :
+	(
+		mcSDO_PARTYPE_BOOL := 1,  (*Data type: Digital information, 1 bit (1 byte)*)
+		mcSDO_PARTYPE_SINT,  (*Data type: Whole number, 1 byte*)
+		mcSDO_PARTYPE_INT,  (*Data type: Whole number, 2 bytes*)
+		mcSDO_PARTYPE_DINT,  (*Data type: Whole number, 4 bytes*)
+		mcSDO_PARTYPE_USINT,  (*Data type: Whole number, 1 byte, positive numbers only*)
+		mcSDO_PARTYPE_UINT,  (*Data type: Whole number, 2 bytes, positive numbers only*)
+		mcSDO_PARTYPE_UDINT,  (*Data type: Whole number, 4 bytes, positive numbers only*)
+		mcSDO_PARTYPE_REAL,  (*Data type: Floating point, 4 bytes*)
+		mcSDO_PARTYPE_VOID := 65535   (*General data type*)
+	);
+
+	McProcessSdoModeEnum :
+	(
+		mcSDO_GET := 0,  (*Read SDO(s)*)
+		mcSDO_SET,     (*Write SDO(s)*)
+		mcSDO_GET_NO_NCT,  (*Read SDO(s) without entry in the NCT*)
+		mcSDO_GET_NO_LOG  (*Read SDO(s) without NCT and logger entry. If an error occurs while reading, an entry is still created*)
 	);
 
 	McCamDefineType : STRUCT
@@ -758,11 +781,20 @@ TYPE
 		mcLL_WITHOUT_FEED_FORWARD  (*control deviation torque only is limited; feed forward torque component is not limited *)
 		);
 
+	McLimitLoadStopModeEnum :
+		(
+		mcLLSM_DEFAULT := 0, (*The limit values are not switched when the movement is aborted.*)
+		mcLLSM_USER_DEFINED := 1, (*When the movement is aborted, a switchover is made to the limit value in the StopTorque parameter.*)
+		mcLLSM_MAX_TORQUE := 2 (*A switchover to the maximum torque value takes place when the movement is aborted.*)
+		);
+
 	McAdvBrLimitLoadCamParType : STRUCT
 		PositionFactorPos : DINT; (*Multiplication factor of the axis position for the positive direction *)
 		LoadFactorPos : DINT; (*Multiplication factor of the torque for the positive direction *)
 		PositionFactorNeg : DINT; (*Multiplication factor of the axis position for the negative direction *)
 		LoadFactorNeg : DINT; (*Multiplication factor of the torque for the negative direction *)
+		StopMode : McLimitLoadStopModeEnum; (*Mode defines how and if limits are switched when movement is aborted*)
+		StopTorque : REAL; (*If Stop mode is mcLLSM_USER_DEFINED, switch over to limit value contained in StopTorque is performed*)
 	END_STRUCT;
 
 	McAcpAxAutoTuneOrientationEnum:
@@ -942,7 +974,7 @@ TYPE
 	    Common : McCamAutCommonParType; (*General parameter for all states of the cam automat*)
 	    State : ARRAY[0..14] OF McCamAutStateParType; (*Parameter for the states of the cam automat*)
 	END_STRUCT;
-		
+
 	McCheckAutCompModeEnum :
 	(
 		mcCAC_CHECK_ALL := 1, (*Check all parameters.*)
@@ -971,5 +1003,14 @@ TYPE
 		LimitsExceeded : BOOL := FALSE; (*Logical result of the Check or Calculate function.*)
 		CalculatedValue : LREAL := 0.0; (*Calculated Master or Slave compensation distance value [Measurement units of master] or [Measurement units of slave].*)
 	END_STRUCT;
+	
+	McProcessSdoType : STRUCT
+	        Index : UINT; (*Index of the SDO parameter to be read or written*)
+	        SubIndex : USINT; (*Subindex of the SDO parameter to be read or written*)
+	        VariableAddress : UDINT; (*Address of the variable that receives the read value or the corresponding value to be written*)
+	        DataType : McSdoDataTypeEnum; (*Data type of the variable*)
+	        Valid : BOOL; (*Output: Parameter was successfully written or read value can be used*)
+	        ErrorInfo : UDINT; (*Output: Error information if 'Valid' is false (see SDO Abort Code)*)
+    	END_STRUCT;
 
 END_TYPE
