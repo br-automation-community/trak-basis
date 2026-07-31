@@ -37,6 +37,7 @@ TYPE
 		Power : BOOL; (*Switch on the controller*)
 		Move : TrakCtrlCmdMoveType; (*Movement structures*)
 		ErrorReset : BOOL; (*Reset the error in assembly*)
+		TraceabilityReset : BOOL; (*Reset current and retained shuttle traceability data*)
 	END_STRUCT;
 	TrakCtrlCmdMoveType : 	STRUCT  (*Movement structures*)
 		Absolute : BOOL; (*Elastic move absolute of all the shuttles to a predefined position*)

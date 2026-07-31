@@ -829,6 +829,16 @@ PROGRAM _CYCLIC
 			pTrakCtrl.Status.Shuttle[i].State.StatusContinuousMotion := MC_ReadStatus_0[i].ContinuousMotion;
 			pTrakCtrl.Status.Shuttle[i].State.StatusSynchronizedMotion := MC_ReadStatus_0[i].SynchronizedMotion;
 		END_IF
+
+		IF pTrakCtrl.Command.TraceabilityReset THEN
+			brsmemset(ADR(pTrakCtrl.Status.Shuttle[i].Traceability),0,SIZEOF(pTrakCtrl.Status.Shuttle[i].Traceability));
+			brsmemset(ADR(RemShTraceability[i]),0,SIZEOF(RemShTraceability[i]));
+			IF pTrakCtrl.Status.Shuttle[i].Valid THEN
+				ShDistanceBaseline[i] := -pTrakCtrl.Status.Shuttle[i].TotalMoveDistance;
+			ELSE
+				ShDistanceBaseline[i] := 0;
+			END_IF
+		END_IF
 				
 		// Keep the persistent distance total current (mapp's own counter resets on every re-identification, so add it on top of the baseline)
 		IF pTrakCtrl.Status.Shuttle[i].Valid THEN
@@ -842,6 +852,10 @@ PROGRAM _CYCLIC
 		END_IF
 		
 	END_FOR
+
+	IF pTrakCtrl.Command.TraceabilityReset THEN
+		pTrakCtrl.Command.TraceabilityReset := FALSE;
+	END_IF
 	
 END_PROGRAM
 
