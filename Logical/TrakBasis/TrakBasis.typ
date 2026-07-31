@@ -14,6 +14,11 @@
 *********************************************************************)
 
 TYPE
+	TrakCtrlShuttleProductStatusEnum :
+		(
+		SH_PRODUCT_STATUS_OK,
+		SH_PRODUCT_STATUS_NOK
+		);
 	TrakApplicationErrorEnum :
 		(
 		TRAK_APP_ERROR_NONE := 0,
@@ -83,6 +88,15 @@ TYPE
 		IsConvoyMaster : BOOL; (*Shuttle is a convoy master*)
 		Pos : McPosType; (*Shuttle position in the coordinate system*)
 		State : TrakCtrlStatusShuttleStateType; (*Shuttle state*)
+		Traceability : TrakCtrlStatusShuttleTraceabilityType; (*Traceability and maintenance data associated with the shuttle. Automatically recovered after power loss*)
+	END_STRUCT;
+	TrakCtrlStatusShuttleTraceabilityType : 	STRUCT  (*Traceability and maintenance data recovered together with the shuttle ID after power loss*)
+		TotalDistance : LREAL; (*Cumulative distance traveled by the shuttle across sessions, for maintenance purposes (mapp's own counter resets on every re-identification)*)
+		ProductType : STRING[32]; (*Type of product currently carried by the shuttle*)
+		ProductStatus : TrakCtrlShuttleProductStatusEnum; (*Quality status of the product currently carried by the shuttle*)
+		LoadTimestamp : McAcpTrakDateTimeType; (*Date and time when the current product was assigned to the shuttle*)
+		BatchNumber : STRING[32]; (*Batch/lot number of the product currently carried by the shuttle*)
+		LastStation : STRING[32]; (*Last known process station visited by the shuttle*)
 	END_STRUCT;
 	TrakCtrlStatusShuttleStateType : 	STRUCT  (*Shuttle PLCopen state*)
 		StatusStandStill : BOOL; (*Shuttle is in state Standstill*)

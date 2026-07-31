@@ -51,6 +51,7 @@ TrakBasis manages power-on and power-off sequences for the ACOPOStrak assembly s
 - **Simulation Support**: Automatically adds simulated shuttles when running in simulation mode.
 - **Real Mode Detection**: Detects and registers real shuttles after startup.
 - **ID Recovery**: Recovers shuttle identifiers after power loss using position-based matching.
+- **Traceability Data Recovery**: Automatically backs up per-shuttle traceability/maintenance data (cumulative distance traveled, product type, product OK/NOK status, load timestamp, batch number, last station) and restores it alongside the shuttle ID after power loss. The cumulative distance is kept persistent across power cycles even though mapp's own distance counter resets on every shuttle re-identification.
 - **Data Structure**: Provides shuttle status including position, velocity, segment, movement state, and lifecycle data.
 
 ### 3. Motion Control

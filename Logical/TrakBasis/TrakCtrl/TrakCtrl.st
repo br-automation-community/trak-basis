@@ -103,6 +103,8 @@ PROGRAM _CYCLIC
 			
 			// Clean the array where the shuttles axis are saved
 			brsmemset(ADR(pTrakCtrl.Status.Shuttle),0,SIZEOF(pTrakCtrl.Status.Shuttle));
+			// Reset the distance baseline; a new identification cycle is about to start and mapp's own counter will restart from zero
+			brsmemset(ADR(ShDistanceBaseline),0,SIZEOF(ShDistanceBaseline));
 			// Stop recording shuttle positions before deleted and until next movement is detected
 			RemShPosRequired := FALSE;
 			DeleteShuttles;
@@ -259,9 +261,11 @@ PROGRAM _CYCLIC
 					pTrakCtrl.Status.ShRecoveryInfo.ShuttleNoData := TRUE;
 				ELSIF RestoreShuttleNumber > TotalCountShuttle THEN
 					brsmemset(ADR(RemShPosition),0,SIZEOF(RemShPosition));
+					brsmemset(ADR(RemShTraceability),0,SIZEOF(RemShTraceability));
 					pTrakCtrl.Status.ShRecoveryInfo.ShuttleMissing := TRUE;
 				ELSIF RestoreShuttleNumber < TotalCountShuttle THEN
 					brsmemset(ADR(RemShPosition),0,SIZEOF(RemShPosition));
+					brsmemset(ADR(RemShTraceability),0,SIZEOF(RemShTraceability));
 					pTrakCtrl.Status.ShRecoveryInfo.ShuttleExtra := TRUE;
 				END_IF
 				TrakState := TRAK_STATE_STANDSTILL;
@@ -311,6 +315,9 @@ PROGRAM _CYCLIC
 				// Restore shuttle references for all matching positions
 				IF (EquivalentShPos[i] <> 0) THEN
 					pTrakCtrl.Status.Shuttle[EquivalentShPos[i]].Axis := AuxShuttleAxis[i];
+					// Restore the traceability data that was backed up for the shuttle previously found at this position
+					pTrakCtrl.Status.Shuttle[EquivalentShPos[i]].Traceability := RemShTraceability[EquivalentShPos[i]];
+					ShDistanceBaseline[EquivalentShPos[i]] := RemShTraceability[EquivalentShPos[i]].TotalDistance;
 				ELSE
 					// Abort shuttle restore sequence (Some shuttle position is not matching)
 					FOR j:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
@@ -823,14 +830,19 @@ PROGRAM _CYCLIC
 			pTrakCtrl.Status.Shuttle[i].State.StatusSynchronizedMotion := MC_ReadStatus_0[i].SynchronizedMotion;
 		END_IF
 				
-		// Save actual shuttle positions to remanent memory (used to recover shuttle IDs after powering up the system)
+		// Keep the persistent distance total current (mapp's own counter resets on every re-identification, so add it on top of the baseline)
+		IF pTrakCtrl.Status.Shuttle[i].Valid THEN
+			pTrakCtrl.Status.Shuttle[i].Traceability.TotalDistance := ShDistanceBaseline[i] + pTrakCtrl.Status.Shuttle[i].TotalMoveDistance;
+		END_IF
+		
+		// Save actual shuttle positions and traceability data to remanent memory (used to recover shuttle IDs after powering up the system)
 		IF RemShPosRequired AND pTrakCtrl.Status.Shuttle[i].Valid THEN 
 			RemShPosition[i] := pTrakCtrl.Status.Shuttle[i].ActPosition;
+			RemShTraceability[i] := pTrakCtrl.Status.Shuttle[i].Traceability;
 		END_IF
 		
 	END_FOR
 	
-		
 END_PROGRAM
 
 PROGRAM _EXIT

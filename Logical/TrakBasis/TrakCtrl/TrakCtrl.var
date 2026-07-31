@@ -87,9 +87,11 @@ END_VAR
 *******************************************************************)
 VAR RETAIN
 	RemShPosition : ARRAY[0..TRAK_MAX_SHUTTLE] OF LREAL; (*Array of shuttle positions saved in remanent memory (used in ID recovery)*)
+	RemShTraceability : ARRAY[0..TRAK_MAX_SHUTTLE] OF TrakCtrlStatusShuttleTraceabilityType; (*Array of shuttle traceability data saved in remanent memory (used in traceability data recovery)*)
 END_VAR
 VAR
 	EquivalentShPos : ARRAY[0..TRAK_MAX_SHUTTLE] OF UINT; (*Checks equivalence between actual and previous shuttle positions (used in ID recovery)*)
+	ShDistanceBaseline : ARRAY[0..TRAK_MAX_SHUTTLE_MINUS_ONE] OF LREAL; (*Distance accumulated before the current identification cycle; added to the live mapp counter (which resets on every re-identification) to keep TotalDistance persistent across power loss*)
 END_VAR
 (********************************************************************
  * Temp variables
