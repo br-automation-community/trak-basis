@@ -274,6 +274,7 @@ PROGRAM _CYCLIC
 		TRAK_STATE_SH_RESTORE_ID:
 			
 			brsmemset(ADR(EquivalentShPos),0,SIZEOF(EquivalentShPos));
+			brsmemset(ADR(EquivalentShPosFound),0,SIZEOF(EquivalentShPosFound));
 			brsmemset(ADR(AuxAxisAssigned),0,SIZEOF(AuxAxisAssigned));
 			
 			// Find equivalent positions
@@ -284,6 +285,7 @@ PROGRAM _CYCLIC
 						// Check if there is a shuttle at some existing position within a predefine tolerance
 						IF ABS(MC_BR_ShReadSectorPos_AcpTrak_0[i].Info.Position - RemShPosition[j]) < pTrakCtrl.Parameter.RestoreTolerance THEN
 							EquivalentShPos[i] := j;
+							EquivalentShPosFound[i] := TRUE;
 							AuxAxisAssigned[j] := TRUE;
 							EXIT;
 						END_IF
@@ -313,7 +315,7 @@ PROGRAM _CYCLIC
 				MC_BR_ShReadErrorInfo_AcpTrak_0[i]();
 				
 				// Restore shuttle references for all matching positions
-				IF (EquivalentShPos[i] <> 0) THEN
+				IF (EquivalentShPosFound[i]) THEN
 					pTrakCtrl.Status.Shuttle[EquivalentShPos[i]].Axis := AuxShuttleAxis[i];
 					// Restore the traceability data that was backed up for the shuttle previously found at this position
 					pTrakCtrl.Status.Shuttle[EquivalentShPos[i]].Traceability := RemShTraceability[EquivalentShPos[i]];
