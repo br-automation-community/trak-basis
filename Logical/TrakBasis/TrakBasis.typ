@@ -89,9 +89,9 @@ TYPE
 		IsConvoyMaster : BOOL; (*Shuttle is a convoy master*)
 		Pos : McPosType; (*Shuttle position in the coordinate system*)
 		State : TrakCtrlStatusShuttleStateType; (*Shuttle state*)
-		Traceability : TrakCtrlStatusShuttleTraceabilityType; (*Traceability and maintenance data associated with the shuttle. Automatically recovered after power loss*)
+		Traceability : TrakCtrlShuttleTraceabilityType; (*Traceability and maintenance data associated with the shuttle. Automatically recovered after power loss*)
 	END_STRUCT;
-	TrakCtrlStatusShuttleTraceabilityType : 	STRUCT  (*Traceability and maintenance data recovered together with the shuttle ID after power loss*)
+	TrakCtrlShuttleTraceabilityType : 	STRUCT  (*Traceability and maintenance data recovered together with the shuttle ID after power loss*)
 		TotalDistance : LREAL; (*Cumulative distance traveled by the shuttle across sessions, for maintenance purposes (mapp's own counter resets on every re-identification)*)
 		ProductType : STRING[32]; (*Type of product currently carried by the shuttle*)
 		ProductStatus : TrakCtrlShuttleProductStatusEnum; (*Quality status of the product currently carried by the shuttle*)

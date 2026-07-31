@@ -87,7 +87,7 @@ END_VAR
 *******************************************************************)
 VAR RETAIN
 	RemShPosition : ARRAY[0..TRAK_MAX_SHUTTLE] OF LREAL; (*Array of shuttle positions saved in remanent memory (used in ID recovery)*)
-	RemShTraceability : ARRAY[0..TRAK_MAX_SHUTTLE] OF TrakCtrlStatusShuttleTraceabilityType; (*Array of shuttle traceability data saved in remanent memory (used in traceability data recovery)*)
+	RemShTraceability : ARRAY[0..TRAK_MAX_SHUTTLE] OF TrakCtrlShuttleTraceabilityType; (*Array of shuttle traceability data saved in remanent memory (used in traceability data recovery)*)
 END_VAR
 VAR
 	EquivalentShPos : ARRAY[0..TRAK_MAX_SHUTTLE] OF UINT; (*Checks equivalence between actual and previous shuttle positions (used in ID recovery)*)
