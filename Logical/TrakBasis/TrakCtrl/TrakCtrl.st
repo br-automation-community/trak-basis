@@ -124,7 +124,7 @@ PROGRAM _CYCLIC
 				IF (pTrakCtrl.Parameter.SimulationParameters.Quantity > TRAK_MAX_SHUTTLE) THEN
 					// Set application error for user feedback and abort shuttle adding
 					pTrakCtrl.Status.Error := TRUE;
-					pTrakCtrl.Status.ErrorInfo.ID := 100; // Error code for shuttle quantity exceeded
+					pTrakCtrl.Status.ErrorInfo.ID := TRAK_APP_ERR_SIM_SH_COUNT_MAX;
 					pTrakCtrl.Status.ErrorInfo.Initiator := 'Application';
 					AuxString := UINT_TO_STRING(pTrakCtrl.Parameter.SimulationParameters.Quantity);
 					pTrakCtrl.Status.ErrorInfo.Text := CONCAT('Requested shuttle quantity (',AuxString);
@@ -191,7 +191,7 @@ PROGRAM _CYCLIC
 					IF (TotalCountShuttle > TRAK_MAX_SHUTTLE) THEN
 						// Set application error for user feedback and abort operation
 						pTrakCtrl.Status.Error := TRUE;
-						pTrakCtrl.Status.ErrorInfo.ID := 101; // Error code for shuttle count exceeded after detection
+						pTrakCtrl.Status.ErrorInfo.ID := TRAK_APP_ERR_SH_COUNT_MAX;
 						pTrakCtrl.Status.ErrorInfo.Initiator := 'Application';
 						AuxString := UINT_TO_STRING(TotalCountShuttle);
 						pTrakCtrl.Status.ErrorInfo.Text := CONCAT('Detected shuttle count (',AuxString);

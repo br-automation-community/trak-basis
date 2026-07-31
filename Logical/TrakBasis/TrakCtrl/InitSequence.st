@@ -69,10 +69,46 @@ ACTION InitSequence:
 				// Store the total amount of segments
 				TotalCountSegment := MC_BR_AsmGetSegment_AcpTrak_0.TotalCount;
 				
-				// If zero segments (or more than the maximum allowed), that's an error
-				IF (MC_BR_AsmGetSegment_AcpTrak_0.TotalCount = 0) OR (MC_BR_AsmGetSegment_AcpTrak_0.TotalCount > TRAK_MAX_SEGMENT) THEN
+				// An assembly without segments cannot be initialized
+				IF (TotalCountSegment = 0) THEN
 					MC_BR_AsmGetSegment_AcpTrak_0.Enable := FALSE;
+					MC_BR_AsmGetSegment_AcpTrak_0.Next := FALSE;
+					pTrakCtrl.Status.Error := TRUE;
+					pTrakCtrl.Status.ErrorInfo.ID := TRAK_APP_ERR_NO_SEGMENTS;
+					pTrakCtrl.Status.ErrorInfo.Initiator := 'Application';
+					pTrakCtrl.Status.ErrorInfo.Text := 'No segments detected in the assembly. Initialization aborted.';
 					InitState := INIT_STATE_ERROR;
+
+				// The configured array must be able to hold every detected segment
+				ELSIF (TotalCountSegment > TRAK_MAX_SEGMENT) THEN
+					MC_BR_AsmGetSegment_AcpTrak_0.Enable := FALSE;
+					MC_BR_AsmGetSegment_AcpTrak_0.Next := FALSE;
+					pTrakCtrl.Status.Error := TRUE;
+					pTrakCtrl.Status.ErrorInfo.ID := TRAK_APP_ERR_SEG_COUNT_MAX;
+					pTrakCtrl.Status.ErrorInfo.Initiator := 'Application';
+					AuxString := UINT_TO_STRING(TotalCountSegment);
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT('Detected segment count (',AuxString);
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,') exceeds TRAK_MAX_SEGMENT limit (');
+					AuxString := UINT_TO_STRING(TRAK_MAX_SEGMENT);
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,AuxString);
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,'). Initialization aborted.');
+					InitState := INIT_STATE_ERROR;
+
+				// Protect the destination array if the FB returns inconsistent count information
+				ELSIF (Counter >= TRAK_MAX_SEGMENT) THEN
+					MC_BR_AsmGetSegment_AcpTrak_0.Enable := FALSE;
+					MC_BR_AsmGetSegment_AcpTrak_0.Next := FALSE;
+					pTrakCtrl.Status.Error := TRUE;
+					pTrakCtrl.Status.ErrorInfo.ID := TRAK_APP_ERR_SEG_INDEX_MAX;
+					pTrakCtrl.Status.ErrorInfo.Initiator := 'Application';
+					AuxString := UINT_TO_STRING(Counter);
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT('Segment index (',AuxString);
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,') is outside TRAK_MAX_SEGMENT capacity (');
+					AuxString := UINT_TO_STRING(TRAK_MAX_SEGMENT);
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,AuxString);
+					pTrakCtrl.Status.ErrorInfo.Text := CONCAT(pTrakCtrl.Status.ErrorInfo.Text,'). Initialization aborted.');
+					InitState := INIT_STATE_ERROR;
+
 				ELSE
 					
 					pTrakCtrl.Status.Segment[Counter].Segment := MC_BR_AsmGetSegment_AcpTrak_0.Segment;
@@ -84,11 +120,6 @@ ACTION InitSequence:
 						MC_BR_AsmGetSegment_AcpTrak_0.Next := FALSE;
 						InitState := INIT_STATE_DONE;
 					
-					ELSIF (Counter >= TRAK_MAX_SEGMENT) THEN
-						MC_BR_AsmGetSegment_AcpTrak_0.Enable := FALSE;
-						MC_BR_AsmGetSegment_AcpTrak_0.Next := FALSE;
-						InitState := INIT_STATE_ERROR;
-						
 					ELSE
 						// Still have more segments to retrieve -> Read the next one
 						MC_BR_AsmGetSegment_AcpTrak_0.Next := FALSE;

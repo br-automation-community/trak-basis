@@ -193,6 +193,16 @@ END_IF
 - **Hardware Errors**: Assembly, segment, or shuttle faults detected by the motion system
 - **Application Errors**: Safety violations or configuration issues detected by TrakBasis logic (e.g., shuttle count exceeding maximum allowed)
 
+Application errors use the symbolic values from `TrakApplicationErrorEnum`:
+
+| Error | ID | Description |
+|-------|----|-------------|
+| `TRAK_APP_ERR_SIM_SH_COUNT_MAX` | 100 | Requested simulation shuttle count exceeds `TRAK_MAX_SHUTTLE` |
+| `TRAK_APP_ERR_SH_COUNT_MAX` | 101 | Detected shuttle count exceeds `TRAK_MAX_SHUTTLE` |
+| `TRAK_APP_ERR_SEG_COUNT_MAX` | 102 | Detected segment count exceeds `TRAK_MAX_SEGMENT` |
+| `TRAK_APP_ERR_SEG_INDEX_MAX` | 103 | Segment enumeration would access outside the configured array |
+| `TRAK_APP_ERR_NO_SEGMENTS` | 104 | No segments were detected during initialization |
+
 ### Shuttle Recovery Configuration
 
 ```st
