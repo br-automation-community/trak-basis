@@ -20,6 +20,8 @@ PROGRAM _INIT
 	InitState := INIT_STATE_SET_PARAMETER;
 	TrakState := TRAK_STATE_DISABLED;
 	
+	gTrakShBackupRestoreData;
+	
 	// Determine if the CPU is running in simulation mode 
 	InSimulation := DiagCpuIsSimulated();
 	
@@ -103,10 +105,6 @@ PROGRAM _CYCLIC
 			
 			// Clean the array where the shuttles axis are saved
 			brsmemset(ADR(pTrakCtrl.Status.Shuttle),0,SIZEOF(pTrakCtrl.Status.Shuttle));
-			// Reset the distance baseline; a new identification cycle is about to start and mapp's own counter will restart from zero
-			brsmemset(ADR(ShDistanceBaseline),0,SIZEOF(ShDistanceBaseline));
-			// Stop recording shuttle positions before deleted and until next movement is detected
-			RemShPosRequired := FALSE;
 			DeleteShuttles;
 			TrakState := TRAK_STATE_DEL_SHUTTLE_WAIT;
 			
@@ -210,23 +208,11 @@ PROGRAM _CYCLIC
 						pTrakCtrl.Status.Shuttle[Counter].Axis := MC_BR_SecGetShuttle_AcpTrak_0.Axis;
 						pTrakCtrl.Status.Shuttle[Counter].ID := MC_BR_SecGetShuttle_AcpTrak_0.AdditionalInfo.ShuttleID;
 						
-						// Define shuttle user ID (very useful with shuttle error diagnosis)
-						AuxString := UINT_TO_STRING(Counter);
-						AuxString := CONCAT('Sh_',AuxString);
-						
-						MC_BR_ShSetUserID_AcpTrak_0.Axis := ADR(MC_BR_SecGetShuttle_AcpTrak_0.Axis);
-						MC_BR_ShSetUserID_AcpTrak_0.UserID := AuxString;
-						MC_BR_ShSetUserID_AcpTrak_0.Execute := TRUE;
-						
 						// All shuttles have been retreived -> proceed
 						IF (MC_BR_SecGetShuttle_AcpTrak_0.RemainingCount = 0) THEN
 							Counter := 0;
 							MC_BR_SecGetShuttle_AcpTrak_0.Enable := FALSE;
-							IF pTrakCtrl.Parameter.RestoreEnabled THEN
-								TrakState := TRAK_STATE_SH_RESTORE_ID_INIT;
-							ELSE
-								TrakState := TRAK_STATE_STANDSTILL;
-							END_IF
+							TrakState := TRAK_STATE_SH_RESTORE_DATA_INIT;
 						ELSE
 							MC_BR_SecGetShuttle_AcpTrak_0.Next := FALSE;
 							TrakState := TRAK_STATE_GET_SHUTTLE;
@@ -235,135 +221,70 @@ PROGRAM _CYCLIC
 				END_IF
 			END_IF	
 			
-		TRAK_STATE_SH_RESTORE_ID_INIT:
+		TRAK_STATE_SH_RESTORE_DATA_INIT:
 			
-			brsmemset(ADR(pTrakCtrl.Status.ShRecoveryInfo),0,SIZEOF(pTrakCtrl.Status.ShRecoveryInfo));
-			// Check how many available shuttle data is stored in remanent memory
-			RestoreShuttleNumber := 0;
-			FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
-				IF (RemShPosition[i] <> 0) THEN
-					RestoreShuttleNumber := RestoreShuttleNumber + 1; 
-				END_IF
-			END_FOR
+			pTrakCtrl.Status.RestoreShStatus := mcACPTRAK_RESTORE_NO_STATUS;
 			
-			// Save shuttle axis in temporary variable (used in next state for shuttle reshuffle)
-			brsmemset(ADR(AuxShuttleAxis),0,SIZEOF(AuxShuttleAxis));
-			FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
-				AuxShuttleAxis[i] := pTrakCtrl.Status.Shuttle[i].Axis;
-			END_FOR
-			
-			// Same amount of shuttles detected than available shuttle positions (try to restore IDs)
-			IF TotalCountShuttle = RestoreShuttleNumber THEN
-				TrakState := TRAK_STATE_SH_RESTORE_ID; 
-				// Different amount of shuttles detected than available shuttle positions (ID restoration can not be performed)	
+			// Official restore FB matches previously known shuttles by position; an empty UserID attempts to restore all of them at once
+			MC_BR_AsmRestoreShData_AcpTrak_0.AdvancedParameters.Tolerance := pTrakCtrl.Parameter.RestoreTolerance;
+			// When restore is disabled, wipe the remanent store instead so a future restore never matches stale identities
+			IF pTrakCtrl.Parameter.RestoreEnabled THEN
+				MC_BR_AsmRestoreShData_AcpTrak_0.AdvancedParameters.Mode := mcACPTRAK_RESTORE_TRY_RESTORING;
 			ELSE
-				IF RestoreShuttleNumber = 0 THEN
-					pTrakCtrl.Status.ShRecoveryInfo.ShuttleNoData := TRUE;
-				ELSIF RestoreShuttleNumber > TotalCountShuttle THEN
-					brsmemset(ADR(RemShPosition),0,SIZEOF(RemShPosition));
-					brsmemset(ADR(RemShTraceability),0,SIZEOF(RemShTraceability));
-					pTrakCtrl.Status.ShRecoveryInfo.ShuttleMissing := TRUE;
-				ELSIF RestoreShuttleNumber < TotalCountShuttle THEN
-					brsmemset(ADR(RemShPosition),0,SIZEOF(RemShPosition));
-					brsmemset(ADR(RemShTraceability),0,SIZEOF(RemShTraceability));
-					pTrakCtrl.Status.ShRecoveryInfo.ShuttleExtra := TRUE;
+				MC_BR_AsmRestoreShData_AcpTrak_0.AdvancedParameters.Mode := mcACPTRAK_RESTORE_RESET_DATA;
+			END_IF
+			MC_BR_AsmRestoreShData_AcpTrak_0.Execute := TRUE;
+			
+			TrakState := TRAK_STATE_SH_RESTORE_DATA_WAIT;
+			
+		TRAK_STATE_SH_RESTORE_DATA_WAIT:
+			
+			IF MC_BR_AsmRestoreShData_AcpTrak_0.Error THEN
+				TrakState := TRAK_STATE_ERROR;
+			ELSIF MC_BR_AsmRestoreShData_AcpTrak_0.Done THEN
+				// Reset-data outcome carries no restore-status meaning, so only read Info.Status when a restore was actually attempted
+				IF NOT pTrakCtrl.Parameter.RestoreEnabled THEN
+					Counter := 0;
+					TrakState := TRAK_STATE_SH_RESTORE_ID;
+				ELSE
+					pTrakCtrl.Status.RestoreShStatus := MC_BR_AsmRestoreShData_AcpTrak_0.Info.Status;
+					// No match by position -> fall back to assigning IDs by shuttle discovery order
+					IF (pTrakCtrl.Status.RestoreShStatus = mcACPTRAK_RESTORE_NO_SH_RESTORED) OR (pTrakCtrl.Status.RestoreShStatus = mcACPTRAK_RESTORE_IDNOTFOUND) THEN
+						Counter := 0;
+						TrakState := TRAK_STATE_SH_RESTORE_ID;
+					ELSE
+						TrakState := TRAK_STATE_STANDSTILL;
+					END_IF
 				END_IF
-				TrakState := TRAK_STATE_STANDSTILL;
 			END_IF
 			
 		TRAK_STATE_SH_RESTORE_ID:
 			
-			brsmemset(ADR(EquivalentShPos),0,SIZEOF(EquivalentShPos));
-			brsmemset(ADR(EquivalentShPosFound),0,SIZEOF(EquivalentShPosFound));
-			brsmemset(ADR(AuxAxisAssigned),0,SIZEOF(AuxAxisAssigned));
-			
-			// Find equivalent positions
-			FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
-				FOR j:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
-					// Make sure that data can only be assigned once
-					IF NOT AuxAxisAssigned[j] THEN
-						// Check if there is a shuttle at some existing position within a predefine tolerance
-						IF ABS(MC_BR_ShReadSectorPos_AcpTrak_0[i].Info.Position - RemShPosition[j]) < pTrakCtrl.Parameter.RestoreTolerance THEN
-							EquivalentShPos[i] := j;
-							EquivalentShPosFound[i] := TRUE;
-							AuxAxisAssigned[j] := TRUE;
-							EXIT;
-						END_IF
-					END_IF
-				END_FOR
-			END_FOR
-			
-			// Reshuffle shuttles	
-			pTrakCtrl.Status.ShRecoveryInfo.ShuttleRecovered := TRUE;
-					
-			FOR i:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
-				
-				// All shuttle related function blocks that use "Enable" input needs to be disabled before shuttle axis reference is updated!
-				MC_BR_ShReadInfo_AcpTrak_0[i].Enable := FALSE;
-				MC_BR_ShReadInfo_AcpTrak_0[i]();
-		
-				MC_BR_ShReadFrame_AcpTrak_0[i].Enable := FALSE;
-				MC_BR_ShReadFrame_AcpTrak_0[i]();
-		
-				MC_BR_ShReadSectorPos_AcpTrak_0[i].Enable := FALSE;
-				MC_BR_ShReadSectorPos_AcpTrak_0[i]();
-
-				MC_ReadStatus_0[i].Enable := FALSE;
-				MC_ReadStatus_0[i]();
-				
-				MC_BR_ShReadErrorInfo_AcpTrak_0[i].Enable := FALSE;
-				MC_BR_ShReadErrorInfo_AcpTrak_0[i]();
-				
-				// Restore shuttle references for all matching positions
-				IF (EquivalentShPosFound[i]) THEN
-					pTrakCtrl.Status.Shuttle[EquivalentShPos[i]].Axis := AuxShuttleAxis[i];
-					// Restore the traceability data that was backed up for the shuttle previously found at this position
-					pTrakCtrl.Status.Shuttle[EquivalentShPos[i]].Traceability := RemShTraceability[EquivalentShPos[i]];
-					ShDistanceBaseline[EquivalentShPos[i]] := RemShTraceability[EquivalentShPos[i]].TotalDistance;
-				ELSE
-					// Abort shuttle restore sequence (Some shuttle position is not matching)
-					FOR j:=0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
-						pTrakCtrl.Status.Shuttle[j].Axis := AuxShuttleAxis[j];
-					END_FOR
-					pTrakCtrl.Status.ShRecoveryInfo.ShuttleMoved := TRUE;
-					pTrakCtrl.Status.ShRecoveryInfo.ShuttleRecovered := FALSE;
-					EXIT;
-				END_IF
-			END_FOR			
-			
-			Counter := 0;
-			TrakState := TRAK_STATE_SH_RESTORE_UID;			
-			
-		TRAK_STATE_SH_RESTORE_UID:
-			
-			IF pTrakCtrl.Status.Shuttle[Counter].Valid THEN
-				// Define shuttle user ID (very useful with shuttle error diagnosis)
+			IF (Counter > TRAK_MAX_SHUTTLE_MINUS_ONE) THEN
+				TrakState := TRAK_STATE_STANDSTILL;
+			ELSIF (pTrakCtrl.Status.Shuttle[Counter].Valid) THEN
 				AuxString := UINT_TO_STRING(Counter);
 				AuxString := CONCAT('Sh_',AuxString);
-							
+				
 				MC_BR_ShSetUserID_AcpTrak_0.Axis := ADR(pTrakCtrl.Status.Shuttle[Counter].Axis);
 				MC_BR_ShSetUserID_AcpTrak_0.UserID := AuxString;
 				MC_BR_ShSetUserID_AcpTrak_0.Execute := TRUE;
 				
-				TrakState := TRAK_STATE_SH_RESTORE_UID_WAIT;
+				TrakState := TRAK_STATE_SH_RESTORE_ID_WAIT;
 			ELSE
-				TrakState := TRAK_STATE_STANDSTILL;
+				Counter := Counter + 1;
 			END_IF
 			
-		TRAK_STATE_SH_RESTORE_UID_WAIT:	
+		TRAK_STATE_SH_RESTORE_ID_WAIT:
 			
-			IF MC_BR_ShSetUserID_AcpTrak_0.Done THEN
+			IF MC_BR_ShSetUserID_AcpTrak_0.Error THEN
+				TrakState := TRAK_STATE_ERROR;
+			ELSIF MC_BR_ShSetUserID_AcpTrak_0.Done THEN
 				Counter := Counter + 1;
-				IF Counter > TRAK_MAX_SHUTTLE_MINUS_ONE THEN
-                    TrakState := TRAK_STATE_STANDSTILL;
-                ELSE
-                    TrakState := TRAK_STATE_SH_RESTORE_UID;
-                END_IF;
-			END_IF		
+				TrakState := TRAK_STATE_SH_RESTORE_ID;
+			END_IF
 
 		TRAK_STATE_STANDSTILL:
-			
-			RemShPosRequired := TRUE;
 			
 			IF NOT pTrakCtrl.Command.Power THEN
 				PowerOff;
@@ -644,6 +565,10 @@ PROGRAM _CYCLIC
 	MC_BR_AsmReset_AcpTrak_0();
 	MC_BR_AsmReset_AcpTrak_0.Execute := FALSE;
 	
+	MC_BR_AsmRestoreShData_AcpTrak_0.Assembly := AdrAssembly;
+	MC_BR_AsmRestoreShData_AcpTrak_0();
+	MC_BR_AsmRestoreShData_AcpTrak_0.Execute := FALSE;
+	
 	//************************* SECTOR ***************************	
 	MC_BR_SecAddShuttle_AcpTrak_0();
 	MC_BR_SecAddShuttle_AcpTrak_0.Execute := FALSE;
@@ -831,33 +756,8 @@ PROGRAM _CYCLIC
 			pTrakCtrl.Status.Shuttle[i].State.StatusContinuousMotion := MC_ReadStatus_0[i].ContinuousMotion;
 			pTrakCtrl.Status.Shuttle[i].State.StatusSynchronizedMotion := MC_ReadStatus_0[i].SynchronizedMotion;
 		END_IF
-
-		IF pTrakCtrl.Command.TraceabilityReset THEN
-			brsmemset(ADR(pTrakCtrl.Status.Shuttle[i].Traceability),0,SIZEOF(pTrakCtrl.Status.Shuttle[i].Traceability));
-			brsmemset(ADR(RemShTraceability[i]),0,SIZEOF(RemShTraceability[i]));
-			IF pTrakCtrl.Status.Shuttle[i].Valid THEN
-				ShDistanceBaseline[i] := -pTrakCtrl.Status.Shuttle[i].TotalMoveDistance;
-			ELSE
-				ShDistanceBaseline[i] := 0;
-			END_IF
-		END_IF
-				
-		// Keep the persistent distance total current (mapp's own counter resets on every re-identification, so add it on top of the baseline)
-		IF pTrakCtrl.Status.Shuttle[i].Valid THEN
-			pTrakCtrl.Status.Shuttle[i].Traceability.TotalDistance := ShDistanceBaseline[i] + pTrakCtrl.Status.Shuttle[i].TotalMoveDistance;
-		END_IF
-		
-		// Save actual shuttle positions and traceability data to remanent memory (used to recover shuttle IDs after powering up the system)
-		IF RemShPosRequired AND pTrakCtrl.Status.Shuttle[i].Valid THEN 
-			RemShPosition[i] := pTrakCtrl.Status.Shuttle[i].ActPosition;
-			RemShTraceability[i] := pTrakCtrl.Status.Shuttle[i].Traceability;
-		END_IF
 		
 	END_FOR
-
-	IF pTrakCtrl.Command.TraceabilityReset THEN
-		pTrakCtrl.Command.TraceabilityReset := FALSE;
-	END_IF
 	
 END_PROGRAM
 

@@ -50,10 +50,11 @@ TrakBasis manages power-on and power-off sequences for the ACOPOStrak assembly s
 ### 2. Shuttle Management
 - **Simulation Support**: Automatically adds simulated shuttles when running in simulation mode.
 - **Real Mode Detection**: Detects and registers real shuttles after startup.
-- **ID Recovery**: Recovers shuttle identifiers after power loss using position-based matching.
-- **Traceability Data Recovery**: Automatically backs up per-shuttle traceability/maintenance data (cumulative distance traveled, product type, product OK/NOK status, load timestamp, batch number, last station) and restores it alongside the shuttle ID after power loss. The cumulative distance is kept persistent across power cycles even though mapp's own distance counter resets on every shuttle re-identification.
-- **Traceability Data Reset**: Clears current and retained traceability data for all shuttles with the one-shot `Command.TraceabilityReset` command, without clearing the positions used for shuttle ID recovery.
+- **ID Recovery**: Recovers shuttle identity after power loss using the official `MC_BR_AsmRestoreShData_AcpTrak` function block (mapp Motion 6.7+), which matches shuttles to their previous position within a configurable tolerance and automatically restores UserID, UserState, user data, and absolute movement distance internally — no application logic needed for that part.
+- **ID Recovery Fallback**: If the official restore can't match a shuttle (`mcACPTRAK_RESTORE_NO_SH_RESTORED`/`mcACPTRAK_RESTORE_IDNOTFOUND`), or if `Parameter.RestoreEnabled` is `FALSE` (in which case the remanent store is wiped via `mcACPTRAK_RESTORE_RESET_DATA` instead of restored), TrakCtrl assigns UserIDs by shuttle discovery order (`Sh_0`, `Sh_1`, ...) as a fallback so shuttles are never left unidentified.
 - **Data Structure**: Provides shuttle status including position, velocity, segment, movement state, and lifecycle data.
+
+> Per-shuttle application user data (product type, traceability, etc.) is intentionally left out of this generic template — each application manages its own data via `MC_BR_ShCopyUserData_AcpTrak` in its own process logic.
 
 ### 3. Motion Control
 - Supports **absolute positioning** and **velocity commands**.
@@ -207,18 +208,22 @@ Application errors use the symbolic values from `TrakApplicationErrorEnum`:
 
 ### Shuttle Recovery Configuration
 
+> ⚠️ **Required Automation Studio configuration**: `MC_BR_AsmRestoreShData_AcpTrak` only works if the assembly's **"Backup and restore data"** setting is configured — calling the FB without it results in an error. In the **Configuration View**, open `mappMotion → Config_1.assembly → Shuttles → Backup and restore data`, set it to **Used**, and set **Variable** to `gTrakShBackupRestoreData` (already declared as a `VAR RETAIN ARRAY OF USINT` in `TrakBasis.var`, sized via `TRAK_MAX_SHUTTLE * (68 + TRAK_SH_USER_DATA_SIZE)`, per B&R's minimum requirement of 68 bytes/shuttle plus user data).
+>
+> `TRAK_SH_USER_DATA_SIZE` (`TrakBasis.var`) reserves bytes for application-level per-shuttle user data (managed by each application via its own `MC_BR_ShCopyUserData_AcpTrak` calls, not by this generic template). If your application uses such data, set `TRAK_SH_USER_DATA_SIZE` to match your own user-data struct size and the shuttle stereotype's `UserData.Size` (`Config_3.shuttlestereotype`) accordingly.
+
 ```st
 // Configure shuttle recovery parameters
 gTrakCtrl.Parameter.RestoreEnabled := TRUE;      // Enable position restoration
 gTrakCtrl.Parameter.RestoreTolerance := 0.01;    // meters tolerance for recovery
 
-// Check recovery status
-IF gTrakCtrl.Status.ShRecoveryInfo.ShuttleRecovered THEN
+// Check recovery status (McAcpTrakAdvRestoreShStatusEnum)
+IF gTrakCtrl.Status.RestoreShStatus = mcACPTRAK_RESTORE_SUCCESS THEN
     // Shuttle ID recovery was successful
 END_IF
 
-IF gTrakCtrl.Status.ShRecoveryInfo.ShuttleMoved THEN
-    // Recovery not possible - shuttles were moved
+IF gTrakCtrl.Status.RestoreShStatus = mcACPTRAK_RESTORE_NO_SH_RESTORED THEN
+    // Recovery not possible - no shuttle matched within tolerance, fallback IDs assigned instead
 END_IF
 ```
 
@@ -338,6 +343,7 @@ TrakBasis is developed for and tested with:
 - **mappMotion 6.x**    
 
 > 💡 All Automation Studio 6.x versions are supported.  
+> ⚠️ Shuttle ID recovery (`MC_BR_AsmRestoreShData_AcpTrak`) requires **mappMotion 6.7 or later**.  
 > ⚠️ Backporting to Automation Studio 4 is not supported due to structural and library differences.
 
 ---

@@ -14,12 +14,7 @@
 *********************************************************************)
 
 TYPE
-	TrakCtrlShuttleProductStatusEnum :
-		(
-		SH_PRODUCT_STATUS_OK,
-		SH_PRODUCT_STATUS_NOK
-		);
-	TrakApplicationErrorEnum :
+	TrakApplicationErrorEnum : 
 		(
 		TRAK_APP_ERROR_NONE := 0,
 		TRAK_APP_ERR_SIM_SH_COUNT_MAX := 100,
@@ -37,7 +32,6 @@ TYPE
 		Power : BOOL; (*Switch on the controller*)
 		Move : TrakCtrlCmdMoveType; (*Movement structures*)
 		ErrorReset : BOOL; (*Reset the error in assembly*)
-		TraceabilityReset : BOOL; (*Reset current and retained shuttle traceability data*)
 	END_STRUCT;
 	TrakCtrlCmdMoveType : 	STRUCT  (*Movement structures*)
 		Absolute : BOOL; (*Elastic move absolute of all the shuttles to a predefined position*)
@@ -67,7 +61,7 @@ TYPE
 		Error : BOOL; (*A hardware or application error is active*)
 		ErrorInfo : TrakCtrlStatusErrorInfoType; (*Hardware or application error information*)
 		PLCopenState : TrakCtrlStatusPLCopenStateType; (*PLC Open state of the assembly *)
-		ShRecoveryInfo : TrakCtrlStatusShRecoveryInfoType; (*Shuttle recovery information*)
+		RestoreShStatus : McAcpTrakAdvRestoreShStatusEnum; (*Outcome of the official MC_BR_AsmRestoreShData_AcpTrak restore attempt*)
 		Segment : ARRAY[0..TRAK_MAX_SEGMENT_MINUS_ONE]OF TrakCtrlStatusSegmentType; (*Overall count of the segments*)
 		Shuttle : ARRAY[0..TRAK_MAX_SHUTTLE_MINUS_ONE]OF TrakCtrlStatusShuttleType; (*Overall count of the shuttles*)
 	END_STRUCT;
@@ -89,15 +83,6 @@ TYPE
 		IsConvoyMaster : BOOL; (*Shuttle is a convoy master*)
 		Pos : McPosType; (*Shuttle position in the coordinate system*)
 		State : TrakCtrlStatusShuttleStateType; (*Shuttle state*)
-		Traceability : TrakCtrlShuttleTraceabilityType; (*Traceability and maintenance data associated with the shuttle. Automatically recovered after power loss*)
-	END_STRUCT;
-	TrakCtrlShuttleTraceabilityType : 	STRUCT  (*Traceability and maintenance data recovered together with the shuttle ID after power loss*)
-		TotalDistance : LREAL; (*Cumulative distance traveled by the shuttle across sessions, for maintenance purposes (mapp's own counter resets on every re-identification)*)
-		ProductType : STRING[32]; (*Type of product currently carried by the shuttle*)
-		ProductStatus : TrakCtrlShuttleProductStatusEnum; (*Quality status of the product currently carried by the shuttle*)
-		LoadTimestamp : McAcpTrakDateTimeType; (*Date and time when the current product was assigned to the shuttle*)
-		BatchNumber : STRING[32]; (*Batch/lot number of the product currently carried by the shuttle*)
-		LastStation : STRING[32]; (*Last known process station visited by the shuttle*)
 	END_STRUCT;
 	TrakCtrlStatusShuttleStateType : 	STRUCT  (*Shuttle PLCopen state*)
 		StatusStandStill : BOOL; (*Shuttle is in state Standstill*)
@@ -115,13 +100,6 @@ TYPE
 		ErrorStop : BOOL; (*Assembly in error state*)
 		StartUp : BOOL; (*Assembly in start up state*)
 		InvalidConfigurartion : BOOL; (*Assembly is invalid*)
-	END_STRUCT;
-	TrakCtrlStatusShRecoveryInfoType : 	STRUCT  (*Shuttle recovery related information*)
-		ShuttleMoved : BOOL; (*One or more shuttles have been moved. Recovery not possible.*)
-		ShuttleMissing : BOOL; (*One or more shuttles are missing from previous data. Recovery not possible.*)
-		ShuttleExtra : BOOL; (*One or more shuttles have been added from previous data. Recovery not possible.*)
-		ShuttleNoData : BOOL; (*No valid shuttle data in remanent memory. Recovery not possible.*)
-		ShuttleRecovered : BOOL; (*Shuttle ID recovery has been successful.*)
 	END_STRUCT;
 	TrakCtrlStatusSegmentType : 	STRUCT  (*Overrall numbers of segments*)
 		Valid : BOOL; (*Segment data valid*)

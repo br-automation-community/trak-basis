@@ -13,8 +13,5 @@
         <Property ID="Deceleration" Value="40.0" />
       </Selector>
     </Selector>
-    <Group ID="UserData">
-      <Property ID="Size" Value="52" />
-    </Group>
   </Element>
 </Configuration>
