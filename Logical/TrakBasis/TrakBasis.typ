@@ -32,11 +32,18 @@ TYPE
 		Power : BOOL; (*Switch on the controller*)
 		Move : TrakCtrlCmdMoveType; (*Movement structures*)
 		ErrorReset : BOOL; (*Reset the error in assembly*)
+		Recover : TrakCtrlCmdRecoverType; (*Shuttle identity recovery commands*)
 	END_STRUCT;
 	TrakCtrlCmdMoveType : 	STRUCT  (*Movement structures*)
 		Absolute : BOOL; (*Elastic move absolute of all the shuttles to a predefined position*)
 		Velocity : BOOL; (*Velocity move of all the shuttles within the predefined sector*)
 		Halt : BOOL; (*Stops all shuttle movements*)
+	END_STRUCT;
+	TrakCtrlCmdRecoverType : 	STRUCT  (*Shuttle identity recovery commands*)
+		Index : UINT; (*Index in Status.Shuttle[] of the shuttle to identify*)
+		UserID : STRING[32]; (*UserID supplied externally (e.g. by a camera recognition system)*)
+		Execute : BOOL; (*Assigns UserID to the shuttle at Index*)
+		ResetShuttleData : BOOL; (*Wipes the remanent shuttle backup/restore store (mcACPTRAK_RESTORE_RESET_DATA)*)
 	END_STRUCT;
 	TrakCtrlParType : 	STRUCT  (*Parameter structure*)
 		Position : LREAL; (*Position of the commanded movement for the selecred shuttle*)
@@ -60,8 +67,8 @@ TYPE
 		MovementDetected : BOOL; (*There are movements in the assembly*)
 		Error : BOOL; (*A hardware or application error is active*)
 		ErrorInfo : TrakCtrlStatusErrorInfoType; (*Hardware or application error information*)
+		AutomaticRestoreSuccess : BOOL; (*TRUE if the automatic restore matched all detected shuttles; FALSE otherwise (some need Command.Recover)*)
 		PLCopenState : TrakCtrlStatusPLCopenStateType; (*PLC Open state of the assembly *)
-		RestoreShStatus : McAcpTrakAdvRestoreShStatusEnum; (*Outcome of the official MC_BR_AsmRestoreShData_AcpTrak restore attempt*)
 		Segment : ARRAY[0..TRAK_MAX_SEGMENT_MINUS_ONE]OF TrakCtrlStatusSegmentType; (*Overall count of the segments*)
 		Shuttle : ARRAY[0..TRAK_MAX_SHUTTLE_MINUS_ONE]OF TrakCtrlStatusShuttleType; (*Overall count of the shuttles*)
 	END_STRUCT;

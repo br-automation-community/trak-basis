@@ -1,12 +1,14 @@
 # TrakBasis – ACOPOStrak Control Framework
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Automation Studio](https://img.shields.io/badge/Automation%20Studio-6.x-blue)](https://www.br-automation.com/)
-[![mappMotion](https://img.shields.io/badge/mappMotion-6.x-green)](https://www.br-automation.com/)
+[![Automation Studio](https://img.shields.io/badge/Automation%20Studio-6.7-blue)](https://www.br-automation.com/)
+[![mappMotion](https://img.shields.io/badge/mappMotion-6.7.2-green)](https://www.br-automation.com/)
 
-**TrakBasis** is a modular and extensible control framework designed to simplify development with **ACOPOStrak** systems. It provides a robust foundation for managing power states, shuttle handling, motion commands, and diagnostics — covering the essential features required in any machine using ACOPOStrak.
+**TrakBasis** is a modular and extensible control framework designed to simplify development with **ACOPOStrak** systems. It provides a foundation for managing power states, shuttle handling, motion commands, and diagnostics.
 
 This framework is especially suited for **closed-loop assemblies** using a **single sector as reference**, but is designed to be extended for more complex topologies.
+
+![Reference closed-loop ACOPOStrak topology](Physical/Config1/Hardware.jpg)
 
 ## 📋 Table of Contents
 
@@ -15,6 +17,7 @@ This framework is especially suited for **closed-loop assemblies** using a **sin
 - [Getting Started](#-getting-started)
 - [Usage Examples](#-usage-examples)
 - [Project Structure](#-project-structure)
+- [Development & Testing](#-development--testing)
 - [Control Interface](#️-control-interface)
 - [Compatibility](#-compatibility)
 - [Troubleshooting](#-troubleshooting)
@@ -33,25 +36,25 @@ This framework is especially suited for **closed-loop assemblies** using a **sin
 **Why TrakBasis?**
 
 Every ACOPOStrak project requires the same fundamental procedures:
-- **Power Management**: Safe power-on/off sequences
+- **Power Management**: Controlled power-on/off sequences
 - **Recovery Maneuvers**: Shuttle detection and ID recovery after power loss
 - **Error Handling**: Assembly, segment, and shuttle error management
 - **Motion Control**: Basic movement commands and coordination
 
-**TrakBasis implements all these common procedures**, providing a ready-to-use foundation that eliminates repetitive development work and ensures proven, reliable operation patterns.
+**TrakBasis implements these common procedures**, providing a reusable starting point that reduces repetitive application development.
 
 ---
 
 ## 🔧 Core Functionality
 
 ### 1. Power Management
-TrakBasis manages power-on and power-off sequences for the ACOPOStrak assembly safely, ensuring readiness before enabling movement or interacting with hardware.
+TrakBasis coordinates power-on and power-off sequences for the ACOPOStrak assembly and checks its readiness before enabling movement.
 
 ### 2. Shuttle Management
 - **Simulation Support**: Automatically adds simulated shuttles when running in simulation mode.
 - **Real Mode Detection**: Detects and registers real shuttles after startup.
 - **ID Recovery**: Recovers shuttle identity after power loss using the official `MC_BR_AsmRestoreShData_AcpTrak` function block (mapp Motion 6.7+), which matches shuttles to their previous position within a configurable tolerance and automatically restores UserID, UserState, user data, and absolute movement distance internally — no application logic needed for that part.
-- **ID Recovery Fallback**: If the official restore can't match a shuttle (`mcACPTRAK_RESTORE_NO_SH_RESTORED`/`mcACPTRAK_RESTORE_IDNOTFOUND`), or if `Parameter.RestoreEnabled` is `FALSE` (in which case the remanent store is wiped via `mcACPTRAK_RESTORE_RESET_DATA` instead of restored), TrakCtrl assigns UserIDs by shuttle discovery order (`Sh_0`, `Sh_1`, ...) as a fallback so shuttles are never left unidentified.
+- **ID Recovery Fallback**: If the official restore can't match a shuttle (`mcACPTRAK_RESTORE_NO_SH_RESTORED`/`mcACPTRAK_RESTORE_IDNOTFOUND`), TrakCtrl doesn't guess — it simply continues to StandStill with that shuttle's UserID left empty. The application can then identify shuttles individually at any time via `Command.Recover` (Index/UserID/Execute) (e.g. camera recognition, barcode, manual HMI), or wipe the whole remanent store on demand via `Command.Recover.ResetShuttleData`.
 - **Data Structure**: Provides shuttle status including position, velocity, segment, movement state, and lifecycle data.
 
 > Per-shuttle application user data (product type, traceability, etc.) is intentionally left out of this generic template — each application manages its own data via `MC_BR_ShCopyUserData_AcpTrak` in its own process logic.
@@ -75,14 +78,15 @@ TrakBasis manages power-on and power-off sequences for the ACOPOStrak assembly s
 
 Before using TrakBasis, ensure you have:
 
-- **Automation Studio 6.x** installed
-- **mappMotion 6.x** license
+- **Automation Studio 6.7** installed
+- **mappMotion 6.7.2** technology package and the runtime licenses required by your target
 - **ACOPOStrak hardware** (or simulation environment)
 - Basic knowledge of **Structured Text (ST)** programming
 
 ### Installation & Setup
 
 > ⚠️ **Note**: This repository is for development and testing of TrakBasis itself. For use in your projects, download the latest release package.
+> Published releases are stable snapshots and may not contain changes that are still under development on the main branch. Check the release notes before importing.
 
 #### Step 1: Import TrakBasis Package
 
@@ -93,7 +97,7 @@ Before using TrakBasis, ensure you have:
    - Select the downloaded TrakBasis package file
    - Follow the import wizard to add all required files to your project
 
-#### Step 2: Configure Hardware References
+#### Step 2: Configure References and Limits
 
 Update the `Reference.st` file to match your ACOPOStrak hardware configuration:
 
@@ -104,27 +108,37 @@ AdrSector := ADR(Sector_1);             // Your default sector name
 AssemblyName := 'gAssembly_1';          // Assembly identifier
 ```
 
+Then review the capacity constants in `TrakBasis.var`:
+
+```st
+TRAK_MAX_SEGMENT : UINT := 12;
+TRAK_MAX_SHUTTLE : UINT := 40;
+TRAK_SH_USER_DATA_SIZE : UINT := 0;
+```
+
+- `TRAK_MAX_SHUTTLE` must match `MaxShuttleCount` in the assembly configuration.
+- `TRAK_MAX_SEGMENT` must be at least the number of configured segments.
+- `TRAK_SH_USER_DATA_SIZE` must match the shuttle stereotype if application user data is used.
+
 #### Step 3: Hardware Configuration
 
 Ensure your ACOPOStrak hardware is properly configured in the **Physical View**:
 - Assembly configuration matches your physical setup
 - Sectors and segments are properly defined
+- The assembly's **Backup and restore data** variable is set to `gTrakShBackupRestoreData`
 - mappMotion configuration is deployed to the target
+
+For simulation, review the defaults in `InitSequence.st`. The supplied project creates 20 shuttles starting at 0.1 m with 0.06 m separation:
+
+```st
+pTrakCtrl.Parameter.SimulationParameters.Position := 0.1;
+pTrakCtrl.Parameter.SimulationParameters.Quantity := 20;
+pTrakCtrl.Parameter.SimulationParameters.Separation := 0.06;
+```
 
 #### Step 4: Start Using TrakBasis
 
-```st
-// Wait for system ready, then power on the assembly
-IF gTrakCtrl.Status.ReadyForPowerOn THEN
-    gTrakCtrl.Command.Power := TRUE;
-END_IF
-
-// Check if assembly is powered on and ready for operation
-IF gTrakCtrl.Status.PowerOn THEN
-    // Assembly is powered and ready for shuttle operations
-    // Keep Command.Power := TRUE as long as system should remain energized
-END_IF
-```
+Continue with the [Basic Assembly Control](#basic-assembly-control) example. Keep `Command.Power` set while the assembly should remain powered; movement and recovery commands are one-shot requests that TrakBasis clears after accepting them.
 
 ## 💡 Usage Examples
 
@@ -187,14 +201,16 @@ IF gTrakCtrl.Status.Error THEN
         // Initiator will contain the component name (e.g., 'Assembly', 'Segment_01', 'Sh_1')
     END_IF
 
-    // Reset any error (hardware or application)
-    gTrakCtrl.Command.ErrorReset := TRUE;
+    // Request a reset for one cycle only, after the cause has been corrected
+    IF OperatorResetRequest THEN
+        gTrakCtrl.Command.ErrorReset := TRUE;
+    END_IF
 END_IF
 ```
 
 **Error Types:**
 - **Hardware Errors**: Assembly, segment, or shuttle faults detected by the motion system
-- **Application Errors**: Safety violations or configuration issues detected by TrakBasis logic (e.g., shuttle count exceeding maximum allowed)
+- **Application Errors**: Configuration or capacity issues detected by TrakBasis logic (e.g., shuttle count exceeding the configured maximum)
 
 Application errors use the symbolic values from `TrakApplicationErrorEnum`:
 
@@ -208,23 +224,40 @@ Application errors use the symbolic values from `TrakApplicationErrorEnum`:
 
 ### Shuttle Recovery Configuration
 
-> ⚠️ **Required Automation Studio configuration**: `MC_BR_AsmRestoreShData_AcpTrak` only works if the assembly's **"Backup and restore data"** setting is configured — calling the FB without it results in an error. In the **Configuration View**, open `mappMotion → Config_1.assembly → Shuttles → Backup and restore data`, set it to **Used**, and set **Variable** to `gTrakShBackupRestoreData` (already declared as a `VAR RETAIN ARRAY OF USINT` in `TrakBasis.var`, sized via `TRAK_MAX_SHUTTLE * (68 + TRAK_SH_USER_DATA_SIZE)`, per B&R's minimum requirement of 68 bytes/shuttle plus user data).
->
-> `TRAK_SH_USER_DATA_SIZE` (`TrakBasis.var`) reserves bytes for application-level per-shuttle user data (managed by each application via its own `MC_BR_ShCopyUserData_AcpTrak` calls, not by this generic template). If your application uses such data, set `TRAK_SH_USER_DATA_SIZE` to match your own user-data struct size and the shuttle stereotype's `UserData.Size` (`Config_3.shuttlestereotype`) accordingly.
+`MC_BR_AsmRestoreShData_AcpTrak` requires the following Automation Studio configuration:
+
+1. Open `mappMotion → Config_1.assembly → Shuttles → Backup and restore data` in the **Configuration View**.
+2. Set the option to **Used**.
+3. Set **Variable** to `gTrakShBackupRestoreData`.
+
+![Backup and restore data configuration in Automation Studio](docs/images/backup-restore-configuration.png)
+
+*The assembly configuration must show `Backup and restore data` as `Used` and reference `gTrakShBackupRestoreData`.*
+
+The variable is declared as a `VAR RETAIN ARRAY OF USINT` in `TrakBasis.var`. Its size is calculated as `TRAK_MAX_SHUTTLE * (68 + TRAK_SH_USER_DATA_SIZE)`, where 68 bytes per shuttle is the minimum backup overhead.
+
+`TRAK_SH_USER_DATA_SIZE` reserves bytes for application-level shuttle data. If the application uses `MC_BR_ShCopyUserData_AcpTrak`, this constant must match the user-data structure size and the shuttle stereotype's `UserData.Size` in `Config_3.shuttlestereotype`.
 
 ```st
 // Configure shuttle recovery parameters
 gTrakCtrl.Parameter.RestoreEnabled := TRUE;      // Enable position restoration
 gTrakCtrl.Parameter.RestoreTolerance := 0.01;    // meters tolerance for recovery
 
-// Check recovery status (McAcpTrakAdvRestoreShStatusEnum)
-IF gTrakCtrl.Status.RestoreShStatus = mcACPTRAK_RESTORE_SUCCESS THEN
-    // Shuttle ID recovery was successful
+// Check recovery status
+IF gTrakCtrl.Status.AutomaticRestoreSuccess THEN
+    // All detected shuttles were restored successfully
+ELSE
+    // Not all shuttles matched; system still reaches StandStill, unmatched shuttles keep an empty
+    // UserID until identified individually (see below)
 END_IF
 
-IF gTrakCtrl.Status.RestoreShStatus = mcACPTRAK_RESTORE_NO_SH_RESTORED THEN
-    // Recovery not possible - no shuttle matched within tolerance, fallback IDs assigned instead
-END_IF
+// Identify a shuttle by index at any time, e.g. after a camera/barcode read:
+gTrakCtrl.Command.Recover.Index := 0;
+gTrakCtrl.Command.Recover.UserID := 'Sh_0';
+gTrakCtrl.Command.Recover.Execute := TRUE;
+
+// Or wipe the whole remanent store on demand:
+gTrakCtrl.Command.Recover.ResetShuttleData := TRUE;
 ```
 
 ## 📁 Project Structure
@@ -235,19 +268,32 @@ TrakBasis/
 │   ├── Global.typ              # Global type definitions
 │   ├── Global.var              # Global variables
 │   ├── Libraries/              # External library dependencies
-│   └── TrakBasis/
-│       ├── TrakBasis.typ       # Main type definitions
-│       ├── TrakBasis.var       # Configuration variables
-│       └── TrakCtrl/
-│           ├── TrakCtrl.st     # Main control program
-│           ├── Commands.st     # Command handling
-│           ├── Reference.st    # Reference management
-│           ├── InitSequence.st # Initialization logic
-│           ├── TrakCtrl.typ    # Control type definitions
-│           └── TrakCtrl.var    # Control variables
-├── Physical/                   # Hardware configuration
+│   ├── TrakBasis/
+│   │   ├── TrakBasis.typ       # Main type definitions
+│   │   ├── TrakBasis.var       # Configuration variables
+│   │   └── TrakCtrl/
+│   │       ├── TrakCtrl.st     # Main control program
+│   │       ├── Commands.st     # Command handling
+│   │       ├── Reference.st    # Reference management
+│   │       ├── InitSequence.st # Initialization logic
+│   │       ├── TrakCtrl.typ    # Control type definitions
+│   │       └── TrakCtrl.var    # Control variables
+│   └── UnitTest/               # B&R Unit Test project and TrakCtrl tests
+├── Physical/
+│   └── Config1/
+│       ├── Hardware.jpg        # Reference closed-loop topology
+│       └── 5PC900_TS17_00/mappMotion/
+│           ├── Config_1.assembly
+│           ├── Config_2.sector
+│           └── Config_3.shuttlestereotype
 └── README.md
 ```
+
+## 🧪 Development & Testing
+
+The repository includes a B&R Unit Test suite under `Logical/UnitTest/utTrakCtrl`. The current fixtures cover communication readiness, power-on, absolute movement, velocity movement, and halt behavior in simulation.
+
+Recovery, backup reset, and error fallback scenarios are not currently covered by this suite. Add or update tests when changing these behaviors.
 
 ## 🎛️ Control Interface
 
@@ -271,6 +317,10 @@ Use `gTrakCtrl.Command` to control the system:
 | `Move.Velocity` | BOOL | Moves all shuttles with velocity within predefined sector |
 | `Move.Halt` | BOOL | Stops the movement for all shuttles |
 | `ErrorReset` | BOOL | Resets any errors (hardware or application) |
+| `Recover.Index` | UINT | Index of the shuttle to identify, used together with `.UserID` and `.Execute` |
+| `Recover.UserID` | STRING[32] | UserID to assign to the shuttle at `.Index` (e.g. supplied by a camera recognition system) |
+| `Recover.Execute` | BOOL | Executes the assignment |
+| `Recover.ResetShuttleData` | BOOL | Wipes the remanent shuttle backup/restore store (`mcACPTRAK_RESTORE_RESET_DATA`) |
 
 ### Parameter Interface
 
@@ -285,6 +335,9 @@ Configure movement and system parameters via `gTrakCtrl.Parameter`:
 | `Direction` | McDirectionEnum | Movement direction (mcDIR_POSITIVE/mcDIR_NEGATIVE) |
 | `RestoreEnabled` | BOOL | Enable shuttle position restoration after power-on |
 | `RestoreTolerance` | LREAL | Position tolerance for shuttle recovery (meters) |
+| `SimulationParameters.Position` | LREAL | Initial position of the first simulated shuttle (meters) |
+| `SimulationParameters.Separation` | LREAL | Separation between simulated shuttles (meters) |
+| `SimulationParameters.Quantity` | UINT | Number of shuttles created in simulation |
 
 ### Status Interface
 
@@ -297,6 +350,10 @@ Monitor system state through `gTrakCtrl.Status`:
 | `PowerOn` | BOOL | Assembly is powered on |
 | `MovementDetected` | BOOL | Movements detected in assembly |
 | `Error` | BOOL | Error present in system (hardware or application) |
+| `AutomaticRestoreSuccess` | BOOL | All detected shuttles were matched by automatic restoration |
+| `PLCopenState` | TrakCtrlStatusPLCopenStateType | Assembly PLCopen states |
+| `Segment[]` | ARRAY | Segment status and diagnostic information |
+| `Shuttle[]` | ARRAY | Shuttle references, state, position, and lifecycle information |
 
 ### Error Information
 
@@ -316,10 +373,12 @@ Individual shuttle information is available in `gTrakCtrl.Status.Shuttle[index]`
 |----------|------|-------------|
 | `Valid` | BOOL | Shuttle data is valid |
 | `ID` | UDINT | Shuttle identifier |
+| `Name` | STRING[32] | Shuttle UserID restored or assigned by the application |
 | `ActPosition` | LREAL | Current shuttle position (meters) |
 | `ActVelocity` | REAL | Current shuttle velocity (m/s) |
 | `ActSector` | STRING[32] | Current sector name |
 | `TotalMoveDistance` | LREAL | Total distance moved by shuttle (meters) |
+| `State` | TrakCtrlStatusShuttleStateType | Shuttle PLCopen states |
 
 ### Segment Data
 
@@ -329,7 +388,10 @@ Segment information is available in `gTrakCtrl.Status.Segment[index]`:
 |----------|------|-------------|
 | `Valid` | BOOL | Segment data is valid |
 | `Name` | STRING[32] | Segment name (for diagnostics) |
+| `State` | TrakCtrlStatusSegmentState | Segment PLCopen states |
 | `Info.TempBalancer` | REAL | Internal segment temperature |
+| `Info.TempSensor` | REAL | Backside segment temperature |
+| `Info.TempAir` | REAL | Segment CPU temperature |
 | `Info.Voltage` | REAL | DC segment voltage |
 | `Info.PowerConsumption` | REAL | Segment power consumption |
 
@@ -337,14 +399,14 @@ Segment information is available in `gTrakCtrl.Status.Segment[index]`:
 
 ## ✅ Compatibility
 
-TrakBasis is developed for and tested with:
+TrakBasis is developed and tested with:
 
-- **Automation Studio 6.x**  
-- **mappMotion 6.x**    
+- **Automation Studio 6.7.0**
+- **mappMotion 6.7.2**
 
-> 💡 All Automation Studio 6.x versions are supported.  
-> ⚠️ Shuttle ID recovery (`MC_BR_AsmRestoreShData_AcpTrak`) requires **mappMotion 6.7 or later**.  
-> ⚠️ Backporting to Automation Studio 4 is not supported due to structural and library differences.
+> Shuttle ID recovery uses `MC_BR_AsmRestoreShData_AcpTrak`, which is available from mappMotion 6.7. Earlier versions are not supported. Other Automation Studio 6.x and mappMotion versions have not been validated.
+>
+> Backporting to Automation Studio 4 is not supported due to structural and library differences.
 
 ---
 
@@ -367,7 +429,7 @@ TrakBasis is developed for and tested with:
 **Movement commands not executing**
 - ✅ Ensure assembly is in ready state
 - ✅ Check for active errors that block movement
-- ✅ Verify shuttle ID exists and is valid
+- ✅ Verify the corresponding `Status.Shuttle[index].Valid` value is `TRUE`
 - ✅ Confirm position is within valid track range
 
 **Simulation shuttles not appearing**
@@ -422,10 +484,10 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 🙏 Acknowledgments
 
-- **B&R Industrial Automation** for the ACOPOStrak technology and mappMotion framework
-- **B&R Community** for feedback and contributions
-- **Contributors** who help improve this framework
+- **B&R Spain** created and maintains TrakBasis
+- **B&R Industrial Automation** develops the ACOPOStrak technology and mappMotion framework
+- **Community contributors** help improve the framework through issues and pull requests
 
 ---
 
-*Made with ❤️ by the B&R Community*
+*Created by B&R Spain and open to community contributions.*

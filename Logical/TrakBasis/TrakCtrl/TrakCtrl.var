@@ -25,6 +25,7 @@ END_VAR
 VAR
 	TrakState : TrakStateEnum;
 	TrakErrorState : TrakErrorStateEnum;
+	TrakShIdState : TrakShIdStateEnum;
 	InitState : InitStateEnum;
 END_VAR
 (********************************************************************
@@ -89,6 +90,7 @@ END_VAR
 VAR
 	i : INT; (*Loop index*)
 	Counter : UINT; (*Auxiliar variable used to iterate in array positions*)
+	ShIdIndex : UINT; (*Shuttle index currently being assigned an externally supplied UserID*)
 	InitDone : BOOL; (*Trak initialization process completed*)
 	InSimulation : BOOL; (*Trak is in simulation*)
 	TotalCountSegment : UINT; (*Used to detect if maximum count of segments is exceeded*)
