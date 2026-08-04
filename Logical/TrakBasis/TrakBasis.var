@@ -7,10 +7,20 @@ VAR CONSTANT
 	TRAK_MAX_SHUTTLE : UINT := 40; (*Maximum number of shuttles. This value must match the assembly configuration file*)
 	TRAK_MAX_SEGMENT_MINUS_ONE : UINT := TRAK_MAX_SEGMENT-1;
 	TRAK_MAX_SHUTTLE_MINUS_ONE : UINT := TRAK_MAX_SHUTTLE-1;
+	TRAK_SH_USER_DATA_SIZE : UINT := 0; (*Bytes reserved per shuttle in User data size.This value must match the shuttle stereotype configuration file*)
+	// Per B&R docs: array size must be at least MaxShuttleCount * (68 + user data size)
+	TRAK_SH_BACKUP_SIZE_MINUS_ONE : UINT := (TRAK_MAX_SHUTTLE*(68+TRAK_SH_USER_DATA_SIZE))-1;
 END_VAR
 (********************************************************************
  * Global control variable
 ********************************************************************)
 VAR
 	gTrakCtrl : TrakCtrlType;
+END_VAR
+(********************************************************************
+ * Backup and restore data - referenced by name from the assembly's
+ * "Backup and restore data" configuration element (Config_1.assembly)
+********************************************************************)
+VAR RETAIN
+	gTrakShBackupRestoreData : ARRAY[0..TRAK_SH_BACKUP_SIZE_MINUS_ONE] OF USINT;
 END_VAR

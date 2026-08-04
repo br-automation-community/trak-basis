@@ -18,7 +18,7 @@
     <Parameter ID="Simulation" Value="1" />
     <Parameter ID="RemMemDevice" Value="PCI.2.LS187.SRAM" />
     <Parameter ID="RemMemSize" Value="20000" />
-    <Parameter ID="RemanentGlobalPvSize" Value="2000" />
+    <Parameter ID="RemanentGlobalPvSize" Value="3000" />
     <Parameter ID="MotionLoggerSize" Value="2048000" />
     <Parameter ID="TimerDeviceType" Value="EPLX2X" />
     <Parameter ID="TimerDevice" Value="5LS187.6-1.IF2" />

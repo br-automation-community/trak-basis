@@ -47,6 +47,9 @@
       <Group ID="MagnetPlateConfigurations">
         <Selector ID="ShuttleType[1]" Value="8F1Sx.102.xxxxxx-x" />
       </Group>
+      <Selector ID="BackupShuttleData" Value="Used">
+        <Property ID="BackupVar" Value="::gTrakShBackupRestoreData" />
+      </Selector>
     </Group>
   </Element>
 </Configuration>

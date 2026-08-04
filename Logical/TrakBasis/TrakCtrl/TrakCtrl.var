@@ -25,6 +25,7 @@ END_VAR
 VAR
 	TrakState : TrakStateEnum;
 	TrakErrorState : TrakErrorStateEnum;
+	TrakShIdState : TrakShIdStateEnum;
 	InitState : InitStateEnum;
 END_VAR
 (********************************************************************
@@ -42,6 +43,7 @@ VAR
 	MC_BR_AsmReset_AcpTrak_0 : MC_BR_AsmReset_AcpTrak; (*Resets all assembly and segment related errors*)
 	MC_BR_AsmStop_AcpTrak_0 : MC_BR_AsmStop_AcpTrak; (*Stops all shuttle movements*)
 	MC_BR_AsmDeleteShuttle_AcpTrak_0 : MC_BR_AsmDeleteShuttle_AcpTrak; (*Deletes all shuttles from an assembly (useful in simulation or when shuttle is lost in real system and references needs to be refreshed)*)
+	MC_BR_AsmRestoreShData_AcpTrak_0 : MC_BR_AsmRestoreShData_AcpTrak; (*Restores shuttle identity and position from the official remanent store after power loss*)
 END_VAR
 (********************************************************************
  * For sector
@@ -83,33 +85,19 @@ VAR
 	MC_BR_ReadErrorText_0 : MC_BR_ReadErrorText; (*FB that reads errors from logger*)
 END_VAR
 (********************************************************************
- * For shuttle ID recovery
-*******************************************************************)
-VAR RETAIN
-	RemShPosition : ARRAY[0..TRAK_MAX_SHUTTLE] OF LREAL; (*Array of shuttle positions saved in remanent memory (used in ID recovery)*)
-END_VAR
-VAR
-	EquivalentShPos : ARRAY[0..TRAK_MAX_SHUTTLE] OF UINT; (*Checks equivalence between actual and previous shuttle positions (used in ID recovery)*)
-	EquivalentShPosFound : ARRAY[0..TRAK_MAX_SHUTTLE] OF BOOL; (*Marks if a match was actually found for index i, since 0 is both a valid slot and the array default (used in ID recovery)*)
-END_VAR
-(********************************************************************
  * Temp variables
 ********************************************************************)
 VAR
 	i : INT; (*Loop index*)
-	j : INT; (*Loop index*)
 	Counter : UINT; (*Auxiliar variable used to iterate in array positions*)
+	ShIdIndex : UINT; (*Shuttle index currently being assigned an externally supplied UserID*)
 	InitDone : BOOL; (*Trak initialization process completed*)
 	InSimulation : BOOL; (*Trak is in simulation*)
-	RestoreShuttleNumber : UINT; (*The amount of the shuttle in the old configuration*)
-	RemShPosRequired : BOOL; (*Remanent data should be collected (after first movement is detected)*)
 	TotalCountSegment : UINT; (*Used to detect if maximum count of segments is exceeded*)
 	TotalCountShuttle : UINT; (*Used to detect if maximum count of shuttles is exceeded*)
 	SegmentDCurrent : ARRAY[0..TRAK_MAX_SEGMENT] OF REAL; (*Used to calculate segment power consumption*)
 	SegmentQCurrent : ARRAY[0..TRAK_MAX_SEGMENT] OF REAL; (*Used to calculate segment power consumption*)
 	AdrErrorComponent : UDINT; (*Reference to motion component to read the logger entry*)
 	SegmentProcessParId : ARRAY[0..5] OF McAcpTrakSegProcessParIDType; (*Used to monitor different ParIDs for every segments*)
-	AuxShuttleAxis : ARRAY[0..TRAK_MAX_SHUTTLE_MINUS_ONE] OF McAxisType; (*Auxiliar axis reference array (used in ID recovery)*)
-	AuxAxisAssigned : ARRAY[0..TRAK_MAX_SHUTTLE] OF BOOL; (*Auxiliar variable for axis ID assignation (used in ID recovery)*)
 	AuxString : STRING[32]; (*Auxiliar string used to parse and define shuttle names for ShuttleUser ID*)
 END_VAR
