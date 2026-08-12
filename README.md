@@ -238,6 +238,8 @@ The variable is declared as a `VAR RETAIN ARRAY OF USINT` in `TrakBasis.var`. It
 
 `TRAK_SH_USER_DATA_SIZE` reserves bytes for application-level shuttle data. If the application uses `MC_BR_ShCopyUserData_AcpTrak`, this constant must match the user-data structure size and the shuttle stereotype's `UserData.Size` in `Config_3.shuttlestereotype`.
 
+`RestoreEnabled` is `FALSE` by default. To enable automatic recovery, set it to `TRUE` in the task and configure the assembly's **Backup and restore data** option as **Used** with `gTrakShBackupRestoreData`.
+
 ```st
 // Configure shuttle recovery parameters
 gTrakCtrl.Parameter.RestoreEnabled := TRUE;      // Enable position restoration

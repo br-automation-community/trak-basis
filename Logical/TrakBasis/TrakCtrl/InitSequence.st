@@ -29,7 +29,7 @@ ACTION InitSequence:
 			pTrakCtrl.Parameter.SimulationParameters.Position := 0.1;
 			pTrakCtrl.Parameter.SimulationParameters.Quantity := 20;
 			pTrakCtrl.Parameter.SimulationParameters.Separation := 0.06;
-			pTrakCtrl.Parameter.RestoreEnabled := TRUE;
+			pTrakCtrl.Parameter.RestoreEnabled := FALSE;
 			pTrakCtrl.Parameter.RestoreTolerance := 0.25;
 			
 			InitState := INIT_STATE_CHECK_ASM_COMM;
