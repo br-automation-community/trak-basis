@@ -230,7 +230,7 @@ Application errors use the symbolic values from `TrakApplicationErrorEnum`:
 2. Set the option to **Used**.
 3. Set **Variable** to `gTrakShBackupRestoreData`.
 
-![Backup and restore data configuration in Automation Studio](docs/images/backup-restore-configuration.png)
+<img width="840" height="438" alt="image" src="https://github.com/user-attachments/assets/a515ade3-6162-4b3c-bd02-86aa95c3eaa4" />
 
 *The assembly configuration must show `Backup and restore data` as `Used` and reference `gTrakShBackupRestoreData`.*
 
