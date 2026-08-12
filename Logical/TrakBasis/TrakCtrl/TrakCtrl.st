@@ -245,17 +245,18 @@ PROGRAM _CYCLIC
 			
 			pTrakCtrl.Status.AutomaticRestoreSuccess := FALSE;
 			
-			// Official restore FB matches previously known shuttles by position; an empty UserID attempts to restore all of them at once
-			MC_BR_AsmRestoreShData_AcpTrak_0.AdvancedParameters.Tolerance := pTrakCtrl.Parameter.RestoreTolerance;
-			// When restore is disabled, wipe the remanent store instead so a future restore never matches stale identities
+			// RestoreEnabled is the sole gate for the automatic attempt; when FALSE, skip it entirely and leave the
+			// remanent backup store untouched (use Recover.ResetShuttleData to wipe it explicitly if ever needed)
 			IF pTrakCtrl.Parameter.RestoreEnabled THEN
+				// Official restore FB matches previously known shuttles by position; an empty UserID attempts to restore all of them at once
+				MC_BR_AsmRestoreShData_AcpTrak_0.AdvancedParameters.Tolerance := pTrakCtrl.Parameter.RestoreTolerance;
 				MC_BR_AsmRestoreShData_AcpTrak_0.AdvancedParameters.Mode := mcACPTRAK_RESTORE_TRY_RESTORING;
+				MC_BR_AsmRestoreShData_AcpTrak_0.Execute := TRUE;
+				
+				TrakState := TRAK_STATE_SH_RESTORE_DATA_WAIT;
 			ELSE
-				MC_BR_AsmRestoreShData_AcpTrak_0.AdvancedParameters.Mode := mcACPTRAK_RESTORE_RESET_DATA;
+				TrakState := TRAK_STATE_STANDSTILL;
 			END_IF
-			MC_BR_AsmRestoreShData_AcpTrak_0.Execute := TRUE;
-			
-			TrakState := TRAK_STATE_SH_RESTORE_DATA_WAIT;
 			
 		TRAK_STATE_SH_RESTORE_DATA_WAIT:
 			
@@ -263,13 +264,10 @@ PROGRAM _CYCLIC
 				pTrakCtrl.Status.Error := TRUE;
 				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_AsmRestoreShData_AcpTrak_0.ErrorID;
 				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmRestoreShData';
-				pTrakCtrl.Status.ErrorInfo.Text := 'Restore/reset command rejected.';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Restore command rejected.';
 				TrakState := TRAK_STATE_ERROR;
 			ELSIF MC_BR_AsmRestoreShData_AcpTrak_0.Done THEN
-				// Reset-data outcome carries no restore-status meaning, so AutomaticRestoreSuccess stays FALSE unless a restore was actually attempted
-				IF pTrakCtrl.Parameter.RestoreEnabled THEN
-					pTrakCtrl.Status.AutomaticRestoreSuccess := (MC_BR_AsmRestoreShData_AcpTrak_0.Info.Status = mcACPTRAK_RESTORE_SUCCESS);
-				END_IF
+				pTrakCtrl.Status.AutomaticRestoreSuccess := (MC_BR_AsmRestoreShData_AcpTrak_0.Info.Status = mcACPTRAK_RESTORE_SUCCESS);
 				// Whether shuttles were matched or not, the system is ready to move; unmatched shuttles keep an empty UserID
 				// until identified individually through the TrakShIdState sequence below
 				TrakState := TRAK_STATE_STANDSTILL;
@@ -451,25 +449,28 @@ PROGRAM _CYCLIC
 		
 		TRAK_SH_ID_STATE_WAIT:
 			
-			IF pTrakCtrl.Command.Recover.Execute THEN
-				IF (pTrakCtrl.Command.Recover.Index <= TRAK_MAX_SHUTTLE_MINUS_ONE)
-					AND pTrakCtrl.Status.Shuttle[pTrakCtrl.Command.Recover.Index].Valid THEN
+			// Deferred while the automatic restore sequence owns MC_BR_AsmRestoreShData_AcpTrak_0, to avoid both state machines driving the same FB call in the same cycle
+			IF (TrakState <> TRAK_STATE_SH_RESTORE_DATA_INIT) AND (TrakState <> TRAK_STATE_SH_RESTORE_DATA_WAIT) THEN
+				IF pTrakCtrl.Command.Recover.Execute THEN
+					IF (pTrakCtrl.Command.Recover.Index <= TRAK_MAX_SHUTTLE_MINUS_ONE)
+						AND pTrakCtrl.Status.Shuttle[pTrakCtrl.Command.Recover.Index].Valid THEN
+						
+						ShIdIndex := pTrakCtrl.Command.Recover.Index;
+						MC_BR_ShSetUserID_AcpTrak_0.Axis := ADR(pTrakCtrl.Status.Shuttle[ShIdIndex].Axis);
+						MC_BR_ShSetUserID_AcpTrak_0.UserID := pTrakCtrl.Command.Recover.UserID;
+						MC_BR_ShSetUserID_AcpTrak_0.Execute := TRUE;
+						
+						TrakShIdState := TRAK_SH_ID_STATE_ASSIGN_WAIT;
+					END_IF
 					
-					ShIdIndex := pTrakCtrl.Command.Recover.Index;
-					MC_BR_ShSetUserID_AcpTrak_0.Axis := ADR(pTrakCtrl.Status.Shuttle[ShIdIndex].Axis);
-					MC_BR_ShSetUserID_AcpTrak_0.UserID := pTrakCtrl.Command.Recover.UserID;
-					MC_BR_ShSetUserID_AcpTrak_0.Execute := TRUE;
+					pTrakCtrl.Command.Recover.Execute := FALSE;
+				ELSIF pTrakCtrl.Command.Recover.ResetShuttleData THEN
+					MC_BR_AsmRestoreShData_AcpTrak_0.AdvancedParameters.Mode := mcACPTRAK_RESTORE_RESET_DATA;
+					MC_BR_AsmRestoreShData_AcpTrak_0.Execute := TRUE;
+					pTrakCtrl.Command.Recover.ResetShuttleData := FALSE;
 					
-					TrakShIdState := TRAK_SH_ID_STATE_ASSIGN_WAIT;
+					TrakShIdState := TRAK_SH_ID_STATE_RESET_WAIT;
 				END_IF
-				
-				pTrakCtrl.Command.Recover.Execute := FALSE;
-			ELSIF pTrakCtrl.Command.Recover.ResetShuttleData THEN
-				MC_BR_AsmRestoreShData_AcpTrak_0.AdvancedParameters.Mode := mcACPTRAK_RESTORE_RESET_DATA;
-				MC_BR_AsmRestoreShData_AcpTrak_0.Execute := TRUE;
-				pTrakCtrl.Command.Recover.ResetShuttleData := FALSE;
-				
-				TrakShIdState := TRAK_SH_ID_STATE_RESET_WAIT;
 			END_IF
 			
 		TRAK_SH_ID_STATE_ASSIGN_WAIT:
