@@ -61,6 +61,10 @@ ACTION InitSequence:
 			
 			IF (MC_BR_AsmGetSegment_AcpTrak_0.Error) THEN
 				MC_BR_AsmGetSegment_AcpTrak_0.Enable := FALSE;
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_AsmGetSegment_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmGetSegment';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Get-segment command rejected.';
 				InitState := INIT_STATE_ERROR;
 				
 			// If there's no error, check if valid data is available	

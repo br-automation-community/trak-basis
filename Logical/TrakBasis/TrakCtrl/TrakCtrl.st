@@ -83,6 +83,10 @@ PROGRAM _CYCLIC
 		TRAK_STATE_SWITCHING_OFF:	
 			
 			IF MC_BR_AsmPowerOff_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_AsmPowerOff_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmPowerOff';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Power-off command rejected.';
 				TrakState := TRAK_STATE_ERROR;
 			ELSIF MC_BR_AsmPowerOff_AcpTrak_0.Done THEN
 				TrakState := TRAK_STATE_DISABLED;
@@ -91,6 +95,10 @@ PROGRAM _CYCLIC
 		TRAK_STATE_SWITCHING_ON:
 			
 			IF MC_BR_AsmPowerOn_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_AsmPowerOn_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmPowerOn';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Power-on command rejected.';
 				TrakState := TRAK_STATE_ERROR;
 			ELSIF MC_BR_AsmPowerOn_AcpTrak_0.Done THEN
 				TrakState := TRAK_STATE_DEL_SHUTTLE;
@@ -111,6 +119,10 @@ PROGRAM _CYCLIC
 		TRAK_STATE_DEL_SHUTTLE_WAIT:
 			
 			IF MC_BR_AsmDeleteShuttle_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_AsmDeleteShuttle_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmDeleteShuttle';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Delete-shuttle command rejected.';
 				TrakState := TRAK_STATE_ERROR;			
 			ELSIF MC_BR_AsmDeleteShuttle_AcpTrak_0.Done THEN
 				TrakState := TRAK_STATE_ADD_SHUTTLE_INIT;
@@ -155,6 +167,10 @@ PROGRAM _CYCLIC
 		TRAK_STATE_ADD_SHUTTLE_WAIT:
 				
 			IF MC_BR_SecAddShuttle_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_SecAddShuttle_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_SecAddShuttle';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Add-shuttle command rejected.';
 				TrakState := TRAK_STATE_ERROR;		
 			ELSIF MC_BR_SecAddShuttle_AcpTrak_0.Done THEN
 				TrakState := TRAK_STATE_ADD_SHUTTLE;
@@ -179,6 +195,10 @@ PROGRAM _CYCLIC
 			IF (MC_BR_SecGetShuttle_AcpTrak_0.Error) THEN
 				MC_BR_SecGetShuttle_AcpTrak_0.Enable := FALSE;
 				MC_BR_SecGetShuttle_AcpTrak_0.Next := FALSE;
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_SecGetShuttle_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_SecGetShuttle';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Get-shuttle command rejected.';
 				TrakState := TRAK_STATE_ERROR;	
 			ELSIF (MC_BR_SecGetShuttle_AcpTrak_0.Valid) THEN
 				TotalCountShuttle := MC_BR_SecGetShuttle_AcpTrak_0.TotalCount;
@@ -240,6 +260,10 @@ PROGRAM _CYCLIC
 		TRAK_STATE_SH_RESTORE_DATA_WAIT:
 			
 			IF MC_BR_AsmRestoreShData_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_AsmRestoreShData_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmRestoreShData';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Restore/reset command rejected.';
 				TrakState := TRAK_STATE_ERROR;
 			ELSIF MC_BR_AsmRestoreShData_AcpTrak_0.Done THEN
 				// Reset-data outcome carries no restore-status meaning, so AutomaticRestoreSuccess stays FALSE unless a restore was actually attempted
@@ -283,6 +307,10 @@ PROGRAM _CYCLIC
 		TRAK_STATE_MOVE_ABS_WAIT:
 			
 			IF MC_BR_ModuloMoveAbs_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_ModuloMoveAbs_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_ModuloMoveAbs';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Absolute-move command rejected.';
 				TrakState := TRAK_STATE_ERROR;
 			ELSE
 				Counter := Counter + 1;
@@ -303,6 +331,10 @@ PROGRAM _CYCLIC
 		TRAK_STATE_MOVE_VEL_WAIT:
 			
 			IF MC_BR_ElasticMoveVel_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_ElasticMoveVel_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_ElasticMoveVel';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Velocity-move command rejected.';
 				TrakState := TRAK_STATE_ERROR;
 			ELSE
 				Counter := Counter + 1;
@@ -312,6 +344,10 @@ PROGRAM _CYCLIC
 		TRAK_STATE_HALTING:
 			
 			IF MC_BR_AsmStop_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_AsmStop_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmStop';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Stop command rejected.';
 				TrakState := TRAK_STATE_ERROR;
 			ELSIF MC_BR_AsmStop_AcpTrak_0.Done THEN
 				TrakState := TRAK_STATE_STANDSTILL;
@@ -348,6 +384,10 @@ PROGRAM _CYCLIC
 		TRAK_STATE_STOPPING:
 			
 			IF MC_BR_AsmStop_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_AsmStop_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmStop';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Stop command rejected.';
 				TrakState := TRAK_STATE_ERROR;
 			ELSIF MC_BR_AsmStop_AcpTrak_0.Done THEN
 				TrakState := TRAK_STATE_STANDSTILL;
@@ -435,6 +475,10 @@ PROGRAM _CYCLIC
 		TRAK_SH_ID_STATE_ASSIGN_WAIT:
 			
 			IF MC_BR_ShSetUserID_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_ShSetUserID_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_ShSetUserID';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Set-UserID command rejected.';
 				TrakState := TRAK_STATE_ERROR;
 				TrakShIdState := TRAK_SH_ID_STATE_WAIT;
 			ELSIF MC_BR_ShSetUserID_AcpTrak_0.Done THEN
@@ -444,6 +488,10 @@ PROGRAM _CYCLIC
 		TRAK_SH_ID_STATE_RESET_WAIT:
 			
 			IF MC_BR_AsmRestoreShData_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_AsmRestoreShData_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmRestoreShData';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Reset-data command rejected.';
 				TrakState := TRAK_STATE_ERROR;
 				TrakShIdState := TRAK_SH_ID_STATE_WAIT;
 			ELSIF MC_BR_AsmRestoreShData_AcpTrak_0.Done THEN

@@ -17,10 +17,8 @@ ACTION References:
 	AdrAssembly	:=	ADR(gAssembly_1);
 	// Obtain the address of the default sector structure where initial shuttle movements will be performed.
 	AdrSector := ADR(Sector_1);
-	
 	// Store the name of the global assembly for identification or logging purposes.
 	AssemblyName 	:= 'gAssembly_1';
-	
 	// Access the address of gTrakCtrl using the built-in ACCESS operator. This ensures pTrakCtrl points directly to gTrakCtrl for control operations.
 	pTrakCtrl ACCESS ADR(gTrakCtrl);
 	
