@@ -11,54 +11,54 @@
 // This action implements a state machine to initialize the AcoposTrak system.
 //********************************************************************
 
-ACTION InitSequence: 
-	
+ACTION InitSequence:
+
 	// State machine controlling the initialization of the AcoposTrak system
 	CASE InitState OF
-		
+
 		INIT_STATE_SET_PARAMETER:
-			
+
 			// Set default motion parameters before communicating with the trak
 			pTrakCtrl.Parameter.Speed := 0.5;
 			pTrakCtrl.Parameter.Acceleration := 5.0;
 			pTrakCtrl.Parameter.Deceleration := 5.0;
 			pTrakCtrl.Parameter.Position := 0.0;
 			pTrakCtrl.Parameter.Direction := mcDIR_POSITIVE;
-			
+
 			// Additional parameters for simulation and restore operations
 			pTrakCtrl.Parameter.SimulationParameters.Position := 0.1;
 			pTrakCtrl.Parameter.SimulationParameters.Quantity := 20;
 			pTrakCtrl.Parameter.SimulationParameters.Separation := 0.06;
 			pTrakCtrl.Parameter.RestoreEnabled := FALSE;
 			pTrakCtrl.Parameter.RestoreTolerance := 0.25;
-			
+
 			InitState := INIT_STATE_CHECK_ASM_COMM;
-		
+
 		INIT_STATE_CHECK_ASM_COMM:
-			
-			 // Verify that the assembly is ready for communication
+
+			// Verify that the assembly is ready for communication
 			IF (MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.CommunicationReady) THEN
 				InitState := INIT_STATE_ASM_RDY_TO_POWER;
 			END_IF
-		
+
 		INIT_STATE_ASM_RDY_TO_POWER:
-			
+
 			// Verify that the assembly is ready to be powered on
 			IF (MC_BR_AsmReadInfo_AcpTrak_0.AssemblyInfo.ReadyForPowerOn) THEN
 				InitState := INIT_STATE_GET_SEGMENT;
 			END_IF
-		
+
 		INIT_STATE_GET_SEGMENT:
-			
+
 			// Start retrieving segment information
 			MC_BR_AsmGetSegment_AcpTrak_0.Enable := TRUE;
 			MC_BR_AsmGetSegment_AcpTrak_0.Next := FALSE;
 			Counter := 0;
-			
+
 			InitState := INIT_STATE_GET_SEGMENT_WAIT;
-		
+
 		INIT_STATE_GET_SEGMENT_WAIT:
-			
+
 			IF (MC_BR_AsmGetSegment_AcpTrak_0.Error) THEN
 				MC_BR_AsmGetSegment_AcpTrak_0.Enable := FALSE;
 				pTrakCtrl.Status.Error := TRUE;
@@ -66,13 +66,13 @@ ACTION InitSequence:
 				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmGetSegment';
 				pTrakCtrl.Status.ErrorInfo.Text := 'Get-segment command rejected.';
 				InitState := INIT_STATE_ERROR;
-				
-			// If there's no error, check if valid data is available	
+
+			// If there's no error, check if valid data is available
 			ELSIF (MC_BR_AsmGetSegment_AcpTrak_0.Valid) THEN
-				
+
 				// Store the total amount of segments
 				TotalCountSegment := MC_BR_AsmGetSegment_AcpTrak_0.TotalCount;
-				
+
 				// An assembly without segments cannot be initialized
 				IF (TotalCountSegment = 0) THEN
 					MC_BR_AsmGetSegment_AcpTrak_0.Enable := FALSE;
@@ -114,16 +114,16 @@ ACTION InitSequence:
 					InitState := INIT_STATE_ERROR;
 
 				ELSE
-					
+
 					pTrakCtrl.Status.Segment[Counter].Segment := MC_BR_AsmGetSegment_AcpTrak_0.Segment;
-					
+
 					// Check if all segments are read
 					IF (MC_BR_AsmGetSegment_AcpTrak_0.RemainingCount = 0) THEN
 						// All segments are retreived -> Move on
 						MC_BR_AsmGetSegment_AcpTrak_0.Enable := FALSE;
 						MC_BR_AsmGetSegment_AcpTrak_0.Next := FALSE;
 						InitState := INIT_STATE_DONE;
-					
+
 					ELSE
 						// Still have more segments to retrieve -> Read the next one
 						MC_BR_AsmGetSegment_AcpTrak_0.Next := FALSE;
@@ -131,26 +131,26 @@ ACTION InitSequence:
 					END_IF
 				END_IF
 			END_IF
-		
+
 		INIT_STATE_GET_SEGMENT_NEXT:
-			
+
 			Counter := Counter + 1;
 			MC_BR_AsmGetSegment_AcpTrak_0.Next := TRUE;
 			InitState := INIT_STATE_GET_SEGMENT_WAIT;
-			
+
 		INIT_STATE_DONE:
-			
+
 			// Successfully completed the initialization process
-			InitDone :=	TRUE;
-		
+			InitDone := TRUE;
+
 		INIT_STATE_ERROR:
-			
+
 			// Wait until there are no more active errors. Error handling is managed by TrakCtrl task.
 			// After the error has been reset, try again to repeat the initialization sequence.
 			IF NOT pTrakCtrl.Status.Error THEN
 				InitState := INIT_STATE_CHECK_ASM_COMM;
 			END_IF
-		
+
 	END_CASE
-	
+
 END_ACTION
