@@ -23,14 +23,6 @@ ACTION AddShuttles:
 	
 END_ACTION
 
-ACTION ShSwitchSector:
-	
-	MC_BR_ShSwitchSector_AcpTrak_0.Sector := AdrSector;
-	MC_BR_ShSwitchSector_AcpTrak_0.Axis := ADR(pTrakCtrl.Status.Shuttle[Counter].Axis);
-	MC_BR_ShSwitchSector_AcpTrak_0.Execute := TRUE;
-	
-END_ACTION
-
 ACTION DeleteShuttles:
 		
 	MC_BR_AsmDeleteShuttle_AcpTrak_0.Assembly := AdrAssembly;
