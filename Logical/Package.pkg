@@ -7,5 +7,6 @@
     <Object Type="Package" Description="Global libraries">Libraries</Object>
     <Object Type="Package" TransferedForTargetSourceCompare="true">TrakBasis</Object>
     <Object Type="Package">UnitTest</Object>
+    <Object Type="Package">mappView</Object>
   </Objects>
 </Package>

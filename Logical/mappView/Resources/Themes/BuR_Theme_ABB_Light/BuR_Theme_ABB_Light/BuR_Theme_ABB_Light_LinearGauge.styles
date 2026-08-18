@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_LinearGauge" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LinearGauge"
+    majorTicksColor="${theme_WidgetStrokeColor}"
+    pointerBorderColor="transparent"
+    pointerBackColor="${theme_BrandColor}"
+    minorTicksColor="${theme_WidgetStrokeColor}"
+    scaleTextColor="${theme_TextColorOperate}"
+    borderWidthArea1="0px"
+    borderWidthArea2="0px"
+    borderWidthArea3="0px"
+    borderWidthArea4="0px"
+    borderWidthArea5="0px"
+    backColorScaleArea1="${theme_WidgetStrokeColor}"
+    backColorScaleArea2="${theme_WidgetStrokeColor}"
+    backColorScaleArea3="${theme_WidgetStrokeColor}"
+    backColorScaleArea4="${theme_WidgetStrokeColor}"
+    backColorScaleArea5="${theme_BrandColor}"
+    pointerBorderWidth="0px"
+    scaleColor="${theme_WidgetStrokeColor}" />
+
+</Styles>

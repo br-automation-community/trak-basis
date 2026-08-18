@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_LadderEditor" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LadderEditor"
+    borderStyle="none"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    backColor="${theme_MainColor}"
+    lineColor="${theme_TextColorOperate}"
+    textColor="${theme_TextColorOperate}"
+    disabledBackColor="${theme_WidgetDisabledBackColor}"
+    disabledBorderStyle="none"
+    disabledTextColor="${theme_TextColorDisabled}"
+    highlightColor="${theme_BrandColorOp20}"
+    selectionColor="${theme_BrandColorOp70}"
+    powerflowLineColor="${theme_BrandColor}"
+    titleBarBackColor="${theme_SubColor}"
+    titleBarTextColor="${theme_TextColorOperate}" />
+	
+
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LadderEditorDialog"
+    backColor="${theme_MainColor}"
+    cornerRadius="${theme_CornerRadiusStandard}"
+    headerGradient="${theme_SubColorGrad}"
+    borderColor="${theme_SubColorBorder}" />
+
+</Styles>

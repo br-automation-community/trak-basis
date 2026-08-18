@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_XYJoystick" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.XYJoystick"
+    borderStyle="solid"
+    borderWidth="2px"
+    borderColor="${theme_SubColorBorder}"
+    thumbColor="${theme_BrandColor}"
+    trackColor="${theme_WidgetStrokeColor}"
+    backColor="${theme_WidgetBackColor}"
+    disabledBackColor="${theme_WidgetDisabledBackColor}"
+    disabledTrackColor="${theme_WidgetDisabledStrokeColor}"
+    disabledThumbColor="${theme_BrandColorDisabled}" />
+
+</Styles>

@@ -3,5 +3,8 @@
 <Package SubType="mappViewControl" PackageType="mappViewControl" xmlns="http://br-automation.co.at/AS/Package">
   <Objects>
     <Object Type="File">Config.mappviewcfg</Object>
+    <Object Type="File">TrakHMI.vis</Object>
+    <Object Type="File">ContentMain.binding</Object>
+    <Object Type="File">ContentMain.eventbinding</Object>
   </Objects>
 </Package>

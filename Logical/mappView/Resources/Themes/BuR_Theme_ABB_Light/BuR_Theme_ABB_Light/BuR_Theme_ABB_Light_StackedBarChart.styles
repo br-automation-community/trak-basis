@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_StackedBarChart" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Unstyled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.StackedBarChart"
+    borderStyle="none"
+    borderWidth="0px"
+    textColor="#FFFFFF"
+    axisColor="rgba(204, 204, 204, 1)" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.StackedBarChartItem"
+    backColor="rgba(153, 204, 255, 1),rgba(153, 255, 153, 1),rgba(71, 209, 71, 1),rgba(255, 204, 102, 1),rgba(255, 112, 77, 1),rgba(255,255,255,0)"
+    borderWidth="0px"
+    borderColor="rgba(100, 100, 100, 1)"
+    textColor="#FFFFFF" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.StackedBarChartThreshold"
+    windowLinesWidth="1px" />	
+
+</Styles>

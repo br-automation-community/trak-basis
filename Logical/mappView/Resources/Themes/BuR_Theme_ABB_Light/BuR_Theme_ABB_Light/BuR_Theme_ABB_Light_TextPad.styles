@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_TextPad" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.TextPad"
+    fontName="${theme_FontMain}"
+    fontSize="12px"
+    borderColor="${theme_SubColorBorder}"
+    borderStyle="solid"
+    borderWidth="2px"
+    textColor="${theme_TextColorNormal}"
+    backColor="${theme_MainColor}"
+    gutterTextColor="${theme_TextColorOperate}"
+    gutterBackColor="${theme_SubColor}"
+    selectionBackColor="${theme_BrandColor}"
+    activeLineBackColor="${theme_WidgetBackColorLightest}"
+    activeGutterBackColor="${theme_WidgetBackColorLightest}" />
+
+</Styles>

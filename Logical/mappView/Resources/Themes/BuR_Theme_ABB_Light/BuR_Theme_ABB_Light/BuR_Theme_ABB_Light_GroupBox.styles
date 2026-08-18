@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_GroupBox" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.GroupBox"
+    headerBackColor="${theme_SubColor}"
+    backColor="${theme_MainColor}"
+    bold="false"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    textColor="${theme_TextColorOperate}"
+    borderWidth="2px"
+    cornerRadius="${theme_CornerRadiusStandard}"
+    borderColor="${theme_SubColorBorder}" />
+
+	<Style
+    id="transparent"
+    xsi:type="widgets.brease.GroupBox"
+    headerBackColor="transparent"
+    backColor="transparent"
+    bold="false"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    textColor="transparent"
+    borderWidth="0px"
+    borderStyle="none"
+    cornerRadius="0px"
+    borderColor="transparent" />
+	
+</Styles>

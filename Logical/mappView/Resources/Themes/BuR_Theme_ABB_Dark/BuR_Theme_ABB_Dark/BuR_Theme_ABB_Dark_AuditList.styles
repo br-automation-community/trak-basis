@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Dark_AuditList" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.AuditList"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    headerFontSize="18px"
+    bold="false"
+    cellPadding="5px"
+    borderStyle="none"
+    textColor="${theme_TextColorOperate}"
+    backColor="transparent"
+    backColorEvenRow="${theme_TableBackColorEvenRow}"
+    backColorOddRow="${theme_TableBackColorOddRow}"
+    cellBorderStyle="solid"
+    cellBorderWidth="0px 0px 1px 1px"
+    cellBorderColor="${theme_SubColor}"
+    headerBackColor="${theme_SubColor}"
+    headerTextColor="${theme_TextColorOperate}"
+    sortingButtonColor="${theme_TextColorOperate}"
+    sortingButtonActiveColor="${theme_BrandColor}"
+    disabledBackColorEvenRow="${theme_TableDisabledBackColorEvenRow}"
+    disabledBackColorOddRow="${theme_TableDisabledBackColorOddRow}"
+    disabledHeaderBackColor="${theme_TableDisabledHeaderBackColor}"
+    disabledHeaderTextColor="${theme_TextColorDisabled}"
+    disabledTextColor="${theme_TableDisabledTextColor}" />
+
+</Styles>

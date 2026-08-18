@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_MeasurementSystemSelector" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.MeasurementSystemSelector"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    bold="true"
+    textAlign="left"
+    textColor="${theme_TextColorOperate}"
+    backColor="${theme_WidgetBackColor}"
+    borderWidth="2px"
+    borderColor="${theme_BorderColorLight}"
+    cornerRadius="${theme_CornerRadiusStandard}"
+    showOpenIndicator="true"
+    openIndicatorColor="${theme_WidgetOpenIndicatorColor}"
+    mouseDownBackColor="${theme_WidgetBackColor}"
+    mouseDownTextColor="${theme_TextColorOperate}"
+    mouseDownBorderWidth="2px"
+    mouseDownBorderColor="${theme_BorderColorMouseDown}"
+    mouseDownOpenIndicatorColor="${theme_WidgetOpenIndicatorColor}"
+    disabledBackColor="${theme_WidgetDisabledBackColor}"
+    disabledTextColor="${theme_TextColorDisabled}"
+    disabledBorderColor="transparent"
+    disabledOpenIndicatorColor="${theme_WidgetDisabledOpenIndicatorColor}"
+    listBackColor="${theme_WidgetBackColor}"
+    listTextColor="${theme_TextColorOperate}"
+    activeTextColor="${theme_WidgetBackColor}"
+    activeBackColor="${theme_BrandColor}"
+    listBorderWidth="2px"
+    listSeparatorColor="transparent" />
+
+</Styles>

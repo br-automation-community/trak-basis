@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Dark_LogoutButton" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LogoutButton"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    textAlign="center"
+    bold="true"
+    borderStyle="none"
+    cornerRadius="${theme_CornerRadiusButtons}"
+    backColor="${theme_WidgetBackColor}"
+    textColor="${theme_TextColorOperate}"
+    imageColor="${theme_TextColorOperate}"
+    disabledBackColor="${theme_WidgetDisabledBackColor}"
+    disabledTextColor="${theme_TextColorDisabled}"
+    disabledImageColor="${theme_TextColorDisabled}"
+    mouseDownBackColor="${theme_WidgetMouseDownBackColor}"
+    mouseDownTextColor="${theme_TextColorMouseDown}"
+    mouseDownImageColor="${theme_TextColorMouseDown}" />
+
+</Styles>

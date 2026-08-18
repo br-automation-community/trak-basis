@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Dark_QRViewer" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.QRViewer"
+    backColor="#FFFFFF"
+    color="#000000"
+    borderColor="${theme_SubColorBorder}"
+    borderWidth="2px"
+    borderStyle="solid" /><!-- QRCode shoule be black and white, so hardcoded -->
+	
+</Styles>

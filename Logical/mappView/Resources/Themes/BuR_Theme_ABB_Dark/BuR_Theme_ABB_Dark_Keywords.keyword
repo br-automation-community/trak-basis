@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<kdef:KeywordSet id="BuR_Theme_ABB_Dark_Keywords" xmlns:kdef="http://www.br-automation.com/iat2015/keyword/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">  
+
+	<!-- Font -->
+	<Keyword id="theme_FontMain" xsi:type="kdef:FontName" value="Arial" />
+	<Keyword id="theme_FontSub" xsi:type="kdef:FontName" value="Arial" />
+	
+	<!-- Brand colors -->
+	<Keyword id="theme_BrandColor" xsi:type="kdef:Color" value="rgba(255, 136, 0, 1)" />
+	<Keyword id="theme_BrandColorBorder" xsi:type="kdef:ColorCollection" value="rgba(255, 136, 0, 1)" />
+	<Keyword id="theme_BrandColorBorderOp50" xsi:type="kdef:ColorCollection" value="rgba(255, 136, 0, 0.5)" />
+	<Keyword id="theme_BrandColorOp88" xsi:type="kdef:Color" value="rgba(255, 136, 0, 0.88)" />
+	<Keyword id="theme_BrandColorOp70" xsi:type="kdef:Color" value="rgba(255, 136, 0, 0.7)" />
+	<Keyword id="theme_BrandColorOp50" xsi:type="kdef:Color" value="rgba(255, 136, 0, 0.5)" />	
+	<Keyword id="theme_BrandColorOp20" xsi:type="kdef:Color" value="rgba(255, 136, 0, 0.2)" />
+	<Keyword id="theme_BrandColorOp5" xsi:type="kdef:Color" value="rgba(255, 136, 0, 0.05)" />
+	<Keyword id="theme_BrandColorDisabled" xsi:type="kdef:Color" value="rgba(255, 196, 128, 1)" />
+	<Keyword id="theme_BrandColorBorderDisabled" xsi:type="kdef:ColorCollection" value="rgba(255, 196, 128, 1)" />
+
+	<!-- Corner Radius -->
+	<Keyword id="theme_CornerRadiusStandard" xsi:type="kdef:PixelValCollection" value="5px" />
+	<Keyword id="theme_CornerRadiusLarge" xsi:type="kdef:PixelValCollection" value="20px" />
+	<Keyword id="theme_CornerRadiusButtons" xsi:type="kdef:PixelValCollection" value="1000px" /> <!-- This forces it to always have round corners -->
+	<Keyword id="theme_CornerRadiusLargeTopOnly" xsi:type="kdef:PixelValCollection" value="20px 20px 0px 0px" />
+	<Keyword id="theme_CornerRadiusStandardBottomOnly" xsi:type="kdef:PixelValCollection" value="0px 0px 5px 5px" />
+
+	<!-- Theme Colors -->
+	<!-- Main Color (for Body) -->
+	<Keyword id="theme_MainColor" xsi:type="kdef:Color" value="rgba(51, 51, 51, 1)" />
+	<Keyword id="theme_MainColorGrad" xsi:type="kdef:Gradient" value="linear-gradient(to bottom,rgba(51, 51, 51, 1) 0%,rgba(51, 51, 51, 1) 100%)" />  
+	<Keyword id="theme_MainColorOp50" xsi:type="kdef:Color" value="rgba(51, 51, 51, 0.5)" />
+	<!-- Sub Color (for Header/Border, etc) -->
+	<Keyword id="theme_SubColor" xsi:type="kdef:Color" value="rgba(31, 31, 31, 1)" />  	
+	<Keyword id="theme_SubColorGrad" xsi:type="kdef:Gradient" value="linear-gradient(to bottom,rgba(31, 31, 31, 1) 0%,rgba(31, 31, 31, 1) 100%)" />  
+	<Keyword id="theme_SubColorOp50" xsi:type="kdef:Color" value="rgba(31, 31, 31, 0.5)" />  
+	<Keyword id="theme_SubColorDisabled" xsi:type="kdef:Color" value="rgba(110, 110, 110, 1)" />  
+	<Keyword id="theme_SubColorBorder" xsi:type="kdef:ColorCollection" value="rgba(31, 31, 31, 1)" />
+
+	<!-- Text Colors -->
+	<!-- Label and Text Output texts only -->
+	<Keyword id="theme_TextColorNormal" xsi:type="kdef:Color" value="rgba(255, 255, 255, 1)" />  
+	<Keyword id="theme_TextColorBody" xsi:type="kdef:Color" value="rgba(210, 210, 210, 1)" />
+	<!-- General Text colors -->
+	<Keyword id="theme_TextColorOperate" xsi:type="kdef:Color" value="rgba(255, 255, 255, 1)" /> 
+	<Keyword id="theme_TextColorOperateOp80" xsi:type="kdef:Color" value="rgba(255, 255, 255, 0.8)" /> 
+	<Keyword id="theme_TextColorDisabled" xsi:type="kdef:Color" value="rgba(210, 210, 210, 1)" />    
+	<Keyword id="theme_TextColorMouseDown" xsi:type="kdef:Color" value="rgba(255, 255, 255, 1)" />
+	
+	<!-- Widget colors -->
+	<!-- General -->
+	<Keyword id="theme_WidgetBackColor" xsi:type="kdef:Color" value="rgba(0, 0, 0, 1)" />
+	<Keyword id="theme_WidgetBackColorTrends" xsi:type="kdef:Color" value="rgba(31, 31, 31, 1)" />
+	<Keyword id="theme_WidgetBackColorLight" xsi:type="kdef:Color" value="rgba(92, 92, 92, 1)" />
+	<Keyword id="theme_WidgetDisabledBackColor" xsi:type="kdef:Color" value="rgba(152, 152, 152, 1)" />    
+	<Keyword id="theme_WidgetMouseDownBackColor" xsi:type="kdef:Color" value="rgba(92, 92, 92, 1)" />    	 
+	<Keyword id="theme_WidgetCheckedIndicatorColor" xsi:type="kdef:Color" value="rgba(0, 0, 0, 1)" />
+	<!-- Red for Alarms -->
+	<Keyword id="theme_AlarmRed" xsi:type="kdef:Color" value="rgba(255, 0, 15, 1)" /> 
+	<Keyword id="theme_AlarmRedBorder" xsi:type="kdef:ColorCollection" value="rgba(255, 0, 15, 1)" /> 
+	<Keyword id="theme_AlarmRedOp50" xsi:type="kdef:Color" value="rgba(255, 0, 15, 0.5)" />
+	<!-- Keyboard unique styles -->
+	<Keyword id="theme_KeyboardBackColor" xsi:type="kdef:Color" value="rgba(240, 240, 240, 1)" />
+	<Keyword id="theme_KeyboardTextColor" xsi:type="kdef:Color" value="rgba(0, 0, 0, 1)" /> 
+	
+	<!-- Border Colors -->
+	<Keyword id="theme_BorderColor" xsi:type="kdef:ColorCollection" value="transparent" /> 
+	<Keyword id="theme_BorderColorDarkest" xsi:type="kdef:ColorCollection" value="rgba(0, 0, 0, 1)" /> 
+	<Keyword id="theme_BorderColorDisabledDarkest" xsi:type="kdef:ColorCollection" value="rgba(152, 152, 152, 1)" />  
+	<Keyword id="theme_BorderColorSubColor" xsi:type="kdef:Color" value="rgba(110, 110, 110, 1)" /> 
+	<Keyword id="theme_BorderColorSub" xsi:type="kdef:ColorCollection" value="rgba(110, 110, 110, 1)" /> 
+	<Keyword id="theme_BorderColorSubGrad" xsi:type="kdef:Gradient" value="linear-gradient(to bottom,rgba(110, 110, 110, 1) 0%,rgba(110, 110, 110, 1) 100%)" /> 
+	<Keyword id="theme_BorderColorLight" xsi:type="kdef:ColorCollection" value="rgba(210, 210, 210, 1)" /> 
+	<Keyword id="theme_BorderColorLightest" xsi:type="kdef:ColorCollection" value="rgba(255, 255, 255, 1)" /> 
+	<Keyword id="theme_BorderColorMouseDown" xsi:type="kdef:ColorCollection" value="rgba(92, 92, 92, 1)" /> 
+	<Keyword id="theme_BorderColorDisabled" xsi:type="kdef:ColorCollection" value="rgba(210, 210, 210, 1)" /> 
+
+	<!-- Table colors -->   
+	<Keyword id="theme_TableBackColorEvenRow" xsi:type="kdef:Color" value="rgba(152, 152, 152, 1)" />
+	<Keyword id="theme_TableBackColorOddRow" xsi:type="kdef:Color" value="rgba(92, 92, 92, 1)" />
+	<Keyword id="theme_TableDisabledBackColorEvenRow" xsi:type="kdef:Color" value="rgba(190, 190, 190, 1)" />
+	<Keyword id="theme_TableDisabledBackColorOddRow" xsi:type="kdef:Color" value="rgba(150, 150, 150, 1)" />
+	<Keyword id="theme_TableDisabledHeaderBackColor" xsi:type="kdef:Color" value="rgba(110, 110, 110, 1)" />
+	<Keyword id="theme_TableDisabledTextColor" xsi:type="kdef:Color" value="rgba(90, 90, 90, 1)" />
+   
+	<!-- Stroke Colors -->
+	<!-- General -->
+	<Keyword id="theme_WidgetStrokeColor" xsi:type="kdef:Color" value="rgba(210, 210, 210, 1)" />
+	<Keyword id="theme_WidgetStrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(210, 210, 210, 1)" />
+	<Keyword id="theme_WidgetDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(169, 169, 169, 1)" />
+	<!-- blue -->
+	<Keyword id="theme_WidgetBlueStrokeColor" xsi:type="kdef:Color" value="rgba(0, 172, 236, 1)" />
+	<Keyword id="theme_WidgetBlueStrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(0, 172, 236, 1)" />
+	<Keyword id="theme_WidgetBlueDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(108, 213, 255, 1)" />
+	<!-- purple -->
+	<Keyword id="theme_WidgetPurpleStrokeColor" xsi:type="kdef:Color" value="rgba(204, 80, 204, 1)" />
+	<Keyword id="theme_WidgetPurpleStrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(204, 80, 204, 1)" />
+	<Keyword id="theme_WidgetPurpleDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(242, 145, 242, 1)" />
+	<!-- magenta -->
+	<Keyword id="theme_WidgetMagentaStrokeColor" xsi:type="kdef:Color" value="rgba(230, 73, 151, 1)" />
+	<Keyword id="theme_WidgetMagentaStrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(230, 73, 151, 1)" />
+	<Keyword id="theme_WidgetMagentaDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(255, 148, 201, 1)" />
+	<!-- teal -->
+	<Keyword id="theme_WidgetTealStrokeColor" xsi:type="kdef:Color" value="rgba(61, 161, 144, 1)" />
+	<Keyword id="theme_WidgetTealStrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(61, 161, 144, 1)" />
+	<Keyword id="theme_WidgetTealDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(61, 161, 144, 1)" />
+	<!-- green -->
+	<Keyword id="theme_WidgetGreenStrokeColor" xsi:type="kdef:Color" value="rgba(81, 163, 75, 1)" />
+	<Keyword id="theme_WidgetGreenStrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(81, 163, 75, 1)" />
+	<Keyword id="theme_WidgetGreenDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(152, 214, 148, 1)" />
+	<!-- yellow -->
+	<Keyword id="theme_WidgetYellowStrokeColor" xsi:type="kdef:Color" value="rgba(150, 141, 11, 1)" />
+	<Keyword id="theme_WidgetYellowtrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(150, 141, 11, 1)" />
+	<Keyword id="theme_WidgetYellowDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(214, 201, 24, 1)" />
+	<!-- gold -->
+	<Keyword id="theme_WidgetGoldStrokeColor" xsi:type="kdef:Color" value="rgba(182, 69, 6, 1)" />
+	<Keyword id="theme_WidgetGoldStrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(182, 69, 6, 1)" />
+	<Keyword id="theme_WidgetGoldDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(242, 172, 102, 1)" />
+	<!-- orange -->
+	<Keyword id="theme_WidgetOrangeStrokeColor" xsi:type="kdef:Color" value="rgba(255, 136, 0, 1)" />
+	<Keyword id="theme_WidgetOrangeStrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(255, 136, 0, 1)" />
+	<Keyword id="theme_WidgetOrangeDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(255, 159, 140, 1)" />
+	<!-- red -->
+	<Keyword id="theme_WidgetRedStrokeColor" xsi:type="kdef:Color" value="rgba(255, 71, 84, 1)" />
+	<Keyword id="theme_WidgetRedStrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(255, 71, 84, 1)" />
+	<Keyword id="theme_WidgetRedDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(255, 153, 160, 1)" />
+	<!-- success -->
+	<Keyword id="theme_WidgetSuccessStrokeColor" xsi:type="kdef:Color" value="rgba(0, 122, 51, 1)" />
+	<Keyword id="theme_WidgetSuccessStrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(0, 122, 51, 1)" />
+	<Keyword id="theme_WidgetSuccessDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(230, 242, 235, 1)" />
+	<!-- error -->
+	<Keyword id="theme_WidgetErrorStrokeColor" xsi:type="kdef:Color" value="rgba(255, 0, 15, 1)" />
+	<Keyword id="theme_WidgetErrorStrokeColorCollection" xsi:type="kdef:ColorCollection" value="rgba(255, 0, 15, 1)" />
+	<Keyword id="theme_WidgetErrorDisabledStrokeColor" xsi:type="kdef:Color" value="rgba(251, 240, 240, 1)" />
+
+	<!-- Trend widgets -->
+	<Keyword id="theme_WidgetGridColor" xsi:type="kdef:Color" value="rgba(92, 92, 92, 1)" />	
+	<Keyword id="theme_WidgetCursorColor" xsi:type="kdef:Color" value="rgba(210, 210, 210, 1)" />
+	<Keyword id="theme_WidgetCursorColorMouseDown" xsi:type="kdef:Color" value="rgba(255, 255, 255, 1)" />
+	<Keyword id="theme_WidgetDisabledCursorColor" xsi:type="kdef:Color" value="rgba(210, 210, 210, 1)" />	
+	
+</kdef:KeywordSet>

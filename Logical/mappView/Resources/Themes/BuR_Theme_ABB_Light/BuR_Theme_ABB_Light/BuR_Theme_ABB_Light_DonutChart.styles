@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_DonutChart" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.DonutChart"
+    backColor="transparent"
+    backColorInfoBox="${theme_MainColor}"
+    borderColor="transparent"
+    fontName="${theme_FontSub}"
+    fontSize="14px"
+    textColor="${theme_TextColorBody}" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.DonutChartItem"
+    backColor="${theme_BrandColor}" />
+	
+	<Style
+    id="blue"
+    xsi:type="widgets.brease.DonutChartItem"
+    backColor="${theme_WidgetBlueStrokeColor}" />
+	
+	<Style
+    id="purple"
+    xsi:type="widgets.brease.DonutChartItem"
+    backColor="${theme_WidgetPurpleStrokeColor}" />
+	
+	<Style
+    id="magenta"
+    xsi:type="widgets.brease.DonutChartItem"
+    backColor="${theme_WidgetMagentaStrokeColor}" />
+	
+	<Style
+    id="teal"
+    xsi:type="widgets.brease.DonutChartItem"
+    backColor="${theme_WidgetTealStrokeColor}" />
+	
+	<Style
+    id="green"
+    xsi:type="widgets.brease.DonutChartItem"
+    backColor="${theme_WidgetGreenStrokeColor}" />
+	
+	<Style
+    id="yellow"
+    xsi:type="widgets.brease.DonutChartItem"
+    backColor="${theme_WidgetYellowStrokeColor}" />
+	
+	<Style
+    id="gold"
+    xsi:type="widgets.brease.DonutChartItem"
+    backColor="${theme_WidgetGoldStrokeColor}" />
+	
+	<Style
+    id="orange"
+    xsi:type="widgets.brease.DonutChartItem"
+    backColor="${theme_WidgetOrangeStrokeColor}" />
+	
+	<Style
+    id="red"
+    xsi:type="widgets.brease.DonutChartItem"
+    backColor="${theme_WidgetRedStrokeColor}" />
+
+</Styles>

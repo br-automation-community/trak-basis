@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_TextInput" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.TextInput"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    bold="false"
+    textAlign="left"
+    textColor="${theme_TextColorOperate}"
+    backColor="${theme_WidgetBackColor}"
+    borderStyle="solid"
+    borderWidth="2px 6px 2px 2px"
+    borderColor="${theme_BorderColor}"
+    cornerRadius="${theme_CornerRadiusStandard}"
+    disabledBackColor="${theme_TextColorDisabled}"
+    disabledTextColor="${theme_SubColorDisabled}"
+    disabledBorderWidth="2px"
+    disabledBorderColor="${theme_BorderColorDisabled}"
+    activeTextColor="${theme_TextColorOperate}"
+    activeBackColor="${theme_WidgetBackColor}"
+    activeBorderWidth="2px 6px 2px 2px"
+    activeBorderColor="${theme_SubColorBorder}" />
+
+</Styles>

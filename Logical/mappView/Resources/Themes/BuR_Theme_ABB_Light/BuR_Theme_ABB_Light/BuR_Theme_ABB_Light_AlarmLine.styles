@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_AlarmLine" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.AlarmLine"
+    fontName="${theme_FontMain}"
+    fontSize="24px"
+    bold="false"
+    backColor="${theme_WidgetBackColorLight}"
+    borderColor="${theme_AlarmRedBorder}"
+    borderWidth="2px"
+    textAlign="left"
+    textColor="${theme_TextColorOperate}"
+    cornerRadius="0px 0px 20px 20px" />
+
+</Styles>

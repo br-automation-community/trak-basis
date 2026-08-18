@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
+<Package SubType="ThemePackage" PackageType="ThemePackage" xmlns="http://br-automation.co.at/AS/Package">
+  <Objects>
+    <Object Type="File" Description="Empty Theme">BuR_Theme_ABB_Light.theme</Object>
+    <Object Type="File" TransferedForTargetSourceCompare="true">BuR_Theme_ABB_Light.keyword</Object>
+    <Object Type="Package" TransferedForTargetSourceCompare="true">BuR_Theme_ABB_Light</Object>
+  </Objects>
+</Package>

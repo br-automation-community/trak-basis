@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_NumPad" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Unstyled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.NumPad"
+    fontName="${theme_FontMain}"
+    borderColor="${theme_BorderColorSub}"
+    headerGradient="${theme_BorderColorSubGrad}"
+    mouseDownTextColor="${theme_KeyboardTextColorMouseDown}"
+    mouseDownBackColor="${theme_BrandColor}"
+    textColor="${theme_KeyboardTextColor}"
+    cornerRadius="${theme_CornerRadiusStandard}" />
+
+	<!-- Cannot style yet due to Enter/delete icon being an SVG with predefined filled color -->
+
+</Styles>

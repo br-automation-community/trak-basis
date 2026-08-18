@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_ProgressBar" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.ProgressBar"
+    fontName="${theme_FontSub}"
+    fontSize="12px"
+    barBorderStyle="solid"
+    barBorderWidth="2px"
+    barBorderColor="${theme_SubColor}"
+    barCornerRadius="${theme_CornerRadiusButtons}"
+    borderStyle="none"
+    borderWidth="2px"
+    borderColor="${theme_SubColor}"
+    barColor="${theme_BrandColor}"
+    barBackColor="${theme_MainColor}"
+    cornerRadius="${theme_CornerRadiusStandard}"
+    fontColor="${theme_TextColorBody}" />
+
+</Styles>

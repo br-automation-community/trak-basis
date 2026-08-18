@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_InfoBanner" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.InfoBanner"
+    backColor="${theme_SubColorOp50}"
+    borderStyle="solid"
+    borderWidth="2px"
+    cornerRadius="${theme_CornerRadiusStandard}"
+    borderColor="${theme_BrandColorBorderOp50}" />
+
+</Styles>

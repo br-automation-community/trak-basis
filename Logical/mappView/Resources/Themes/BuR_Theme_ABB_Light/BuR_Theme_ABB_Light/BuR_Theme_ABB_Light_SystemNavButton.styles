@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_SystemNavButton" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.SystemNavButton"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    textAlign="left"
+    bold="true"
+    borderStyle="solid"
+    borderWidth="0px 0px 5px 0px"
+    cornerRadius="0px"
+    margin="10px"
+    borderColor="${theme_BorderColorLightest}"
+    backColor="${theme_WidgetBackColor}"
+    textColor="${theme_TextColorOperate}"
+    imageColor="${theme_TextColorOperate}"
+    disabledBackColor="${theme_MainColor}"
+    disabledTextColor="${theme_SubColorDisabled}"
+    disabledImageColor="${theme_SubColorDisabled}"
+    disabledBorderColor="${theme_BorderColorSub}"
+    mouseDownBackColor="${theme_WidgetMouseDownBackColor}"
+    mouseDownBorderWidth="0px 0px 5px 0px"
+    mouseDownBorderColor="${theme_BrandColorBorder}"
+    mouseDownTextColor="${theme_BrandColor}"
+    mouseDownImageColor="${theme_BrandColor}"
+    checkedBackColor="${theme_WidgetBackColor}"
+    checkedTextColor="${theme_TextColorOperate}"
+    checkedImageColor="${theme_BrandColor}"
+    checkedBorderColor="${theme_BrandColorBorder}"
+    disabledCheckedBackColor="${theme_WidgetDisabledBackColor}"
+    disabledCheckedTextColor="${theme_TextColorDisabled}"
+    disabledCheckedImageColor="${theme_BrandColorDisabled}"
+    disabledCheckedBorderColor="${theme_BrandColorBorderDisabled}" />
+
+	<Style
+    id="appButton"
+    xsi:type="widgets.brease.SystemNavButton"
+    fontName="${theme_FontMain}"
+    fontSize="50px"
+    textAlign="center"
+    bold="true"
+    borderStyle="solid"
+    borderWidth="0px 0px 10px 0px"
+    cornerRadius="0px"
+    margin="10px"
+    borderColor="${theme_BorderColorLightest}"
+    backColor="${theme_WidgetBackColor}"
+    textColor="${theme_TextColorOperate}"
+    imageColor="${theme_TextColorOperate}"
+    disabledBackColor="${theme_MainColor}"
+    disabledTextColor="${theme_SubColorDisabled}"
+    disabledImageColor="${theme_SubColorDisabled}"
+    disabledBorderColor="${theme_BorderColorSub}"
+    mouseDownBackColor="${theme_WidgetMouseDownBackColor}"
+    mouseDownBorderWidth="0px 0px 10px 0px"
+    mouseDownBorderColor="${theme_BrandColorBorder}"
+    mouseDownTextColor="${theme_BrandColor}"
+    mouseDownImageColor="${theme_BrandColor}"
+    checkedBackColor="${theme_WidgetBackColor}"
+    checkedTextColor="${theme_TextColorOperate}"
+    checkedImageColor="${theme_BrandColor}"
+    checkedBorderColor="${theme_BrandColorBorder}"
+    disabledCheckedBackColor="${theme_WidgetDisabledBackColor}"
+    disabledCheckedTextColor="${theme_TextColorDisabled}"
+    disabledCheckedImageColor="${theme_BrandColorDisabled}"
+    disabledCheckedBorderColor="${theme_BrandColorBorderDisabled}" />
+
+
+</Styles>

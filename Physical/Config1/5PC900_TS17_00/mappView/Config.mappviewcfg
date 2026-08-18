@@ -3,13 +3,12 @@
 <Configuration>
   <Element ID="MappViewConfiguration" Type="MAPPVIEWCFG">
     <Group ID="Server">
-      <Selector ID="WebServerProtocol" Value="2">
-        <Property ID="WebServerPortSsl" Value="443" />
-        <Property ID="SSLConfiguration" />
+      <Selector ID="WebServerProtocol" Value="1">
+        <Property ID="WebServerPort" Value="81" />
       </Selector>
       <Property ID="MaxClientConnections" Value="1" />
       <Property ID="MpUserXUserPreferences" Value="FALSE" />
-      <Selector ID="StartupUser" Value="StartupUserForcedLogin" />
+      <Selector ID="StartupUser" Value="StartupUserAnonymousToken" />
       <Group ID="TcpProxyConf">
         <Selector ID="InsecureMode" Value="1" />
       </Group>
@@ -40,6 +39,8 @@
         <Selector ID="renderingPolicy" Value="1" />
         <Selector ID="securityPolicy" Value="1" />
       </Group>
+      <Selector ID="EventbindingExecution" Value="1" />
+      <Selector ID="VisuEventbindingExecution" Value="1" />
     </Group>
   </Element>
 </Configuration>

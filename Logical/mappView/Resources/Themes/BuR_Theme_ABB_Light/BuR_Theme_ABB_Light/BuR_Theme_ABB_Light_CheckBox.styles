@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_CheckBox" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.CheckBox"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    textAlign="left"
+    bold="true"
+    borderStyle="none"
+    borderWidth="2px"
+    cornerRadius="0px"
+    foreColor="${theme_WidgetBackColor}"
+    backColor="transparent"
+    borderColor="transparent"
+    textColor="${theme_TextColorOperate}"
+    checkedBoxImageColor="${theme_TextColorOperate}"
+    uncheckedBoxImageColor="${theme_TextColorOperate}"
+    disabledBackColor="transparent"
+    disabledTextColor="${theme_TextColorDisabled}"
+    disabledForeColor="${theme_WidgetDisabledBackColor}"
+    disabledBorderColor="transparent"
+    mouseDownBackColor="transparent"
+    mouseDownTextColor="${theme_TextColorMouseDown}"
+    mouseDownForeColor="${theme_WidgetBackColor}"
+    mouseDownBorderWidth="2px"
+    mouseDownBorderColor="transparent"
+    mouseDownBoxBorderColor="${theme_BrandColorBorder}"
+    checkedTextColor="${theme_TextColorOperate}"
+    disabledCheckedTextColor="${theme_WidgetDisabledOpenIndicatorColor}"
+    disabledCheckedBoxImageColor="${theme_TextColorOperate}"
+    disabledUncheckedBoxImageColor="${theme_TextColorOperate}" />
+
+</Styles>

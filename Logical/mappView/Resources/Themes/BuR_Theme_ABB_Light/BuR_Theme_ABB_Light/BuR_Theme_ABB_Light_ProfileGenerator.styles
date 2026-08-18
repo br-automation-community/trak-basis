@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_ProfileGenerator" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Unstyled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.ProfileGenerator"
+    borderStyle="none"
+    backColor="#ffffff" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.ProfileGeneratorXAxis"
+    axisColor="#646464" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.ProfileGeneratorYAxis"
+    axisColor="#646464" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.ProfileGeneratorYAxisItem"
+    lineColor="#FF9900" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.ProfileGeneratorYAxisStepItem"
+    lineColor="#FF9900"
+    editLineColor="#b4b4b4"
+    editLineWidth="15px" />
+
+</Styles>

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Dark_Navigation" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<!-- Does only have a margin property, but we use the margin of the NavigationButton instead - V5.22 -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.Navigation"
+    buttonMargin="0px" />
+
+</Styles>

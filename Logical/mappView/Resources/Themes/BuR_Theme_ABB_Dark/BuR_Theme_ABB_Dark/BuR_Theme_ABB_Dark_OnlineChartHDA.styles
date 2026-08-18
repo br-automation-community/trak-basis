@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Dark_OnlineChartHDA" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.OnlineChartHDA"
+    borderColor="${theme_SubColorBorder}"
+    borderStyle="none"
+    borderWidth="2px"
+    chartColor="${theme_WidgetBackColorTrends}"
+    disabledChartColor="${theme_WidgetDisabledBackColor}"
+    backColor="transparent" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.OnlineChartHDA.Graph"
+    lineColor="${theme_BrandColor}"
+    disabledLineColor="${theme_BrandColorDisabled}" />
+
+<Style
+    id="blue"
+    xsi:type="widgets.brease.OnlineChartHDA.Graph"
+    lineColor="${theme_WidgetBlueStrokeColor}"
+    disabledLineColor="${theme_WidgetBlueDisabledStrokeColor}" />
+
+<Style
+    id="purple"
+    xsi:type="widgets.brease.OnlineChartHDA.Graph"
+    lineColor="${theme_WidgetPurpleStrokeColor}"
+    disabledLineColor="${theme_WidgetPurpleDisabledStrokeColor}" />
+
+<Style
+    id="magenta"
+    xsi:type="widgets.brease.OnlineChartHDA.Graph"
+    lineColor="${theme_WidgetMagentaStrokeColor}"
+    disabledLineColor="${theme_WidgetMagentaDisabledStrokeColor}" />
+
+<Style
+    id="teal"
+    xsi:type="widgets.brease.OnlineChartHDA.Graph"
+    lineColor="${theme_WidgetTealStrokeColor}"
+    disabledLineColor="${theme_WidgetTealDisabledStrokeColor}" />
+
+<Style
+    id="green"
+    xsi:type="widgets.brease.OnlineChartHDA.Graph"
+    lineColor="${theme_WidgetGreenStrokeColor}"
+    disabledLineColor="${theme_WidgetGreenDisabledStrokeColor}" />
+
+<Style
+    id="yellow"
+    xsi:type="widgets.brease.OnlineChartHDA.Graph"
+    lineColor="${theme_WidgetYellowStrokeColor}"
+    disabledLineColor="${theme_WidgetYellowDisabledStrokeColor}" />
+
+<Style
+    id="gold"
+    xsi:type="widgets.brease.OnlineChartHDA.Graph"
+    lineColor="${theme_WidgetGoldStrokeColor}"
+    disabledLineColor="${theme_WidgetGoldDisabledStrokeColor}" />
+
+<Style
+    id="orange"
+    xsi:type="widgets.brease.OnlineChartHDA.Graph"
+    lineColor="${theme_WidgetOrangeStrokeColor}"
+    disabledLineColor="${theme_WidgetOrangeDisabledStrokeColor}" />
+
+<Style
+    id="red"
+    xsi:type="widgets.brease.OnlineChartHDA.Graph"
+    lineColor="${theme_WidgetRedStrokeColor}"
+    disabledLineColor="${theme_WidgetRedDisabledStrokeColor}" />
+	
+<Style
+    id="default"
+    xsi:type="widgets.brease.OnlineChartHDA.YAxis"
+    fontName="${theme_FontSub}"
+    titleFontName="${theme_FontMain}"
+    color="${theme_WidgetStrokeColor}"
+    textColor="${theme_WidgetStrokeColor}"
+    titleTextColor="${theme_TextColorOperate}"
+    disabledTextColor="${theme_WidgetDisabledStrokeColor}"
+    gridColor="${theme_WidgetGridColor}" />
+
+<Style
+    id="default"
+    xsi:type="widgets.brease.OnlineChartHDA.XAxis"
+    fontName="${theme_FontSub}"
+    color="${theme_WidgetStrokeColor}"
+    textColor="${theme_WidgetStrokeColor}"
+    disabledTextColor="${theme_WidgetDisabledStrokeColor}"
+    gridColor="${theme_WidgetGridColor}" />
+
+<Style
+    id="default"
+    xsi:type="widgets.brease.OnlineChartHDA.Cursor"
+    fontName="${theme_FontSub}" />
+
+</Styles>

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Dark_RadioButton" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.RadioButton"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    textAlign="left"
+    bold="true"
+    borderStyle="none"
+    borderWidth="2px"
+    cornerRadius="0px"
+    foreColor="${theme_TextColorMouseDown}"
+    backColor="transparent"
+    borderColor="transparent"
+    textColor="${theme_TextColorOperate}"
+    checkedBoxImageColor="${theme_WidgetCheckedIndicatorColor}"
+    uncheckedBoxImageColor="${theme_WidgetCheckedIndicatorColor}"
+    disabledBackColor="transparent"
+    disabledTextColor="${theme_TextColorDisabled}"
+    disabledForeColor="${theme_TextColorDisabled}"
+    disabledBorderColor="transparent"
+    mouseDownBackColor="transparent"
+    mouseDownTextColor="${theme_BrandColor}"
+    mouseDownForeColor="${theme_TextColorMouseDown}"
+    mouseDownBorderWidth="2px"
+    mouseDownBorderColor="transparent"
+    checkedTextColor="${theme_TextColorOperate}"
+    disabledCheckedTextColor="${theme_TextColorDisabled}"
+    disabledCheckedBoxImageColor="${theme_WidgetCheckedIndicatorColor}"
+    disabledUncheckedBoxImageColor="${theme_WidgetCheckedIndicatorColor}" />
+
+</Styles>

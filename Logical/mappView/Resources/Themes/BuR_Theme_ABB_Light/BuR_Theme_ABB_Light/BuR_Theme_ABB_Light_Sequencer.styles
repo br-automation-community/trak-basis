@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_Sequencer" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Unstyled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.Sequencer"
+    backColor="transparent"
+    borderStyle="none" /> 
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.SequencerEditArea"
+    backColor="transparent"
+    borderStyle="solid"
+    borderWidth="2px"
+    borderColor="#bebebe"
+    lineSelectedColor="#000000" /> 
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.SequencerStepItem"
+    backColor="#FFFFFF"
+    activeBackColor="rgba(219, 219, 219, 1)"
+    margin="20px" /> 
+	
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.SequencerStepItemParameterForm"
+    backColor="#222222"
+    borderWidth="0px"
+    padding="10px" /> 
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.SequencerStepItemPopup"
+    headerBackColor="#222222"
+    backColor="#a6a6a6"
+    bold="false"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    textColor="#f2f2f2"
+    borderWidth="0px 0px 0px 0px"
+    borderColor="transparent" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.SequencerMonitor"
+    backColor="transparent"
+    borderWidth="2px"
+    borderColor="rgba(102, 102, 102, 1)"
+    padding="10px" /> 
+	
+	<!-- All SequencerStepItem must have the same margin!--> 
+	<Style
+    id="StepItem_Green"
+    xsi:type="widgets.brease.SequencerStepItem"
+    margin="20px"
+    textColor="#FFFFFF"
+    activeTextColor="#FFFFFF"
+    disabledTextColor="rgba(241, 241, 241, 1)"
+    borderWidth="0px"
+    backColor="#00a200"
+    activeBackColor="#FF8500" /> 
+	
+	<Style
+    id="StepItem_Red"
+    xsi:type="widgets.brease.SequencerStepItem"
+    margin="20px"
+    textColor="#FFFFFF"
+    activeTextColor="#FFFFFF"
+    disabledTextColor="rgba(241, 241, 241, 1)"
+    borderWidth="0px"
+    backColor="#ff1a1a"
+    activeBackColor="#FF8500" /> 
+	<Style
+    id="StepItem_Blue"
+    xsi:type="widgets.brease.SequencerStepItem"
+    margin="20px"
+    textColor="#FFFFFF"
+    activeTextColor="#FFFFFF"
+    disabledTextColor="rgba(241, 241, 241, 1)"
+    borderWidth="0px"
+    backColor="#0077ff"
+    activeBackColor="#FF8500" /> 
+	<Style
+    id="StepItem_Yellow"
+    xsi:type="widgets.brease.SequencerStepItem"
+    margin="20px"
+    textColor="#333333"
+    activeTextColor="#FFFFFF"
+    disabledTextColor="rgba(241, 241, 241, 1)"
+    borderWidth="0px"
+    backColor="#eaf900"
+    activeBackColor="#FF8500" /> 
+	<Style
+    id="StepItem_Pink"
+    xsi:type="widgets.brease.SequencerStepItem"
+    margin="20px"
+    textColor="#FFFFFF"
+    activeTextColor="#FFFFFF"
+    disabledTextColor="rgba(241, 241, 241, 1)"
+    borderWidth="0px"
+    backColor="#f900b8"
+    activeBackColor="#FF8500" /> 
+	
+</Styles>

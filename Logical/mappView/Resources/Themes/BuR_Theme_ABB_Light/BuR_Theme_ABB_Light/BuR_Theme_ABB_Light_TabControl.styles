@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_TabControl" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.TabControl"
+    headerBackColor="transparent"
+    backColor="${theme_MainColor}"
+    borderWidth="2px"
+    borderStyle="solid"
+    cornerRadius="${theme_CornerRadiusStandardBottomOnly}"
+    borderColor="${theme_SubColorBorder}" />
+
+	<Style
+    id="default"
+    xsi:type="widgets.brease.TabItem"
+    fontName="${theme_FontMain}"
+    fontSize="16px"
+    textAlign="center"
+    bold="true"
+    borderStyle="solid"
+    borderWidth="2px 2px 0px 2px"
+    activeBorderWidth="2px 2px 0px 2px"
+    cornerRadius="${theme_CornerRadiusLargeTopOnly}"
+    activeCornerRadius="${theme_CornerRadiusLargeTopOnly}"
+    backColor="${theme_SubColor}"
+    borderColor="${theme_SubColorBorder}"
+    textColor="${theme_TextColorOperate}"
+    imageColor="${theme_TextColorOperate}"
+    mouseDownImageColor="${theme_TextColorMouseDown}"
+    activeBackColor="${theme_MainColor}"
+    activeTextColor="${theme_TextColorOperate}"
+    activeBorderColor="${theme_BrandColorBorder}" />
+
+</Styles>

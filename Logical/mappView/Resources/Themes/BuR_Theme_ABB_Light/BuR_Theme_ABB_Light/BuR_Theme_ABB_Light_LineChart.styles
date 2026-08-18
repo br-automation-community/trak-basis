@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Light_LineChart" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LineChart"
+    fontName="${theme_FontSub}"
+    borderColor="${theme_SubColorBorder}"
+    borderStyle="none"
+    disabledBorderColor="${theme_BorderColorDisabled}"
+    chartColor="${theme_WidgetBackColorTrends}"
+    disabledChartColor="${theme_WidgetDisabledBackColor}"
+    backColor="transparent"
+    disabledBackColor="transparent"
+    gridColor="${theme_WidgetBackColorLight}"
+    disabledGridColor="${theme_WidgetDisabledStrokeColor}"
+    chartBorderColor="${theme_BorderColorSubColor}" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LineChartGraph"
+    lineColor="${theme_BrandColor}"
+    activeIntersectionPointColor="${theme_BrandColor}"
+    intersectionPointColor="${theme_BrandColorDisabled}"
+    disabledLineColor="${theme_BrandColorDisabled}"
+    disabledIntersectionPointColor="${theme_WidgetDisabledBackColor}"
+    fillColor="transparent"
+    disabledFillColor="transparent" />
+
+	<Style
+    id="blue"
+    xsi:type="widgets.brease.LineChartGraph"
+    lineColor="${theme_WidgetBlueStrokeColor}"
+    activeIntersectionPointColor="${theme_WidgetBlueStrokeColor}"
+    intersectionPointColor="${theme_WidgetBlueDisabledStrokeColor}"
+    disabledLineColor="${theme_WidgetBlueDisabledStrokeColor}"
+    disabledIntersectionPointColor="${theme_WidgetDisabledBackColor}"
+    fillColor="transparent"
+    disabledFillColor="transparent" />
+	
+	<Style
+    id="purple"
+    xsi:type="widgets.brease.LineChartGraph"
+    lineColor="${theme_WidgetPurpleStrokeColor}"
+    activeIntersectionPointColor="${theme_WidgetPurpleStrokeColor}"
+    intersectionPointColor="${theme_WidgetPurpleDisabledStrokeColor}"
+    disabledLineColor="${theme_WidgetPurpleDisabledStrokeColor}"
+    disabledIntersectionPointColor="${theme_WidgetDisabledBackColor}"
+    fillColor="transparent"
+    disabledFillColor="transparent" />
+
+	<Style
+    id="magenta"
+    xsi:type="widgets.brease.LineChartGraph"
+    lineColor="${theme_WidgetMagentaStrokeColor}"
+    activeIntersectionPointColor="${theme_WidgetMagentaStrokeColor}"
+    intersectionPointColor="${theme_WidgetMagentaDisabledStrokeColor}"
+    disabledLineColor="${theme_WidgetMagentaDisabledStrokeColor}"
+    disabledIntersectionPointColor="${theme_WidgetDisabledBackColor}"
+    fillColor="transparent"
+    disabledFillColor="transparent" />
+
+	<Style
+    id="teal"
+    xsi:type="widgets.brease.LineChartGraph"
+    lineColor="${theme_WidgetTealStrokeColor}"
+    activeIntersectionPointColor="${theme_WidgetTealStrokeColor}"
+    intersectionPointColor="${theme_WidgetTealDisabledStrokeColor}"
+    disabledLineColor="${theme_WidgetTealDisabledStrokeColor}"
+    disabledIntersectionPointColor="${theme_WidgetDisabledBackColor}"
+    fillColor="transparent"
+    disabledFillColor="transparent" />
+
+	<Style
+    id="green"
+    xsi:type="widgets.brease.LineChartGraph"
+    lineColor="${theme_WidgetGreenStrokeColor}"
+    activeIntersectionPointColor="${theme_WidgetGreenStrokeColor}"
+    intersectionPointColor="${theme_WidgetGreenDisabledStrokeColor}"
+    disabledLineColor="${theme_WidgetGreenDisabledStrokeColor}"
+    disabledIntersectionPointColor="${theme_WidgetDisabledBackColor}"
+    fillColor="transparent"
+    disabledFillColor="transparent" />
+
+	<Style
+    id="yellow"
+    xsi:type="widgets.brease.LineChartGraph"
+    lineColor="${theme_WidgetYellowStrokeColor}"
+    activeIntersectionPointColor="${theme_WidgetYellowStrokeColor}"
+    intersectionPointColor="${theme_WidgetYellowDisabledStrokeColor}"
+    disabledLineColor="${theme_WidgetYellowDisabledStrokeColor}"
+    disabledIntersectionPointColor="${theme_WidgetDisabledBackColor}"
+    fillColor="transparent"
+    disabledFillColor="transparent" />
+
+	<Style
+    id="gold"
+    xsi:type="widgets.brease.LineChartGraph"
+    lineColor="${theme_WidgetGoldStrokeColor}"
+    activeIntersectionPointColor="${theme_WidgetGoldStrokeColor}"
+    intersectionPointColor="${theme_WidgetGoldDisabledStrokeColor}"
+    disabledLineColor="${theme_WidgetGoldDisabledStrokeColor}"
+    disabledIntersectionPointColor="${theme_WidgetDisabledBackColor}"
+    fillColor="transparent"
+    disabledFillColor="transparent" />
+
+	<Style
+    id="orange"
+    xsi:type="widgets.brease.LineChartGraph"
+    lineColor="${theme_WidgetOrangeStrokeColor}"
+    activeIntersectionPointColor="${theme_WidgetOrangeStrokeColor}"
+    intersectionPointColor="${theme_WidgetOrangeDisabledStrokeColor}"
+    disabledLineColor="${theme_WidgetOrangeDisabledStrokeColor}"
+    disabledIntersectionPointColor="${theme_WidgetDisabledBackColor}"
+    fillColor="transparent"
+    disabledFillColor="transparent" />
+
+	<Style
+    id="red"
+    xsi:type="widgets.brease.LineChartGraph"
+    lineColor="${theme_WidgetRedStrokeColor}"
+    activeIntersectionPointColor="${theme_WidgetRedStrokeColor}"
+    intersectionPointColor="${theme_WidgetRedDisabledStrokeColor}"
+    disabledLineColor="${theme_WidgetRedDisabledStrokeColor}"
+    disabledIntersectionPointColor="${theme_WidgetDisabledBackColor}"
+    fillColor="transparent"
+    disabledFillColor="transparent" />
+
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LineChartIndexAxis"
+    axisColor="${theme_WidgetStrokeColor}"
+    disabledAxisColor="${theme_WidgetDisabledStrokeColor}" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LineChartTimeAxis"
+    axisColor="${theme_WidgetStrokeColor}"
+    disabledAxisColor="${theme_WidgetDisabledStrokeColor}" />
+		
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LineChartYAxis"
+    axisColor="${theme_WidgetStrokeColor}"
+    disabledAxisColor="${theme_WidgetDisabledStrokeColor}" />
+	
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LineChartXAxisIndexCursor"
+    lineColor="${theme_WidgetCursorColor}"
+    activeLineColor="${theme_WidgetCursorColorMouseDown}"
+    disabledLineColor="${theme_WidgetDisabledCursorColor}" />
+
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LineChartXAxisMsTimeCursor"
+    lineColor="${theme_WidgetCursorColor}"
+    activeLineColor="${theme_WidgetCursorColorMouseDown}"
+    disabledLineColor="${theme_WidgetDisabledCursorColor}" />
+
+	<Style
+    id="default"
+    xsi:type="widgets.brease.LineChartXAxisTimeCursor"
+    lineColor="${theme_WidgetCursorColor}"
+    activeLineColor="${theme_WidgetCursorColorMouseDown}"
+    disabledLineColor="${theme_WidgetDisabledCursorColor}" />
+
+</Styles>

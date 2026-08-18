@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
+<Configuration>
+  <Element ID="FontsConfiguration" Type="FONTSCFG">
+    <Property ID="FontFamily" Value="ABBvoice (ABBVOICE_RG.TTF)" />
+    <Property ID="FontName" Value="ABBFont" />
+  </Element>
+</Configuration>

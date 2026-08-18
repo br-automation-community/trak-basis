@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Styles
+  id="BuR_Theme_ABB_Dark_Line" xmlns="http://www.br-automation.com/iat2015/styles/engineering/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<!-- Styled -->
+	<Style
+    id="default"
+    xsi:type="widgets.brease.Line"
+    lineColor="${theme_WidgetStrokeColor}"
+    lineWidth="1px"
+    opacity="1" />
+
+	<Style
+    id="blue"
+    xsi:type="widgets.brease.Line"
+    lineColor="${theme_WidgetBlueStrokeColor}"
+    lineWidth="1px"
+    opacity="1" />
+
+	<Style
+    id="purple"
+    xsi:type="widgets.brease.Line"
+    lineColor="${theme_WidgetPurpleStrokeColor}"
+    lineWidth="1px"
+    opacity="1" />
+
+	<Style
+    id="magenta"
+    xsi:type="widgets.brease.Line"
+    lineColor="${theme_WidgetMagentaStrokeColor}"
+    lineWidth="1px"
+    opacity="1" />
+
+	<Style
+    id="teal"
+    xsi:type="widgets.brease.Line"
+    lineColor="${theme_WidgetTealStrokeColor}"
+    lineWidth="1px"
+    opacity="1" />
+
+	<Style
+    id="green"
+    xsi:type="widgets.brease.Line"
+    lineColor="${theme_WidgetGreenStrokeColor}"
+    lineWidth="1px"
+    opacity="1" />
+
+	<Style
+    id="yellow"
+    xsi:type="widgets.brease.Line"
+    lineColor="${theme_WidgetYellowStrokeColor}"
+    lineWidth="1px"
+    opacity="1" />
+
+	<Style
+    id="gold"
+    xsi:type="widgets.brease.Line"
+    lineColor="${theme_WidgetGoldStrokeColor}"
+    lineWidth="1px"
+    opacity="1" />
+
+	<Style
+    id="orange"
+    xsi:type="widgets.brease.Line"
+    lineColor="${theme_WidgetOrangeStrokeColor}"
+    lineWidth="1px"
+    opacity="1" />
+
+	<Style
+    id="red"
+    xsi:type="widgets.brease.Line"
+    lineColor="${theme_WidgetRedStrokeColor}"
+    lineWidth="1px"
+    opacity="1" />
+
+</Styles>
