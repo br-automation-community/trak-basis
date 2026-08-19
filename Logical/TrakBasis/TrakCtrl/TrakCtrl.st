@@ -819,6 +819,7 @@ PROGRAM _CYCLIC
 			pTrakCtrl.Status.Shuttle[i].TotalMoveDistance := MC_BR_ShReadInfo_AcpTrak_0[i].ShuttleInfo.LifeCycleInfo.AbsoluteMovementDistance;
 			pTrakCtrl.Status.Shuttle[i].IsConvoyMaster := MC_BR_ShReadInfo_AcpTrak_0[i].ShuttleInfo.ConvoyInfo.IsConvoyMaster;
 			pTrakCtrl.Status.Shuttle[i].Pos := MC_BR_ShReadFrame_AcpTrak_0[i].Frame.Pos;
+			pTrakCtrl.Status.Shuttle[i].Angle := MC_BR_ShReadFrame_AcpTrak_0[i].Frame.Orient.Angle3;
 			pTrakCtrl.Status.Shuttle[i].State.StatusStandStill := MC_ReadStatus_0[i].StandStill;
 			pTrakCtrl.Status.Shuttle[i].State.StatusStopping := MC_ReadStatus_0[i].Stopping;
 			pTrakCtrl.Status.Shuttle[i].State.StatusErrorStop := MC_ReadStatus_0[i].ErrorStop;
