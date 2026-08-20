@@ -1,0 +1,55 @@
+(********************************************************************
+ * COPYRIGHT - B&R Spain
+ ********************************************************************
+ * Program: TrakHmi
+ * File: TrakHmi.var
+ * Author: B&R Spain
+ * Created: August 18, 2026
+ ********************************************************************
+ * Local variables of program TrakHmi
+ ********************************************************************)
+(********************************************************************
+ * CONSTANT VALUES
+ ********************************************************************)
+VAR CONSTANT
+	SVG_MM_PER_UNIT : REAL := 1000.0; (*Shuttle.Pos is in mm; gAssembly_1_Layout.svg's viewBox is in m - divide by this to convert*)
+	SVG_REFRESH_TIME : TIME := T#50ms; (*Diagram refresh period - also the sampling interval used for the heading-from-movement delta*)
+	SVG_ID_SYSTEM_PREFIX : STRING[10] := 'gsg_'; (*Fixed prefix the SVG configuration tool always adds to element ids, regardless of the configured name*)
+	SVG_FILL_PREFIX : STRING[4] := 'p'; (*Prefix on the id of whichever element actually carries the fill color - the object hierarchy tool adds it to each segment's nested polygon, and CreateSvgContent adds it to each shuttle's polygon too, since the wrapping <g>'s own fill can never override a child's own fill attribute*)
+	SVG_SEG_NAME : STRING[16] := 'Seg_'; (*Configured name for segment elements - only this (and SVG_SH_NAME) should need changing if TrakLayout.svg is renamed*)
+	SVG_SH_NAME : STRING[16] := 'Sh_'; (*Configured name for shuttle elements*)
+	SVG_CONTENT_VIEWBOX : STRING[40] := '-1.39558 -0.765 2.13115 0.88'; (*Must match gAssembly_1_Layout.svg's own viewBox (its 1st line) - update by hand if the assembly layout changes*)
+	PI : LREAL := 3.14159265358979323846;
+	RAD_TO_DEG : LREAL := 180.0/PI;
+	MIN_HEADING_DELTA_SQ : LREAL := 4.0; (*mm^2 (~2mm move) - below this, movement is noise and the shuttle's heading is left unchanged*)
+END_VAR
+(********************************************************************
+ * Diagram elements
+ ********************************************************************)
+VAR
+	SvgSegment : ARRAY[0..TRAK_MAX_SEGMENT_MINUS_ONE] OF SvgSegmentType;
+	SvgShuttle : ARRAY[0..TRAK_MAX_SHUTTLE_MINUS_ONE] OF SvgShuttleType;
+	SvgTransform : STRING[8000]; (*Bound to the Paper widget "transform" property (ContentMain.binding)*)
+	SvgTransformSh : STRING[8000]; (*Bound to the Paper widget "transform" property (ContentMain.binding)*)
+	SvgContent : STRING[10000]; (*Shuttle icons (not present in gAssembly_1_Layout.svg), bound to the Paper widget "svgContent" property (ContentMain.binding); empty whenever ShowShuttles is FALSE*)
+	SvgSegIdPrefix : STRING[26]; (*SVG_ID_SYSTEM_PREFIX + SVG_SEG_NAME, computed once in _INIT*)
+	SvgShIdPrefix : STRING[26]; (*SVG_ID_SYSTEM_PREFIX + SVG_SH_NAME, computed once in _INIT*)
+	PrevPosX : ARRAY[0..TRAK_MAX_SHUTTLE_MINUS_ONE] OF LREAL; (*Shuttle.Pos.X from the previous refresh, used to derive heading from movement direction*)
+	PrevPosY : ARRAY[0..TRAK_MAX_SHUTTLE_MINUS_ONE] OF LREAL; (*Shuttle.Pos.Y from the previous refresh, used to derive heading from movement direction*)
+	ShowShuttles : BOOL := TRUE; (*Bindable from mapp View (ShowShuttlesButton) - lets the operator hide all shuttles when only segment states matter*)
+END_VAR
+(********************************************************************
+ * Sequence control
+ ********************************************************************)
+VAR
+	i : UINT;
+	SvgNum : UINT; (*1-based element number used to build ids SvgSegIdPrefix<n>/SvgShIdPrefix<n> - UINT_TO_STRING requires a plain variable, not an inline expression*)
+	AuxNum : STRING[24]; (*Scratch buffer for brsftoa/brsitoa numeric-to-string conversions before appending to SvgTransform via brsstrcat*)
+	AuxID : STRING[14]; (*Scratch buffer for an element's fill-select id (SVG_FILL_PREFIX+ID), computed on the fly in CreateSvgTransform*)
+	DeltaX : LREAL; (*Pos.X - PrevPosX, scratch for heading-from-movement calculation*)
+	DeltaY : LREAL; (*Pos.Y - PrevPosY, scratch for heading-from-movement calculation*)
+	HeadingRad : LREAL; (*ATAN2(DeltaY,DeltaX) equivalent, radians, scratch for heading-from-movement calculation*)
+	TrigShowShuttlesOn : R_TRIG; (*Rebuilds SvgContent once, on the rising edge of ShowShuttles*)
+	TrigShowShuttlesOff : F_TRIG; (*Clears SvgContent once, on the falling edge of ShowShuttles*)
+	TON_0 : TON; (*Throttles the diagram rebuild to SVG_REFRESH_TIME instead of every PLC cycle*)
+END_VAR
