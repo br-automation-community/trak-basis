@@ -13,7 +13,6 @@
   </EventBindingsSets>
   <Dialogs />
   <Contents>
-    <Content refId="ContentHeader" />
     <Content refId="ContentMain" />
   </Contents>
   <SnippetsSets />

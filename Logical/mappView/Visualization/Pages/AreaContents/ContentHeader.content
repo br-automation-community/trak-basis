@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Content id="ContentHeader" guid="38e43e4b-c4ba-428d-a758-201e129e9a0d" height="60" width="1258" xmlns="http://www.br-automation.com/iat2015/contentDefinition/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Widgets>
-    <Widget xsi:type="widgets.brease.Image" id="Image1" top="0" left="1168" width="90" height="60" zIndex="0" image="Media/BnR_Logo_Tagline_below.svg" />
-    <Widget xsi:type="widgets.brease.Image" id="Image2" top="0" left="1080" width="60" height="56" zIndex="1" image="Media/Alarm.svg" imageColor="rgba(255, 136, 0, 1)" visible="false" />
-  </Widgets>
-</Content>
