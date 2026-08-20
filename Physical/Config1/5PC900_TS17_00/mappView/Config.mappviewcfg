@@ -25,9 +25,9 @@
     <Group ID="OpcUa">
       <Property ID="ServerConnectionTimeout" Value="5000" />
       <Group ID="SamplingRates">
-        <Property ID="default" Value="200" />
-        <Property ID="slow" Value="1000" />
-        <Property ID="fast" Value="100" />
+        <Property ID="default" Value="100" />
+        <Property ID="slow" Value="500" />
+        <Property ID="fast" Value="50" />
       </Group>
       <Property ID="InitValueChangedEvents" Value="TRUE" />
     </Group>
@@ -39,7 +39,7 @@
       </Group>
       <Property ID="defaultVisu" Value="" />
       <Group ID="Widget">
-        <Selector ID="renderingPolicy" Value="1" />
+        <Selector ID="renderingPolicy" Value="2" />
         <Selector ID="securityPolicy" Value="1" />
       </Group>
       <Selector ID="EventbindingExecution" Value="1" />

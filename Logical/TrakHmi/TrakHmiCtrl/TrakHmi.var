@@ -30,7 +30,6 @@ VAR
 	SvgSegment : ARRAY[0..TRAK_MAX_SEGMENT_MINUS_ONE] OF SvgSegmentType;
 	SvgShuttle : ARRAY[0..TRAK_MAX_SHUTTLE_MINUS_ONE] OF SvgShuttleType;
 	SvgTransform : STRING[8000]; (*Bound to the Paper widget "transform" property (ContentMain.binding)*)
-	SvgTransformSh : STRING[8000]; (*Bound to the Paper widget "transform" property (ContentMain.binding)*)
 	SvgContent : STRING[10000]; (*Shuttle icons (not present in gAssembly_1_Layout.svg), bound to the Paper widget "svgContent" property (ContentMain.binding); empty whenever ShowShuttles is FALSE*)
 	SvgSegIdPrefix : STRING[26]; (*SVG_ID_SYSTEM_PREFIX + SVG_SEG_NAME, computed once in _INIT*)
 	SvgShIdPrefix : STRING[26]; (*SVG_ID_SYSTEM_PREFIX + SVG_SH_NAME, computed once in _INIT*)

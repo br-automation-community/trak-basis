@@ -9,14 +9,13 @@
 			<Source xsi:type="opcUa" refId="::TrakHmiCtr:ShowShuttles" attribute="value" />
 			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="ShowShuttlesButton" attribute="value" />
 		</Binding>    
-		
 		<Binding mode="oneWay">
-			<Source xsi:type="opcUa" refId="::TrakHmiCtr:SvgTransform" attribute="value" samplingRate="fast" />
+			<Source xsi:type="opcUa" refId="::TrakHmiCtr:SvgTransform" attribute="value" />
 			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="TrakStatusPaper" attribute="transform" />
 		</Binding>
 		<Binding mode="oneWay">
-			<Source xsi:type="opcUa" refId="::TrakHmiCtr:SvgTransformSh" attribute="value" samplingRate="fast" />
-			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="TrakShPaper" attribute="transform" />
+			<Source xsi:type="opcUa" refId="::TrakHmiCtr:SvgContent" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="TrakStatusPaper" attribute="svgContent" />
 		</Binding>
 	</Bindings>
 </BindingsSet>

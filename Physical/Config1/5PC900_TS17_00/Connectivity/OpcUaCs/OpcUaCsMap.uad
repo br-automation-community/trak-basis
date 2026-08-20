@@ -19,7 +19,6 @@
       <Variable Name="SvgTransform" />
       <Variable Name="SvgContent" />
       <Variable Name="ShowShuttles" />
-      <Variable Name="SvgTransformSh" />
     </Task>
   </Module>
 </OpcUaSource>
