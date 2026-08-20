@@ -1,6 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BindingsSet id="ContentMain" xmlns="http://www.br-automation.com/iat2015/binding/engineering/v2" xmlns:bt="http://www.br-automation.com/iat2015/bindingListTypes/engineering/v2" xmlns:be="http://www.br-automation.com/iat2015/bindingListEmbedded/engineering/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Bindings>
-
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Command.Power" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="PowerButton" attribute="value" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::TrakHmiCtr:ShowShuttles" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="ShowShuttlesButton" attribute="value" />
+		</Binding>    
+		
+		<Binding mode="oneWay">
+			<Source xsi:type="opcUa" refId="::TrakHmiCtr:SvgTransform" attribute="value" samplingRate="fast" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="TrakStatusPaper" attribute="transform" />
+		</Binding>
+		<Binding mode="oneWay">
+			<Source xsi:type="opcUa" refId="::TrakHmiCtr:SvgTransformSh" attribute="value" samplingRate="fast" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="TrakShPaper" attribute="transform" />
+		</Binding>
 	</Bindings>
 </BindingsSet>

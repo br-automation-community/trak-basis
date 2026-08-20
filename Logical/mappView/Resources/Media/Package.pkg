@@ -2,7 +2,7 @@
 <?AutomationStudio FileVersion="4.9"?>
 <Package SubType="MediaPackage" PackageType="MediaPackage" xmlns="http://br-automation.co.at/AS/Package">
   <Objects>
-    <Object Type="File">BnR_Logo_Tagline_below.svg</Object>
-    <Object Type="File">Alarm.svg</Object>
+    <Object Type="Package">SymbolLib</Object>
+    <Object Type="File">gAssembly_Sh.svg</Object>
   </Objects>
 </Package>

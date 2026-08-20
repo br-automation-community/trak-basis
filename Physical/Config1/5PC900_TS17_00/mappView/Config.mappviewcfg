@@ -12,6 +12,9 @@
       <Group ID="TcpProxyConf">
         <Selector ID="InsecureMode" Value="1" />
       </Group>
+      <Group ID="FileDeviceWhitelist">
+        <Property ID="FileDeviceName[1]" Value="SvgData" />
+      </Group>
       <Group ID="DiagnosticPageConf">
         <Selector ID="DiagnosticPageSelection" Value="2">
           <Property ID="DiagnosticPageRole[1]" Value="Everyone" />
@@ -40,7 +43,6 @@
         <Selector ID="securityPolicy" Value="1" />
       </Group>
       <Selector ID="EventbindingExecution" Value="1" />
-      <Selector ID="VisuEventbindingExecution" Value="1" />
     </Group>
   </Element>
 </Configuration>
