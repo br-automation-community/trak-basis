@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
 <Configuration>
   <Element ID="DefaultViewConfiguration" Type="uadcfg">
+    <Group ID="InformationModels">
+      <Property ID="ComplexTypeFacet" Value="0" />
+      <Property ID="ExportTypeInformation" Value="0" />
+      <Property ID="DedicatedTypeDefinitionsForStructures" Value="0" />
+    </Group>
   </Element>
 </Configuration>

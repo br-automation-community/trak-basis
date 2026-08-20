@@ -13,36 +13,28 @@ TYPE
 
 	CoTraceTriggerConditionEnum :
 	(
-		coTRACE_IN_WINDOW_EVENT 		:= 20,	(*The trigger event occurs if the value of the DataPoint meets the following conditions:
-"value DNE(&ge;)DNE threshold + window" and
-"value DNE(&le;)DNE threshold - window"
-DNE(<img src="IN_WINDOW.png">)DNE*)
-		coTRACE_OUT_OF_WINDOW_EVENT 	:= 30, (*The trigger event occurs if the value of the DataPoint meets the following conditions:
-"value DNE(&gt;)DNE threshold + window" or
-"value DNE(&lt;)DNE threshold - window"
-DNE(<img src="OUT_WINDOW.png">)DNE*)
-		coTRACE_ABOVE_THRESHOLD_EVENT	:= 40, (*The trigger event occurs if the value of the DataPoint meets the following condition:
-"value DNE(&gt;)DNE threshold + window"
-DNE(<img src="ABOVE_WINDOW.png">)DNE*)
-		coTRACE_BELOW_THRESHOLD_EVENT	:= 50, (*The trigger event occurs if the value of the DataPoint meets the following condition:
-"value DNE(&lt;)DNE threshold - window"
-DNE(<img src="BELOW_WINDOW.png">)DNE*)
-		coTRACE_ENTER_WINDOW_EVENT		:= 24, (*The trigger event occurs if the value for the DataPoint
-goes below the upper window limit "threshold + window" or
-goes above the lower window limit "threshold - window"
-(after being outside the window before) and is then within the window. If the value of the value of the DataPoint is already within the window during trace activation, the trace is not yet started.
-DNE(<img src="IN_WINDOW_ENTRY.png">)DNE*)
-		coTRACE_LEAVE_WINDOW_EVENT		:= 34, (*The trigger event occurs if the value for the DataPoint
-goes above the upper window limit "threshold + window" or
-goes below the lower window limit "threshold - window"
-(after being inside the window before) and is then outside the window. If the value of the DataPoint is already outside the window during trace activation, the trace is not yet started.
-DNE(<img src="OUT_WINDOW_ENTRY.png">)DNE*)
-		coTRACE_GOES_ABOVE_WINDOW_EVENT := 44, (*The trigger event occurs if the value of the DataPoint goes above the upper window limit "threshold + window".
-If, during trace activation, the value of the trigger parameter is already above the window, the trace is not yet started.
-DNE(<img src="ABOVE_WINDOW_ENTRY.png">)DNE*)
-		coTRACE_GOES_BELOW_WINDOW_EVENT := 54 (*The trigger event occurs if the value of the DataPoint goes below the lower window limit "threshold - window".
-If, during trace activation, the value of the trigger parameter is already below the window, the trace is not yet started.
-DNE(<img src="BELOW_WINDOW_ENTRY.png">)DNE*)
+		coTRACE_IN_WINDOW_EVENT 		:= 20,	(*The trigger event occurs if the value of the data point meets the following conditions:
+"Value <= Threshold value + window" and
+"Value >= Threshold value - window"*)
+		coTRACE_OUT_OF_WINDOW_EVENT 	:= 30, (*The trigger event occurs if the value of the data point meets one of the following conditions:
+"Value > Threshold value + Window"
+"Value < Threshold value - Window"*)
+		coTRACE_ABOVE_THRESHOLD_EVENT	:= 40, (*The trigger event occurs if the value of the data point meets the following condition:
+"Value > Threshold value + Window"*)
+		coTRACE_BELOW_THRESHOLD_EVENT	:= 50, (*The trigger event occurs if the value of the data point meets the following condition:
+"Value < Threshold value - Window"*)
+		coTRACE_ENTER_WINDOW_EVENT		:= 24, (*The trigger event occurs if the following is true for the value of the data point:
+It undershoots upper threshold value "Threshold value + Window".
+It overshoots lower threshold value "Threshold value - Window".
+(after the value of the data point was previously outside the window) and then is inside the window. If the value of the data point already appears inside the window while enabling the trace, the trigger event does not occur.*)
+		coTRACE_LEAVE_WINDOW_EVENT		:= 34, (*The trigger event occurs if the following is true for the value of the data point:
+It overshoots upper threshold value "Threshold value + Window".
+It undershoots lower threshold value "Threshold value - Window".
+(after the value of the data point was previously inside the window) and then is outside the window. If the value of the data point already appears outside the window while enabling the trace, the trigger event does not occur.*)
+		coTRACE_GOES_ABOVE_WINDOW_EVENT := 44, (*The trigger event occurs if the value of the data point overshoots upper threshold value "Threshold value + Window".
+If the value of the data point already appears above the window while enabling the trace, the trigger event does not occur.*)
+		coTRACE_GOES_BELOW_WINDOW_EVENT := 54 (*The trigger event occurs if the value of the data point undershoots lower threshold value "Threshold value - Window".
+If the value of the data point already appears below the window while enabling the trace, the trigger event does not occur.*)
 	);
 	(*Enumeration of trigger conditions*)
 

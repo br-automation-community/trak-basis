@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<?AutomationStudio WorkingVersion="6.1" FileVersion="4.9"?>
+<?AutomationStudio WorkingVersion="6.7" FileVersion="4.9"?>
 <Hardware xmlns="http://br-automation.co.at/AS/Hardware">
   <Module Name="5AC901.BX02-01" Type="5AC901.BX02-01" Version="1.1.1.0">
     <Connection Connector="SY" TargetModule="5PC910.SX02-00" TargetConnector="SY3" />
