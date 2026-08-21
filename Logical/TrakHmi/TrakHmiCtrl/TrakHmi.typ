@@ -16,6 +16,7 @@ TYPE
 	END_STRUCT;
 	SvgShuttleType : 	STRUCT  (*Runtime state of one shuttle - shown/hidden, moved, rotated and colored*)
 		ID : STRING[10]; (*<g> id built in SvgContent (e.g. gsg_Sh_1)*)
+		UserID : STRING[32]; (*UserID displayed next to the shuttle; empty means the shuttle is not identified*)
 		Visible : BOOL; (*Element is shown on the diagram*)
 		TranslateX : REAL; (*Pixel offset in x-direction*)
 		TranslateY : REAL; (*Pixel offset in y-direction*)

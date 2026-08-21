@@ -30,7 +30,7 @@ VAR
 	SvgSegment : ARRAY[0..TRAK_MAX_SEGMENT_MINUS_ONE] OF SvgSegmentType;
 	SvgShuttle : ARRAY[0..TRAK_MAX_SHUTTLE_MINUS_ONE] OF SvgShuttleType;
 	SvgTransform : STRING[8000]; (*Bound to the Paper widget "transform" property (ContentMain.binding)*)
-	SvgContent : STRING[10000]; (*Shuttle icons (not present in gAssembly_1_Layout.svg), bound to the Paper widget "svgContent" property (ContentMain.binding); empty whenever ShowShuttles is FALSE*)
+	SvgContent : STRING[24000]; (*Shuttle icons and UserID labels, bound to the Paper widget "svgContent" property; empty whenever ShowShuttles is FALSE*)
 	SvgSegIdPrefix : STRING[26]; (*SVG_ID_SYSTEM_PREFIX + SVG_SEG_NAME, computed once in _INIT*)
 	SvgShIdPrefix : STRING[26]; (*SVG_ID_SYSTEM_PREFIX + SVG_SH_NAME, computed once in _INIT*)
 	PrevPosX : ARRAY[0..TRAK_MAX_SHUTTLE_MINUS_ONE] OF LREAL; (*Shuttle.Pos.X from the previous refresh, used to derive heading from movement direction*)
@@ -45,6 +45,11 @@ VAR
 	SvgNum : UINT; (*1-based element number used to build ids SvgSegIdPrefix<n>/SvgShIdPrefix<n> - UINT_TO_STRING requires a plain variable, not an inline expression*)
 	AuxNum : STRING[24]; (*Scratch buffer for brsftoa/brsitoa numeric-to-string conversions before appending to SvgTransform via brsstrcat*)
 	AuxID : STRING[14]; (*Scratch buffer for an element's fill-select id (SVG_FILL_PREFIX+ID), computed on the fly in CreateSvgTransform*)
+	SvgContentDirty : BOOL; (*Requests one SvgContent rebuild after a shuttle UserID changes*)
+	XmlUserID : STRING[160]; (*Escaped UserID; worst case is 32 ampersands expanded to &amp;*)
+	XmlChar : STRING[1]; (*Single UserID character being escaped for insertion into SVG text*)
+	XmlCharCount : INT;
+	XmlCharIndex : INT;
 	DeltaX : LREAL; (*Pos.X - PrevPosX, scratch for heading-from-movement calculation*)
 	DeltaY : LREAL; (*Pos.Y - PrevPosY, scratch for heading-from-movement calculation*)
 	HeadingRad : LREAL; (*ATAN2(DeltaY,DeltaX) equivalent, radians, scratch for heading-from-movement calculation*)

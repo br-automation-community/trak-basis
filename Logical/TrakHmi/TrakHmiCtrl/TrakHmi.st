@@ -55,15 +55,10 @@ PROGRAM _CYCLIC
 	IF TON_0.Q THEN
 
 		//*************************************************************************************************************
-		// SHOW/HIDE SHUTTLES - (re)build SvgContent only on change, not every refresh tick
+		// SHOW/HIDE SHUTTLES - edge detection is evaluated here; rebuilding happens after shuttle data is refreshed
 		//*************************************************************************************************************
 		TrigShowShuttlesOn(CLK := ShowShuttles);
 		TrigShowShuttlesOff(CLK := ShowShuttles);
-		IF TrigShowShuttlesOn.Q THEN
-			CreateSvgContent;
-		ELSIF TrigShowShuttlesOff.Q THEN
-			SvgContent := '';
-		END_IF
 
 		//*************************************************************************************************************
 		// SEGMENTS - color only; always part of the project/assembly, so no display/position logic at all
@@ -85,6 +80,15 @@ PROGRAM _CYCLIC
 		//*************************************************************************************************************
 		FOR i := 0 TO TRAK_MAX_SHUTTLE_MINUS_ONE DO
 			SvgShuttle[i].Visible := gTrakCtrl.Status.Shuttle[i].Valid AND ShowShuttles;
+			IF gTrakCtrl.Status.Shuttle[i].Valid THEN
+				IF SvgShuttle[i].UserID <> gTrakCtrl.Status.Shuttle[i].Name THEN
+					SvgShuttle[i].UserID := gTrakCtrl.Status.Shuttle[i].Name;
+					SvgContentDirty := TRUE;
+				END_IF
+			ELSIF SvgShuttle[i].UserID <> '' THEN
+				SvgShuttle[i].UserID := '';
+				SvgContentDirty := TRUE;
+			END_IF
 			SvgShuttle[i].TranslateX := LREAL_TO_REAL(gTrakCtrl.Status.Shuttle[i].Pos.X) / SVG_MM_PER_UNIT;
 			SvgShuttle[i].TranslateY := -LREAL_TO_REAL(gTrakCtrl.Status.Shuttle[i].Pos.Y) / SVG_MM_PER_UNIT;
 
@@ -124,6 +128,16 @@ PROGRAM _CYCLIC
 				SvgShuttle[i].Fill := 1;
 			END_IF
 		END_FOR
+
+		//*************************************************************************************************************
+		// SVG CONTENT - rebuild only when shown or when a UserID changes (for example after shuttle recovery)
+		//*************************************************************************************************************
+		IF TrigShowShuttlesOff.Q THEN
+			SvgContent := '';
+		ELSIF ShowShuttles AND (TrigShowShuttlesOn.Q OR SvgContentDirty) THEN
+			CreateSvgContent;
+			SvgContentDirty := FALSE;
+		END_IF
 
 		//*************************************************************************************************************
 		// BUILD THE TRANSFORM STRING - one "select" command per element, in the format expected by widget Paper
