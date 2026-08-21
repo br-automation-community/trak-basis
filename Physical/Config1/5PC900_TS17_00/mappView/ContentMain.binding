@@ -17,5 +17,81 @@
 			<Source xsi:type="opcUa" refId="::TrakHmiCtr:SvgContent" attribute="value" />
 			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="TrakStatusPaper" attribute="svgContent" />
 		</Binding>
+		<Binding mode="oneWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Status.PowerOn" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="PowerOnIndicator" attribute="value" />
+		</Binding>
+		<Binding mode="oneWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Status.Error" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="ErrorIndicator" attribute="value" />
+		</Binding>
+		<Binding mode="oneWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Status.ErrorInfo.ID" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="ErrorIdOutput" attribute="value" />
+		</Binding>
+		<Binding mode="oneWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Status.Error" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="ErrorIdOutput" attribute="visible" />
+		</Binding>
+		<Binding mode="oneWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Status.ErrorInfo.Initiator" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="ErrorInitiatorOutput" attribute="value" />
+		</Binding>
+		<Binding mode="oneWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Status.Error" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="ErrorInitiatorOutput" attribute="visible" />
+		</Binding>
+		<Binding mode="oneWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Status.ErrorInfo.Text" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="ErrorTextOutput" attribute="value" />
+		</Binding>
+		<Binding mode="oneWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Status.Error" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="ErrorTextOutput" attribute="visible" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Command.Move.Absolute" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="MoveAbsoluteButton" attribute="value" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Command.Move.Velocity" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="MoveVelocityButton" attribute="value" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Command.Move.Halt" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="MoveHaltButton" attribute="value" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Command.ErrorReset" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="ErrorResetButton" attribute="value" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Parameter.Position" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="PositionInput" attribute="value" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Parameter.Speed" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="SpeedInput" attribute="value" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Parameter.Acceleration" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="AccelerationInput" attribute="value" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Parameter.Deceleration" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="DecelerationInput" attribute="value" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Parameter.Direction" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="DirectionDropDown" attribute="selectedValue" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Parameter.RestoreEnabled" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="RestoreEnabledButton" attribute="value" />
+		</Binding>
+		<Binding mode="twoWay">
+			<Source xsi:type="opcUa" refId="::AsGlobalPV:gTrakCtrl.Parameter.RestoreTolerance" attribute="value" />
+			<Target xsi:type="brease" contentRefId="ContentMain" widgetRefId="RestoreToleranceInput" attribute="value" />
+		</Binding>
 	</Bindings>
 </BindingsSet>

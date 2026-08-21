@@ -3,17 +3,41 @@
   <Widgets>
     <Widget xsi:type="widgets.brease.GroupBox" id="GroupBoxStatus" top="0" left="0" width="614" height="600" zIndex="0" text="STATUS" fontName="ABBFont">
       <Widgets>
-        <Widget xsi:type="widgets.brease.Paper" id="TrakStatusPaper" top="0" left="0" width="610" height="455" zIndex="0" colorList="rgba(204, 204, 204, 1), rgba(179, 255, 179, 1), rgba(255, 255, 179, 1), rgba(255, 153, 153, 1)" maxZoomLevel="100" minZoomLevel="100" svgFilePath="/FileDevice:SvgData/gAssembly_1_Layout.svg" transitionTime="100" />
+        <Widget xsi:type="widgets.brease.Paper" id="TrakStatusPaper" top="0" left="0" width="610" height="340" zIndex="0" colorList="rgba(204, 204, 204, 1), rgba(179, 255, 179, 1), rgba(255, 255, 179, 1), rgba(255, 153, 153, 1)" maxZoomLevel="100" minZoomLevel="100" svgFilePath="/FileDevice:SvgData/gAssembly_1_Layout.svg" transitionTime="100" />
+        <Widget xsi:type="widgets.brease.ToggleButton" id="ShowShuttlesButton" top="7" left="529" width="75" height="72" zIndex="1" image="Media/SymbolLib/Symbols/UnHide.svg" imageAlign="top" text="Shuttles" fontSize="12px" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.ToggleButton" id="PowerOnIndicator" top="350" left="7" width="110" height="36" zIndex="2" image="Media/SymbolLib/Symbols/On.svg" text="Power On" />
+        <Widget xsi:type="widgets.brease.ToggleButton" id="ErrorIndicator" top="350" left="125" width="90" height="36" zIndex="3" image="Media/SymbolLib/Alarm/Error.svg" text="Error" />
+        <Widget xsi:type="widgets.brease.NumericOutput" id="ErrorIdOutput" top="350" left="225" width="70" height="36" zIndex="4" />
+        <Widget xsi:type="widgets.brease.TextOutput" id="ErrorInitiatorOutput" top="350" left="305" width="150" height="36" zIndex="5" />
+        <Widget xsi:type="widgets.brease.TextOutput" id="ErrorTextOutput" top="392" left="7" width="460" height="70" zIndex="6" multiLine="true" wordWrap="true" />
+        <Widget xsi:type="widgets.brease.Image" id="Image1" top="343" left="529" width="76" height="67" zIndex="7" />
       </Widgets>
     </Widget>
     <Widget xsi:type="widgets.brease.GroupBox" id="GroupBoxCommands" top="0" left="624" width="400" height="290" zIndex="1" text="COMMANDS" fontName="ABBFont">
       <Widgets>
-        <Widget xsi:type="widgets.brease.ToggleButton" id="PowerButton" top="7" left="314" width="75" height="72" zIndex="0" image="Media/SymbolLib/Symbols/On.svg" />
-        <Widget xsi:type="widgets.brease.ToggleButton" id="ShowShuttlesButton" top="90" left="314" width="75" height="72" zIndex="1" text="Shuttles" />
+        <Widget xsi:type="widgets.brease.ToggleButton" id="PowerButton" top="7" left="314" width="75" height="72" zIndex="0" image="Media/SymbolLib/Symbols/On.svg" imageAlign="top" text="Power" fontSize="12px" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.MomentaryPushButton" id="MoveAbsoluteButton" top="12" left="24" width="151" height="63" zIndex="1" image="Media/SymbolLib/DisplayAndTouch/Calibrate.svg" imageAlign="top" text="Absolute" cornerRadius="50px" fontSize="12px" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.MomentaryPushButton" id="MoveVelocityButton" top="92" left="24" width="151" height="63" zIndex="2" image="Media/SymbolLib/Media/FastForward.svg" imageAlign="top" text="Velocity" cornerRadius="50px" fontSize="12px" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.MomentaryPushButton" id="MoveHaltButton" top="172" left="24" width="151" height="63" zIndex="3" image="Media/SymbolLib/Symbols/Stop.svg" imageAlign="top" text="Halt" cornerRadius="50px" fontSize="12px" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.ToggleButton" id="ErrorResetButton" top="7" left="229" width="75" height="72" zIndex="4" image="Media/SymbolLib/Symbols/Reset.svg" imageAlign="top" text="Reset" fontSize="12px" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.ToggleButton" id="RestoreEnabledButton" top="172" left="275" width="115" height="63" zIndex="5" image="Media/SymbolLib/Symbols/Restart.svg" imageAlign="top" text="Enable Restore" textAlign="center" fontSize="12px" fontName="ABBFont" />
       </Widgets>
     </Widget>
     <Widget xsi:type="widgets.brease.GroupBox" id="GroupBoxParameters" top="300" left="624" width="400" height="300" zIndex="2" text="PARAMETERS" fontName="ABBFont">
-      <Widgets />
+      <Widgets>
+        <Widget xsi:type="widgets.brease.Label" id="PositionLabel" top="10" left="10" width="140" zIndex="0" text="Position" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.NumericInput" id="PositionInput" top="10" left="160" width="110" zIndex="1" unit="{'metric':'MTR','imperial':'MTR','imperial-us':'MTR'}" unitAlign="right" />
+        <Widget xsi:type="widgets.brease.Label" id="SpeedLabel" top="52" left="10" width="140" zIndex="2" text="Speed" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.NumericInput" id="SpeedInput" top="52" left="160" width="110" zIndex="3" unit="{'metric':'MTS','imperial':'MTS','imperial-us':'MTS'}" unitAlign="right" />
+        <Widget xsi:type="widgets.brease.Label" id="AccelerationLabel" top="94" left="10" width="140" zIndex="4" text="Acceleration" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.NumericInput" id="AccelerationInput" top="94" left="160" width="110" zIndex="5" unit="{'metric':'MSK','imperial':'MSK','imperial-us':'MSK'}" unitAlign="right" />
+        <Widget xsi:type="widgets.brease.Label" id="DecelerationLabel" top="136" left="10" width="140" zIndex="6" text="Deceleration" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.NumericInput" id="DecelerationInput" top="136" left="160" width="110" zIndex="7" unit="{'metric':'MSK','imperial':'MSK','imperial-us':'MSK'}" unitAlign="right" />
+        <Widget xsi:type="widgets.brease.Label" id="DirectionLabel" top="178" left="10" width="140" zIndex="8" text="Direction" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.DropDownBox" id="DirectionDropDown" top="178" left="160" width="150" zIndex="9" dataProvider="[{'value':'0','text':'Positive'},{'value':'1','text':'Negative'},{'value':'2','text':'Current'},{'value':'3','text':'Shortest way'}]" />
+        <Widget xsi:type="widgets.brease.Label" id="RestoreToleranceLabel" top="220" left="10" width="140" zIndex="10" text="Restore Tolerance (m)" fontName="ABBFont" />
+        <Widget xsi:type="widgets.brease.NumericInput" id="RestoreToleranceInput" top="220" left="160" width="110" zIndex="11" format="{'metric':{'decimalPlaces':2,'minimumIntegerDigits':1},'imperial':{'decimalPlaces':2,'minimumIntegerDigits':1},'imperial-us':{'decimalPlaces':2,'minimumIntegerDigits':1}}" unit="{'metric':'MTR','imperial':'MTR','imperial-us':'MTR'}" unitAlign="right" />
+      </Widgets>
     </Widget>
   </Widgets>
 </Content>

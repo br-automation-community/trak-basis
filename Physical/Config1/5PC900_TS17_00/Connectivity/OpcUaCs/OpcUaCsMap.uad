@@ -5,13 +5,27 @@
     <ACLAliases />
     <EURangeViolationAliases />
     <EURangesAliases />
-    <EngineeringUnitAliases />
+    <EngineeringUnitAliases>
+      <EngineeringUnit Id="1" UnitId="5067858" NameSpaceUri="http://www.opcfoundation.org/UA/units/un/cefact" Name="metre" Symbol="m" />
+      <EngineeringUnit Id="2" UnitId="5067859" NameSpaceUri="http://www.opcfoundation.org/UA/units/un/cefact" Name="metre per second" Symbol="m/s" />
+      <EngineeringUnit Id="3" UnitId="5067595" NameSpaceUri="http://www.opcfoundation.org/UA/units/un/cefact" Name="metre per second squared" Symbol="m/s²" />
+    </EngineeringUnitAliases>
   </Aliases>
   <Module Name="&lt;Default&gt;">
     <GlobalVariables Name="Global Variables">
       <Variable Name="gTrakCtrl">
         <Variable Name="Command">
           <Variable Name="Power" />
+          <Variable Name="Move" RecursiveEnable="2" />
+          <Variable Name="ErrorReset" />
+        </Variable>
+        <Variable Name="Parameter">
+          <Variable Name="Position" EngineeringUnitId="1" />
+          <Variable Name="Speed" EngineeringUnitId="2" />
+          <Variable Name="Acceleration" EngineeringUnitId="3" />
+          <Variable Name="Deceleration" EngineeringUnitId="3" />
+          <Variable Name="RestoreEnabled" />
+          <Variable Name="RestoreTolerance" EngineeringUnitId="1" />
         </Variable>
       </Variable>
     </GlobalVariables>
