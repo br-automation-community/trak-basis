@@ -75,9 +75,30 @@ PROGRAM _CYCLIC
 			// Waits until InitSequence has finished before accepting commands
 			IF InitDone THEN
 				IF pTrakCtrl.Command.Power THEN
-					PowerOn;
-					TrakState := TRAK_STATE_SWITCHING_ON;
+					// Shuttles must be deleted before powering on: real hardware re-detects them automatically at power-on
+					TrakState := TRAK_STATE_DEL_SHUTTLE;
 				END_IF
+			END_IF
+
+		TRAK_STATE_DEL_SHUTTLE:
+
+			// Clean the array where the shuttles axis are saved
+			brsmemset(ADR(pTrakCtrl.Status.Shuttle),0,SIZEOF(pTrakCtrl.Status.Shuttle));
+			DeleteShuttles;
+			TrakState := TRAK_STATE_DEL_SHUTTLE_WAIT;
+
+		TRAK_STATE_DEL_SHUTTLE_WAIT:
+
+			IF MC_BR_AsmDeleteShuttle_AcpTrak_0.Error THEN
+				pTrakCtrl.Status.Error := TRUE;
+				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_AsmDeleteShuttle_AcpTrak_0.ErrorID;
+				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmDeleteShuttle';
+				pTrakCtrl.Status.ErrorInfo.Text := 'Delete-shuttle command rejected.';
+				TrakState := TRAK_STATE_ERROR;
+			ELSIF MC_BR_AsmDeleteShuttle_AcpTrak_0.Done THEN
+				// Shuttles are gone from the software references; power on now so real hardware re-detects whatever is physically present
+				PowerOn;
+				TrakState := TRAK_STATE_SWITCHING_ON;
 			END_IF
 
 		TRAK_STATE_SWITCHING_OFF:
@@ -101,31 +122,12 @@ PROGRAM _CYCLIC
 				pTrakCtrl.Status.ErrorInfo.Text := 'Power-on command rejected.';
 				TrakState := TRAK_STATE_ERROR;
 			ELSIF MC_BR_AsmPowerOn_AcpTrak_0.Done THEN
-				TrakState := TRAK_STATE_DEL_SHUTTLE;
+				TrakState := TRAK_STATE_ADD_SHUTTLE_INIT;
 			END_IF
 
 			IF NOT pTrakCtrl.Command.Power THEN
 				PowerOff;
 				TrakState := TRAK_STATE_SWITCHING_OFF;
-			END_IF
-
-		TRAK_STATE_DEL_SHUTTLE:
-
-			// Clean the array where the shuttles axis are saved
-			brsmemset(ADR(pTrakCtrl.Status.Shuttle),0,SIZEOF(pTrakCtrl.Status.Shuttle));
-			DeleteShuttles;
-			TrakState := TRAK_STATE_DEL_SHUTTLE_WAIT;
-
-		TRAK_STATE_DEL_SHUTTLE_WAIT:
-
-			IF MC_BR_AsmDeleteShuttle_AcpTrak_0.Error THEN
-				pTrakCtrl.Status.Error := TRUE;
-				pTrakCtrl.Status.ErrorInfo.ID := MC_BR_AsmDeleteShuttle_AcpTrak_0.ErrorID;
-				pTrakCtrl.Status.ErrorInfo.Initiator := 'MC_BR_AsmDeleteShuttle';
-				pTrakCtrl.Status.ErrorInfo.Text := 'Delete-shuttle command rejected.';
-				TrakState := TRAK_STATE_ERROR;
-			ELSIF MC_BR_AsmDeleteShuttle_AcpTrak_0.Done THEN
-				TrakState := TRAK_STATE_ADD_SHUTTLE_INIT;
 			END_IF
 
 		TRAK_STATE_ADD_SHUTTLE_INIT:
@@ -779,7 +781,7 @@ PROGRAM _CYCLIC
 		MC_BR_SegProcessParID_AcpTrak_0[i].DataAddress := ADR(SegmentProcessParId);
 		MC_BR_SegProcessParID_AcpTrak_0[i].NumberOfParIDs := 6;
 		IF NOT InSimulation THEN
-			MC_BR_SegProcessParID_AcpTrak_0[i].Execute := TON_0.Q AND pTrakCtrl.Status.PowerOn;
+			MC_BR_SegProcessParID_AcpTrak_0[i].Execute := (pTrakCtrl.Status.Segment[i].Segment.controlif <> 0) AND TON_0.Q AND pTrakCtrl.Status.PowerOn;
 		END_IF
 		MC_BR_SegProcessParID_AcpTrak_0[i]();
 		MC_BR_SegProcessParID_AcpTrak_0[i].Execute := FALSE;
