@@ -135,6 +135,8 @@ Ensure your ACOPOStrak hardware is properly configured in the **Physical View**:
 
 Keep `Config_4.assemblyfeature` registered in `mappMotion/Package.pkg` and referenced from `Config_1.assembly` under **Assembly features** when importing or adapting TrakBasis. If the application's default sector is not `Sector_1`, update the `SectorRef` in `Config_4.assemblyfeature` to the intended sector.
 
+<img width="1501" height="567" alt="image" src="https://github.com/user-attachments/assets/6d6913b4-8956-4ac6-be32-8b0ec0cdc996" />
+
 This configuration is not strictly required in simulation: TrakBasis adds simulated shuttles directly to the software-selected sector. It is nevertheless required for the supplied configuration when deploying to real ACOPOStrak hardware.
 
 For simulation, review the defaults in `InitSequence.st`. The supplied project creates 20 shuttles starting at 0.1 m with 0.06 m separation:
