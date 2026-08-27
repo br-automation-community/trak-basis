@@ -6,5 +6,6 @@
     <Object Type="File">Config_1.assembly</Object>
     <Object Type="File">Config_2.sector</Object>
     <Object Type="File">Config_3.shuttlestereotype</Object>
+    <Object Type="File">Config_4.assemblyfeature</Object>
   </Objects>
 </Package>

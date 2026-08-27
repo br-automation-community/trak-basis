@@ -126,7 +126,16 @@ Ensure your ACOPOStrak hardware is properly configured in the **Physical View**:
 - Assembly configuration matches your physical setup
 - Sectors and segments are properly defined
 - The assembly's **Backup and restore data** variable is set to `gTrakShBackupRestoreData`
+- The assembly's **Assembly features** includes the shuttle auto-attach feature described below
 - mappMotion configuration is deployed to the target
+
+#### Shuttle Auto-Attachment on Real Hardware
+
+`Config_4.assemblyfeature` configures the `ShtSectorAutoAttach` assembly feature. `Config_1.assembly` references this feature and gives `Sector_1` the highest attachment priority. During real-hardware startup, detected shuttles must be attached to a sector before the motion commands can operate on them. Without this feature, shuttles can remain assigned to the internal sector, and `Move.Absolute` and `Move.Velocity` commands will not execute.
+
+Keep `Config_4.assemblyfeature` registered in `mappMotion/Package.pkg` and referenced from `Config_1.assembly` under **Assembly features** when importing or adapting TrakBasis. If the application's default sector is not `Sector_1`, update the `SectorRef` in `Config_4.assemblyfeature` to the intended sector.
+
+This configuration is not strictly required in simulation: TrakBasis adds simulated shuttles directly to the software-selected sector. It is nevertheless required for the supplied configuration when deploying to real ACOPOStrak hardware.
 
 For simulation, review the defaults in `InitSequence.st`. The supplied project creates 20 shuttles starting at 0.1 m with 0.06 m separation:
 
@@ -287,7 +296,8 @@ TrakBasis/
 │       └── 5PC900_TS17_00/mappMotion/
 │           ├── Config_1.assembly
 │           ├── Config_2.sector
-│           └── Config_3.shuttlestereotype
+│           ├── Config_3.shuttlestereotype
+│           └── Config_4.assemblyfeature
 └── README.md
 ```
 

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?AutomationStudio FileVersion="4.9"?>
+<Configuration>
+  <Element ID="Feature_Shuttle_Auto_Attatch" Type="assemblyfeature">
+    <Selector ID="Type" Value="ShtSectorAutoAttach">
+      <Group ID="Priority[1]">
+        <Property ID="SectorRef" Value="Sector_1" />
+      </Group>
+    </Selector>
+  </Element>
+</Configuration>

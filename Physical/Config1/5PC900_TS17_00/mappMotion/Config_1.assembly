@@ -51,5 +51,8 @@
         <Property ID="BackupVar" Value="::gTrakShBackupRestoreData" />
       </Selector>
     </Group>
+    <Group ID="AssemblyFeatures">
+      <Property ID="AssemblyFeatureRef[1]" Value="Feature_Shuttle_Auto_Attatch" />
+    </Group>
   </Element>
 </Configuration>
