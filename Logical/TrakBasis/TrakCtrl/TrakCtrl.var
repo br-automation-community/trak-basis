@@ -98,6 +98,6 @@ VAR
 	SegmentDCurrent : ARRAY[0..TRAK_MAX_SEGMENT] OF REAL; (*Used to calculate segment power consumption*)
 	SegmentQCurrent : ARRAY[0..TRAK_MAX_SEGMENT] OF REAL; (*Used to calculate segment power consumption*)
 	AdrErrorComponent : UDINT; (*Reference to motion component to read the logger entry*)
-	SegmentProcessParId : ARRAY[0..5] OF McAcpTrakSegProcessParIDType; (*Used to monitor different ParIDs for every segments*)
+	SegmentProcessParId : ARRAY[0..TRAK_MAX_SEGMENT_MINUS_ONE,0..5] OF McAcpTrakSegProcessParIDType; (*Used to monitor different ParIDs for every segment, one private block per segment so concurrent async FB instances never share the same buffer*)
 	AuxString : STRING[32]; (*Auxiliar string used to parse and define shuttle names for ShuttleUser ID*)
 END_VAR

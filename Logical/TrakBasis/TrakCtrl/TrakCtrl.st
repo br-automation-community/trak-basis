@@ -750,35 +750,35 @@ PROGRAM _CYCLIC
 
 		// Segments parameters readings
 		// 1. Voltage - Should be 58V in opertation
-		SegmentProcessParId[0].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
-		SegmentProcessParId[0].ParID := 298;
-		SegmentProcessParId[0].VariableAddress := ADR(pTrakCtrl.Status.Segment[i].Info.Voltage);
+		SegmentProcessParId[i,0].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
+		SegmentProcessParId[i,0].ParID := 298;
+		SegmentProcessParId[i,0].VariableAddress := ADR(pTrakCtrl.Status.Segment[i].Info.Voltage);
 		// 2. Direct Axis Current - Used to find power consumption
-		SegmentProcessParId[1].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
-		SegmentProcessParId[1].ParID := 218;
-		SegmentProcessParId[1].VariableAddress := ADR(SegmentDCurrent[i]);
+		SegmentProcessParId[i,1].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
+		SegmentProcessParId[i,1].ParID := 218;
+		SegmentProcessParId[i,1].VariableAddress := ADR(SegmentDCurrent[i]);
 		// 3. Q-axis Current - Used to find power consumption
-		SegmentProcessParId[2].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
-		SegmentProcessParId[2].ParID := 213;
-		SegmentProcessParId[2].VariableAddress := ADR(SegmentQCurrent[i]);
+		SegmentProcessParId[i,2].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
+		SegmentProcessParId[i,2].ParID := 213;
+		SegmentProcessParId[i,2].VariableAddress := ADR(SegmentQCurrent[i]);
 		// 4. Temperature Balancer - Warning 90�C / Error at 95�C - Internal ambient temperature of segment
-		SegmentProcessParId[3].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
-		SegmentProcessParId[3].ParID := 63648;
-		SegmentProcessParId[3].VariableAddress := ADR(pTrakCtrl.Status.Segment[i].Info.TempBalancer);
+		SegmentProcessParId[i,3].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
+		SegmentProcessParId[i,3].ParID := 63648;
+		SegmentProcessParId[i,3].VariableAddress := ADR(pTrakCtrl.Status.Segment[i].Info.TempBalancer);
 		// 5. Temperature Air - Warning 75�C / Error at 80�C - CPU temperature
-		SegmentProcessParId[4].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
-		SegmentProcessParId[4].ParID := 63647;
-		SegmentProcessParId[4].VariableAddress := ADR(pTrakCtrl.Status.Segment[i].Info.TempAir);
+		SegmentProcessParId[i,4].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
+		SegmentProcessParId[i,4].ParID := 63647;
+		SegmentProcessParId[i,4].VariableAddress := ADR(pTrakCtrl.Status.Segment[i].Info.TempAir);
 		// 6. Tempreature Sensor - Warning 75�C / Error at 80�C - Back side of segment in the center
-		SegmentProcessParId[5].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
-		SegmentProcessParId[5].ParID := 861;
-		SegmentProcessParId[5].VariableAddress := ADR(pTrakCtrl.Status.Segment[i].Info.TempSensor);
+		SegmentProcessParId[i,5].DataType := mcACPTRAK_SEG_PARTYPE_REAL;
+		SegmentProcessParId[i,5].ParID := 861;
+		SegmentProcessParId[i,5].VariableAddress := ADR(pTrakCtrl.Status.Segment[i].Info.TempSensor);
 		// 7. Power consumption
 		pTrakCtrl.Status.Segment[i].Info.PowerConsumption := pTrakCtrl.Status.Segment[i].Info.Voltage * SQRT(SegmentQCurrent[i]**2 + SegmentDCurrent[i]**2);
 
 		MC_BR_SegProcessParID_AcpTrak_0[i].Segment := ADR(pTrakCtrl.Status.Segment[i].Segment);
 		MC_BR_SegProcessParID_AcpTrak_0[i].ChannelIndex := 0;
-		MC_BR_SegProcessParID_AcpTrak_0[i].DataAddress := ADR(SegmentProcessParId);
+		MC_BR_SegProcessParID_AcpTrak_0[i].DataAddress := ADR(SegmentProcessParId[i,0]);
 		MC_BR_SegProcessParID_AcpTrak_0[i].NumberOfParIDs := 6;
 		IF NOT InSimulation THEN
 			MC_BR_SegProcessParID_AcpTrak_0[i].Execute := (pTrakCtrl.Status.Segment[i].Segment.controlif <> 0) AND TON_0.Q AND pTrakCtrl.Status.PowerOn;
