@@ -9,6 +9,7 @@
   <Dependencies>
     <Dependency ObjectName="standard" />
     <Dependency ObjectName="AsBrStr" />
+    <Dependency ObjectName="AsIODiag" />
     <Dependency ObjectName="McBase" />
     <Dependency ObjectName="McAxis" />
     <Dependency ObjectName="McAcpTrak" />
