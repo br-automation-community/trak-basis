@@ -63,6 +63,7 @@ TrakBasis coordinates power-on and power-off sequences for the ACOPOStrak assemb
 - Supports **absolute positioning** and **velocity commands**.
 - Allows external commands to be triggered in a centralized way through a shared interface structure.
 - Handles collective halts and coordinated movement restarts.
+- **Velocity Override**: Scales shuttle velocity by a percentage without changing the configured `Speed`, applied continuously while the assembly is powered on.
 
 ### 4. Diagnostics & Error Handling
 - Automatically detects and categorizes assembly, segment, or shuttle errors.
@@ -190,6 +191,22 @@ IF gTrakCtrl.Status.PowerOn THEN
     // gTrakCtrl.Command.Move.Halt := TRUE;
 END_IF
 ```
+
+### Velocity Override
+
+```st
+// Scale shuttle velocity to 50% of the configured Speed
+gTrakCtrl.Parameter.Override.Factor := 50.0;    // percentage (0-100)
+gTrakCtrl.Parameter.Override.Enable := TRUE;
+
+// Back to full speed
+gTrakCtrl.Parameter.Override.Factor := 100.0;
+
+// Disable the override (shuttles move at the unscaled configured Speed)
+gTrakCtrl.Parameter.Override.Enable := FALSE;
+```
+
+The override is only applied to the FB while `Status.PowerOn` is `TRUE`; `Factor` is clamped to the 0–100 range before being applied.
 
 ### Error Handling
 
@@ -349,6 +366,8 @@ Configure movement and system parameters via `gTrakCtrl.Parameter`:
 | `Direction` | McDirectionEnum | Movement direction (mcDIR_POSITIVE/mcDIR_NEGATIVE) |
 | `RestoreEnabled` | BOOL | Enable shuttle position restoration after power-on |
 | `RestoreTolerance` | LREAL | Position tolerance for shuttle recovery (meters) |
+| `Override.Enable` | BOOL | Enables the velocity override (applied only while `Status.PowerOn` is `TRUE`) |
+| `Override.Factor` | REAL | Velocity override percentage, clamped to 0–100, applied as a multiplication factor on shuttle velocity |
 | `SimulationParameters.Position` | LREAL | Initial position of the first simulated shuttle (meters) |
 | `SimulationParameters.Separation` | LREAL | Separation between simulated shuttles (meters) |
 | `SimulationParameters.Quantity` | UINT | Number of shuttles created in simulation |
