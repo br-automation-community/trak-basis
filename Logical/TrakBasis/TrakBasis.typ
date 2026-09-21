@@ -54,11 +54,16 @@ TYPE
 		RestoreEnabled : BOOL; (*The system try to restore shuttle positions after power on*)
 		RestoreTolerance : LREAL; (*Discrepancy allowed when restoring position*)
 		SimulationParameters : TrakCtrlParSimType; (*Simulation parameter for the trak system*)
+		Override : TrakCtrlParOverrideType; (*Speed override parameters for the assembly*)
 	END_STRUCT;
 	TrakCtrlParSimType : 	STRUCT  (*Parameter for when trak is being simulated*)
 		Position : LREAL; (*Position of first shuttle*)
 		Separation : LREAL; (*Separation between shuttles*)
 		Quantity : UINT; (*Quantity of the shuttles*)
+	END_STRUCT;
+	TrakCtrlParOverrideType : 	STRUCT  (*Speed override parameters for the assembly*)
+		Enable : BOOL; (*Enables the velocity override on the assembly*)
+		Factor : REAL; (*Override percentage (0-100) applied to shuttle velocity when Enable is TRUE*)
 	END_STRUCT;
 	TrakCtrlStatusType : 	STRUCT  (*Status structure*)
 		CommunicationReady : BOOL; (*Communication is posible with the assembly*)

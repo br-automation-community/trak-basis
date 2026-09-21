@@ -31,6 +31,8 @@ ACTION InitSequence:
 			pTrakCtrl.Parameter.SimulationParameters.Separation := 0.06;
 			pTrakCtrl.Parameter.RestoreEnabled := FALSE;
 			pTrakCtrl.Parameter.RestoreTolerance := 0.25;
+			pTrakCtrl.Parameter.Override.Enable := FALSE;
+			pTrakCtrl.Parameter.Override.Factor := 100.0;
 
 			InitState := INIT_STATE_CHECK_ASM_COMM;
 

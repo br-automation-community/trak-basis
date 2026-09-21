@@ -641,6 +641,12 @@ PROGRAM _CYCLIC
 	MC_BR_AsmRestoreShData_AcpTrak_0();
 	MC_BR_AsmRestoreShData_AcpTrak_0.Execute := FALSE;
 
+	MC_BR_AsmSetOverride_AcpTrak_0.Assembly := AdrAssembly;
+	MC_BR_AsmSetOverride_AcpTrak_0.Enable := pTrakCtrl.Parameter.Override.Enable AND pTrakCtrl.Status.PowerOn;
+	MC_BR_AsmSetOverride_AcpTrak_0.Type := mcACPTRAK_OVERRIDE_VELOCITY;
+	MC_BR_AsmSetOverride_AcpTrak_0.Factor := LIMIT(0.0, pTrakCtrl.Parameter.Override.Factor, 100.0) / 100.0;
+	MC_BR_AsmSetOverride_AcpTrak_0();
+
 	//************************* SECTOR ***************************
 	MC_BR_SecAddShuttle_AcpTrak_0();
 	MC_BR_SecAddShuttle_AcpTrak_0.Execute := FALSE;
