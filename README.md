@@ -199,14 +199,11 @@ END_IF
 gTrakCtrl.Parameter.Override.Factor := 50.0;    // percentage (0-100)
 gTrakCtrl.Parameter.Override.Enable := TRUE;
 
-// Back to full speed
-gTrakCtrl.Parameter.Override.Factor := 100.0;
-
 // Disable the override (shuttles move at the unscaled configured Speed)
 gTrakCtrl.Parameter.Override.Enable := FALSE;
 ```
 
-The override is only applied to the FB while `Status.PowerOn` is `TRUE`; `Factor` is clamped to the 0–100 range before being applied.
+The override is only applied to the FB while `Status.PowerOn` is `TRUE`; `Factor` is clamped to the 0–100 range before being applied. Whenever `Enable` is `FALSE`, a second `MC_BR_AsmSetOverride_AcpTrak` instance explicitly commands the assembly back to a factor of `1.0`, so the override is actively reset rather than just left inactive.
 
 ### Error Handling
 

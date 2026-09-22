@@ -45,6 +45,7 @@ VAR
 	MC_BR_AsmDeleteShuttle_AcpTrak_0 : MC_BR_AsmDeleteShuttle_AcpTrak; (*Deletes all shuttles from an assembly (useful in simulation or when shuttle is lost in real system and references needs to be refreshed)*)
 	MC_BR_AsmRestoreShData_AcpTrak_0 : MC_BR_AsmRestoreShData_AcpTrak; (*Restores shuttle identity and position from the official remanent store after power loss*)
 	MC_BR_AsmSetOverride_AcpTrak_0 : MC_BR_AsmSetOverride_AcpTrak; (*Sets the velocity override factor for the assembly*)
+	MC_BR_AsmSetOverride_AcpTrak_1 : MC_BR_AsmSetOverride_AcpTrak; (*Explicitly resets the velocity override factor to 1.0 when the override is disabled*)
 END_VAR
 (********************************************************************
  * For sector
